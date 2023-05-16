@@ -33,7 +33,16 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/sp_home_recommended"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="200dp"/>
+
+            <TextView
+                android:id="@+id/tv_home_userPresets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/user_presets"
+                android:textColor="#000000"
+                android:textSize="20sp" />
+
 
         </LinearLayout>
     </ScrollView>
