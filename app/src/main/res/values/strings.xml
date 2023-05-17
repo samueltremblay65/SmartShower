@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SmartShower</string>
+    <string name="add_preset">Add preset</string>
+    <string name="recommended">Recommended</string>
+    <string name="user_presets">My presets</string>
+    <string name="hi_sam">Good morning Sam</string>
+    <string name="view_stats">View usage statistics</string>
 </resources>
