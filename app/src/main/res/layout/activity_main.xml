@@ -21,6 +21,11 @@
             android:layout_weight="1"
             android:text="@string/hi_sam"
             android:textSize="20sp" />
+        
+        <Button
+            android:layout_width=""
+            android:layout_height=""
+        
     </LinearLayout>
 
     <ScrollView
