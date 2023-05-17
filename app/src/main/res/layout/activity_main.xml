@@ -62,10 +62,11 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+            <include layout="@layout/shower_preset" />
+            <include layout="@layout/shower_preset" />
+            <include layout="@layout/shower_preset" />
+            <include layout="@layout/shower_preset" />
+            <include layout="@layout/shower_preset" />
 
         </LinearLayout>
     </ScrollView>
