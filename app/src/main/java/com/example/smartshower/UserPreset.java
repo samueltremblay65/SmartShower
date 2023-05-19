@@ -1,15 +1,20 @@
 package com.example.smartshower;
 
+import static java.sql.Types.ROWID;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Random;
+import java.util.UUID;
 
 @Entity
 public class UserPreset {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "uid")
     public int uid;
 
     @ColumnInfo(name = "name")
@@ -29,15 +34,11 @@ public class UserPreset {
 
     // Default constructor : creates object with default values
     public UserPreset(){
-        this.name = "New preset";
-        this.flowRate = 100;
-        this.temp = 38;
-        this.tempLimit = 50;
-        this.theme = "basic";
     }
 
     // Main constructor to specify custom preset
-    public UserPreset(String name, int temp, int tempLimit, int flowRate, String theme )
+    @Ignore
+    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, String theme )
     {
         this.name = name;
         this.flowRate = flowRate;

@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {UserPreset.class}, version = 1)
+@Database(entities = {UserPreset.class}, version = 2)
 public abstract class PresetDatabase extends RoomDatabase {
     public abstract UserPresetDao userPresetDao();
 
@@ -27,7 +27,8 @@ public abstract class PresetDatabase extends RoomDatabase {
             synchronized (PresetDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    PresetDatabase.class, "preset_database").addCallback(sRoomDatabaseCallback).build();
+                                    PresetDatabase.class, "preset_database").addCallback(sRoomDatabaseCallback).
+                                    fallbackToDestructiveMigration().build();
                 }
             }
         }

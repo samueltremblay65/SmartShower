@@ -32,5 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("OBSERVER","Detected change in database");
             }
         };
+
+        presetViewModel.insert(new UserPreset());
     }
 }
