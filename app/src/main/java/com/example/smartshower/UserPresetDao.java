@@ -19,6 +19,9 @@ public interface UserPresetDao {
     @Insert
     void insertAll(UserPreset... users);
 
+    @Query("DELETE FROM userpreset")
+    void deleteAll();
+
     @Delete
     void delete(UserPreset user);
 }

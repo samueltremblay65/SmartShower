@@ -21,5 +21,7 @@ public class PresetViewModel extends AndroidViewModel {
     LiveData<List<UserPreset>> getAllPresets() { return allPresets; }
 
     public void insert(UserPreset preset) { presetRepository.insert(preset); }
+
+    public void deleteAll() { presetRepository.deleteAll(); }
 }
 

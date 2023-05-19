@@ -11,6 +11,7 @@ class PresetRepository {
     private UserPresetDao presetDao;
     private LiveData<List<UserPreset>> allPresets;
 
+    // Interface used to interact with database (through DAO)
     PresetRepository(Application application) {
         PresetDatabase db = PresetDatabase.getDatabase(application);
         presetDao = db.userPresetDao();
@@ -28,5 +29,12 @@ class PresetRepository {
         PresetDatabase.databaseWriteExecutor.execute(() -> {
             presetDao.insertAll(preset);
         });
+    }
+
+    // Deletes all records from table
+    void deleteAll() {
+       PresetDatabase.databaseWriteExecutor.execute(() -> {
+            presetDao.deleteAll();
+       });
     }
 }
