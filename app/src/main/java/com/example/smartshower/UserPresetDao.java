@@ -1,5 +1,6 @@
 package com.example.smartshower;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -10,7 +11,7 @@ import java.util.List;
 @Dao
 public interface UserPresetDao {
     @Query("SELECT * FROM userpreset")
-    List<UserPreset> getAll();
+    LiveData<List<UserPreset>> getAll();
 
     @Query("SELECT * FROM userpreset WHERE uid IN (:userIds)")
     List<UserPreset> loadAllByIds(int[] userIds);

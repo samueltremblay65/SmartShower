@@ -8,7 +8,6 @@ import java.util.Random;
 
 @Entity
 public class UserPreset {
-    private static int idTracker = 1;
 
     @PrimaryKey
     public int uid;
@@ -28,6 +27,7 @@ public class UserPreset {
     @ColumnInfo(name = "theme")
     public String theme;
 
+    // Default constructor : creates object with default values
     public UserPreset(){
         this.name = "New preset";
         this.flowRate = 100;
@@ -36,6 +36,7 @@ public class UserPreset {
         this.theme = "basic";
     }
 
+    // Main constructor to specify custom preset
     public UserPreset(String name, int temp, int tempLimit, int flowRate, String theme )
     {
         this.name = name;
