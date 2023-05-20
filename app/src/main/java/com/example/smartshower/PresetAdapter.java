@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,9 +19,13 @@ public class PresetAdapter extends
     private List<UserPreset> allPresets;
 
     // Pass in the contact array into the constructor
-    public PresetAdapter(List<UserPreset> presets) {
+    public PresetAdapter(List<UserPreset> presets, PresetClickListener presetClickListener) {
         allPresets = presets;
+        this.presetClickListener = presetClickListener;
     }
+
+    // Item click listener for selecting presets
+    public PresetClickListener presetClickListener;
 
     // Usually involves inflating a layout from XML and returning the holder
     @Override
@@ -55,6 +60,14 @@ public class PresetAdapter extends
 
         TextView flowRateView = holder.flowRateTextView;
         flowRateView.setText(String.format("%d flow rate", userPreset.tempLimit));
+
+        // Adding on click listener
+        holder.presetContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presetClickListener.onItemClick(userPreset);
+            }
+        });
     }
 
     // Returns the total count of items in the list
@@ -73,6 +86,8 @@ public class PresetAdapter extends
         public TextView maxTempTextView;
         public TextView flowRateTextView;
 
+        public LinearLayout presetContainer;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
         public ViewHolder(View itemView) {
@@ -84,6 +99,7 @@ public class PresetAdapter extends
             tempTextView = (TextView) itemView.findViewById(R.id.tv_preset_temp);
             maxTempTextView = (TextView) itemView.findViewById(R.id.tv_preset_maxTemp);
             flowRateTextView = (TextView) itemView.findViewById(R.id.tv_preset_flowrate);
+            presetContainer = (LinearLayout) itemView.findViewById(R.id.presetContainer);
         }
     }
 }
