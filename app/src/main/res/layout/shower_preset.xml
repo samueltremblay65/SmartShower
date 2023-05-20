@@ -11,21 +11,25 @@
         android:layout_height="wrap_content"
         android:text="Morning shower"
         android:textAllCaps="true"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:id="@+id/tv_preset_name" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="24 degrees" />
+        android:text="24 degrees"
+        android:id="@+id/tv_preset_temp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="100% water flow" />
+        android:text="100% water flow"
+        android:id="@+id/tv_preset_maxTemp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="10 minute limit" />
+        android:text="10 minute limit"
+        android:id="@+id/tv_preset_flowrate"/>
 
 </LinearLayout>
