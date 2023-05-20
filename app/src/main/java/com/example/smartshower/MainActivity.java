@@ -57,7 +57,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Setting preset recycler view adapter and layout manager
         presetListView = (RecyclerView) findViewById(R.id.rv_home_presets);
-        PresetAdapter presetAdapter = new PresetAdapter(presetList);
+        PresetAdapter presetAdapter = new PresetAdapter(presetList, new PresetClickListener() {
+            @Override
+            public void onItemClick(UserPreset preset) {
+                startPresetShower(preset);
+            }
+        });
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -65,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void showPreset_onClick(View view)
+    public void startPresetShower(UserPreset preset)
     {
         Intent myIntent = new Intent(MainActivity.this, Shower.class);
         // myIntent.putExtra("key", value); //Optional parameters
