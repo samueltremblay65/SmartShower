@@ -5,4 +5,6 @@
     <string name="user_presets">My presets</string>
     <string name="hi_sam">Good morning Sam</string>
     <string name="view_stats">View usage statistics</string>
+    <string name="increase_temp">Increase temperature</string>
+    <string name="decrease_temp">Decrease temperature</string>
 </resources>

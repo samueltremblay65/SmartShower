@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/recommended"
             android:textColor="#000000"
-            android:textSize="24sp"
+            android:textSize="@dimen/heading2"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
@@ -34,16 +34,40 @@
 
         <include layout="@layout/shower_preset" />
 
-        <TextView
-            android:id="@+id/tv_home_userPresets"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/user_presets"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp"/>
+            android:orientation="horizontal">
+
+            <!--layout_weight=1 makes items show on opposite sides-->
+            <TextView
+                android:id="@+id/tv_home_userPresets"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_presets"
+                android:textSize="@dimen/heading2"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btn_home_manage_presets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:backgroundTint="@color/transparent"
+                android:minWidth="80dp"
+                android:minHeight="48dp"
+                android:text="manage presets"
+                android:textSize="@dimen/smallText"
+                android:textColor="@color/black_300"
+                android:translationX="5dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -71,7 +95,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btn_home_createPreset"
+            android:id="@+id/btn_home_viewStatistics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#D1D1D1"
@@ -82,7 +106,8 @@
             android:textColorHint="#000000"
             android:textColorLink="#000000"
             android:textSize="20sp"
-            app:cornerRadius="10dp" />
+            app:cornerRadius="10dp"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 
