@@ -5,16 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private PresetViewModel presetViewModel;
+
+    // Views
+    RecyclerView presetListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,18 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        presetViewModel.deleteAll();
+        // FIX ME: temporary preset list for development
+        UserPreset preset1 = new UserPreset("Good morning", 25, 50, 100, "cold");
+        UserPreset preset2 = new UserPreset("Good evening", 30, 60, 80, "cold");
+
+        ArrayList<UserPreset> presetList = new ArrayList<UserPreset>();
+        presetList.add(preset1);
+        presetList.add(preset2);
+
+        // Setting preset recycler view adapter and layout manager
+        presetListView = (RecyclerView) findViewById(R.id.rv_home_presets);
+        PresetAdapter presetAdapter = new PresetAdapter(presetList);
+        presetListView.setAdapter(presetAdapter);
+        presetListView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

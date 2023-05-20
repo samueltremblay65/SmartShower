@@ -46,4 +46,14 @@ public class UserPreset {
         this.tempLimit = tempLimit;
         this.theme = theme;
     }
+
+    @Ignore
+    public UserPreset(String name, int temp, int tempLimit, int flowRate, String theme )
+    {
+        this.name = name;
+        this.flowRate = flowRate;
+        this.temp = temp;
+        this.tempLimit = tempLimit;
+        this.theme = theme;
+    }
 }
