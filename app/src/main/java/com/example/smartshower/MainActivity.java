@@ -88,7 +88,10 @@ public class MainActivity extends AppCompatActivity {
     public void startPresetShower(UserPreset preset)
     {
         Intent myIntent = new Intent(MainActivity.this, Shower.class);
-        // myIntent.putExtra("key", value); //Optional parameters
+        myIntent.putExtra("name", preset.name); //Optional parameters
+        myIntent.putExtra("temperature", preset.temp); //Optional parameters
+        myIntent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
+        myIntent.putExtra("flowRate", preset.flowRate); //Optional parameters
         MainActivity.this.startActivity(myIntent);
     }
 }
