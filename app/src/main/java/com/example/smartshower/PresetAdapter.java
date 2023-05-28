@@ -56,10 +56,10 @@ public class PresetAdapter extends
         tempView.setText(String.format("%s degrees", userPreset.name));
 
         TextView maxTempView = holder.maxTempTextView;
-        maxTempView.setText(String.format("%d degrees limit" ,userPreset.tempLimit));
+        maxTempView.setText(String.format("%d degrees limit", userPreset.tempLimit));
 
         TextView flowRateView = holder.flowRateTextView;
-        flowRateView.setText(String.format("%d flow rate", userPreset.tempLimit));
+        flowRateView.setText(String.format("%d flow rate", userPreset.flowRate));
 
         // Adding on click listener
         holder.presetContainer.setOnClickListener(new View.OnClickListener() {
