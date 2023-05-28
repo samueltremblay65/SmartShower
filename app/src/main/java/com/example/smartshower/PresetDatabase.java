@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {UserPreset.class}, version = 2)
+@Database(entities = {UserPreset.class}, version = 5)
 public abstract class PresetDatabase extends RoomDatabase {
     public abstract UserPresetDao userPresetDao();
 

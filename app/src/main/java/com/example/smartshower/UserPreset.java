@@ -7,9 +7,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.util.Random;
-import java.util.UUID;
-
 @Entity
 public class UserPreset {
 
@@ -29,6 +26,9 @@ public class UserPreset {
     @ColumnInfo(name = "flowRate")
     public int flowRate;
 
+    @ColumnInfo(name = "secondsLimit")
+    public int secondsLimit;
+
     @ColumnInfo(name = "theme")
     public String theme;
 
@@ -38,22 +38,24 @@ public class UserPreset {
 
     // Main constructor to specify custom preset
     @Ignore
-    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, String theme )
+    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme)
     {
         this.name = name;
         this.flowRate = flowRate;
         this.temp = temp;
         this.tempLimit = tempLimit;
         this.theme = theme;
+        this.secondsLimit = secondsLimit;
     }
 
     @Ignore
-    public UserPreset(String name, int temp, int tempLimit, int flowRate, String theme )
+    public UserPreset(String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme )
     {
         this.name = name;
         this.flowRate = flowRate;
         this.temp = temp;
         this.tempLimit = tempLimit;
         this.theme = theme;
+        this.secondsLimit = secondsLimit;
     }
 }

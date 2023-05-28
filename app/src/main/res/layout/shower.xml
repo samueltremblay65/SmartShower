@@ -73,7 +73,7 @@
             android:textAlignment="center"
             android:textSize="20sp" />
 
-        <com.google.android.material.slider.RangeSlider
+        <com.google.android.material.slider.Slider
             android:id="@+id/slider_showerFlow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,6 +81,7 @@
             app:thumbColor="@color/shower_blue300"
             app:trackColor="@color/black_300"
             android:layout_marginLeft="20dp"
+
             android:layout_marginRight="20dp"/>
 
     </LinearLayout>

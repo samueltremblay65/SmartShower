@@ -57,11 +57,11 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // FIX ME: temporary preset list for development
-        UserPreset preset1 = new UserPreset("Good morning", 25, 50, 100, "cold");
-        UserPreset preset2 = new UserPreset("Good evening", 38, 60, 80, "cold");
-        UserPreset preset3 = new UserPreset("Ice cold", 10, 25, 100, "cold");
-        UserPreset preset4 = new UserPreset("Soothe", 38, 60, 100, "cold");
-        UserPreset preset5 = new UserPreset("Kids", 35, 37, 90, "cold");
+        UserPreset preset1 = new UserPreset("Good morning", 25, 50, 100, 500,"cold");
+        UserPreset preset2 = new UserPreset("Good evening", 38, 60, 80, 500,"cold");
+        UserPreset preset3 = new UserPreset("Ice cold", 10, 25, 100, 300,"cold");
+        UserPreset preset4 = new UserPreset("Soothe", 38, 60, 100, 60,"cold");
+        UserPreset preset5 = new UserPreset("Kids", 35, 37, 90, 1000, "cold");
 
         ArrayList<UserPreset> presetList = new ArrayList<UserPreset>();
         presetList.add(preset1);
@@ -81,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 
-        btn_showStats = (Button) findViewById(R.id.btn_home_viewStatistics);
-
+        btn_showStats = findViewById(R.id.btn_home_viewStatistics);
     }
 
     public void startPresetShower(UserPreset preset)
@@ -92,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         myIntent.putExtra("temperature", preset.temp); //Optional parameters
         myIntent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
         myIntent.putExtra("flowRate", preset.flowRate); //Optional parameters
+        myIntent.putExtra("timeLimit", preset.secondsLimit);
         MainActivity.this.startActivity(myIntent);
     }
 }
