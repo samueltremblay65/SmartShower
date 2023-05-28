@@ -81,7 +81,7 @@
             app:thumbColor="@color/shower_blue300"
             app:trackColor="@color/black_300"
             android:layout_marginLeft="20dp"
-
+            app:labelBehavior="gone"
             android:layout_marginRight="20dp"/>
 
     </LinearLayout>

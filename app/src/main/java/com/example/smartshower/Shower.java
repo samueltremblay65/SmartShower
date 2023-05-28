@@ -168,12 +168,14 @@ public class Shower extends AppCompatActivity {
     {
         isOn = true;
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.red));
+        startShowerButton.setText(getResources().getText(R.string.stop_shower));
     }
 
     private void stopShower()
     {
         isOn = false;
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));
+        startShowerButton.setText(getResources().getText(R.string.start_shower));
     }
 
     @SuppressLint("DefaultLocale")
