@@ -18,7 +18,6 @@
             android:id="@+id/shower_clock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="19:38"
             android:textAlignment="center"
             android:textColor="@color/black_300"
             android:textSize="25sp" />
@@ -119,7 +118,6 @@
             android:textColorHint="#000000"
             android:textColorLink="#000000"
             android:textSize="20sp"
-            android:layout_below="@+id/shower_layoutMain"
             app:cornerRadius="10dp"
             tools:ignore="VisualLintButtonSize" />
 
