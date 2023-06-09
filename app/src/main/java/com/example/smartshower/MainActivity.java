@@ -21,8 +21,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private PresetViewModel presetViewModel;
-
     // Views
     RecyclerView presetListView;
     RecyclerView recommendedListView;
@@ -44,10 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
-
-        // Getting view model object. DO NOT create new instance directly
-        // Lifecycle of view model should extend past activity lifecycle
-        presetViewModel = new ViewModelProvider(this).get(PresetViewModel.class);
 
         // Create the observer which updates the UI.
         final Observer<List<UserPreset>> presetObserver = new Observer<List<UserPreset>>() {
@@ -81,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        List<UserPreset> recommendedPresets = new ArrayList<UserPreset>();
+        List<UserPreset> recommendedPresets = new ArrayList<>();
         recommendedPresets.add(preset1);
 
         PresetAdapter recommendedAdapter = new PresetAdapter(recommendedPresets, new PresetClickListener() {

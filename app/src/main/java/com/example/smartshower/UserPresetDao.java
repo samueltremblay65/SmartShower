@@ -11,7 +11,7 @@ import java.util.List;
 @Dao
 public interface UserPresetDao {
     @Query("SELECT * FROM userpreset")
-    LiveData<List<UserPreset>> getAll();
+    List<UserPreset> getAll();
 
     @Query("SELECT * FROM userpreset WHERE uid IN (:userIds)")
     List<UserPreset> loadAllByIds(int[] userIds);

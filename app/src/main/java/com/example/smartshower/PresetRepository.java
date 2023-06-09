@@ -1,40 +1,79 @@
 package com.example.smartshower;
 
 import android.app.Application;
-
-import androidx.lifecycle.LiveData;
+import android.os.AsyncTask;
 
 import java.util.List;
 
-class PresetRepository {
+public class PresetRepository {
 
     private UserPresetDao presetDao;
-    private LiveData<List<UserPreset>> allPresets;
+    private List<UserPreset> allPresets;
 
-    // Interface used to interact with database (through DAO)
-    PresetRepository(Application application) {
-        PresetDatabase db = PresetDatabase.getDatabase(application);
-        presetDao = db.userPresetDao();
+    // creating a constructor for our variables
+    // and passing the variables to it.
+    public PresetRepository(Application application) {
+        ShowerDatabase database= ShowerDatabase.getInstance(application);
+        presetDao = database.presetDao();
         allPresets = presetDao.getAll();
     }
 
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    LiveData<List<UserPreset>> getAllPresets() {
+    // creating a method to insert the data to our database.
+    public void insert(UserPreset preset) {
+        new InsertPresetAsyncTask(presetDao).execute(preset);
+    }
+
+    // creating a method to delete the data in our database.
+    public void delete(UserPreset preset) {
+        new DeletePresetAsyncTask(presetDao).execute();
+    }
+
+    public void deleteAllPresets() {
+        new DeleteAllPresetsAsyncTask(presetDao).execute();
+    }
+
+    public List<UserPreset> getAllPresets() {
         return allPresets;
     }
 
-    // Can only be called by non UI
-    void insert(UserPreset preset) {
-        PresetDatabase.databaseWriteExecutor.execute(() -> {
+    private static class InsertPresetAsyncTask extends AsyncTask<UserPreset, Void, Void> {
+        private UserPresetDao presetDao;
+
+        private InsertPresetAsyncTask(UserPresetDao presetDao) {
+            this.presetDao = presetDao;
+        }
+
+        @Override
+        protected Void doInBackground(UserPreset... preset) {
+            // below line is use to insert our modal in dao.
             presetDao.insertAll(preset);
-        });
+            return null;
+        }
     }
 
-    // Deletes all records from table
-    void deleteAll() {
-       PresetDatabase.databaseWriteExecutor.execute(() -> {
+    private static class DeletePresetAsyncTask extends AsyncTask<UserPreset, Void, Void> {
+        private UserPresetDao presetDao;
+
+        private DeletePresetAsyncTask(UserPresetDao presetDao) {
+            this.presetDao = presetDao;
+        }
+
+        @Override
+        protected Void doInBackground(UserPreset... userPreset) {
+            presetDao.delete(userPreset[0]);
+            return null;
+        }
+    }
+
+    private static class DeleteAllPresetsAsyncTask extends AsyncTask<Void, Void, Void> {
+        private UserPresetDao presetDao;
+        private DeleteAllPresetsAsyncTask(UserPresetDao presetDao) {
+            this.presetDao = presetDao;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
             presetDao.deleteAll();
-       });
+            return null;
+        }
     }
 }
