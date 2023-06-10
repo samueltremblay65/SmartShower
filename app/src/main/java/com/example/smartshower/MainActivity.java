@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveTask() {
-
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
             @Override
@@ -130,18 +129,23 @@ public class MainActivity extends AppCompatActivity {
                 task.setFinishBy("Tomorrow");
                 task.setFinished(false);
 
-                //adding to database
-                DatabaseClient.getInstance(getApplicationContext()).getAppDatabase()
-                        .taskDao()
-                        .insert(task);
+                // Creating presets
+                UserPreset preset1 = new UserPreset("Good morning", 25, 50, 100, 300, "cold");
+                UserPreset preset2 = new UserPreset("Good evening", 38, 60, 80, 120, "cold");
+                UserPreset preset3 = new UserPreset("Ice cold", 10, 25, 100, 300, "cold");
+                UserPreset preset4 = new UserPreset("Soothe", 38, 60, 100, 60, "cold");
+                UserPreset preset5 = new UserPreset("Kids", 35, 37, 90, 900, "cold");
+
+                // Adding to database
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.taskDao().insert(task);
+                db.userPresetDao().insertAll(preset1, preset2, preset3, preset4, preset5);
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
             }
         }
