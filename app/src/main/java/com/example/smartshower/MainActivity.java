@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.startActivity(myIntent);
     }
 
+    // Database tasks
     private void saveTask() {
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
