@@ -1,9 +1,53 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "3c3c0c79e00b0a9e4890f1339c6b412e",
+    "version": 2,
+    "identityHash": "7a1cf2812c0050b879f83c6dfaf5e14c",
     "entities": [
+      {
+        "tableName": "Task",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `task` TEXT, `desc` TEXT, `finish_by` TEXT, `finished` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "task",
+            "columnName": "task",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "desc",
+            "columnName": "desc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finishBy",
+            "columnName": "finish_by",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finished",
+            "columnName": "finished",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
       {
         "tableName": "UserPreset",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `temp` INTEGER NOT NULL, `tempLimit` INTEGER NOT NULL, `flowRate` INTEGER NOT NULL, `secondsLimit` INTEGER NOT NULL, `theme` TEXT)",
@@ -64,7 +108,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c3c0c79e00b0a9e4890f1339c6b412e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a1cf2812c0050b879f83c6dfaf5e14c')"
     ]
   }
 }
