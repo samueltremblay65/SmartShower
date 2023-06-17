@@ -11,4 +11,7 @@
     <string name="start_shower">Start shower</string>
     <string name="stop_shower">Stop shower</string>
     <string name="edit_preset">Edit preset</string>
+    <string name="stats_average_duration">Average shower duration</string>
+    <string name="stats_average_temperature">Average shower temperature</string>
+    <string name="stats_number_showers_monthly">Number of showers this month</string>
 </resources>

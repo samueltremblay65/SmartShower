@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         btn_showStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
+                MainActivity.this.startActivity(myIntent);
             }
         });
 
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startPresetShower(UserPreset preset) {
         Intent myIntent = new Intent(MainActivity.this, Shower.class);
-        myIntent.putExtra("name", preset.name); //Optional parameters
+        myIntent.putExtra("presetId", preset.uid); //Optional parameters
         myIntent.putExtra("temperature", preset.temp); //Optional parameters
         myIntent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
         myIntent.putExtra("flowRate", preset.flowRate); //Optional parameters
@@ -112,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                Log.i("JIRAF", "Hello");
                 presets = db.userPresetDao().getAll();
+
                 return null;
             }
 

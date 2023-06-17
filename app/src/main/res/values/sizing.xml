@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="heading2">28sp</dimen>
+    <dimen name="heading3">24sp</dimen>
     <dimen name="smallText">16sp</dimen>
 </resources>
