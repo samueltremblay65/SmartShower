@@ -2,27 +2,32 @@ package com.example.smartshower;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ButtonBarLayout;
+
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.Slider;
 
 import org.w3c.dom.Text;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Shower extends AppCompatActivity {
+
+    public ShowerSession session;
 
     private int timerSeconds;
     private int currentTemp;
@@ -57,7 +62,7 @@ public class Shower extends AppCompatActivity {
 
         // Get extra variables
         Intent intent = this.getIntent();
-        String name = intent.getStringExtra("name");
+        int presetId = intent.getIntExtra("presetId", 0);
         int temp = intent.getIntExtra("temperature", 30);
         int tempLimit = intent.getIntExtra("tempLimit", 50);
         int flowRate = intent.getIntExtra("flowRate", 100);
@@ -145,6 +150,9 @@ public class Shower extends AppCompatActivity {
                 {
                     timerSeconds--;
 
+                    // Update statistics
+                    session.update(currentTemp, currentFlow);
+
                     // Update timer text
                     timerDisplay.setText(formatTime(timerSeconds));
                 }
@@ -167,6 +175,8 @@ public class Shower extends AppCompatActivity {
     private void startShower()
     {
         isOn = true;
+        session = new ShowerSession(0);
+
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.red));
         startShowerButton.setText(getResources().getText(R.string.stop_shower));
     }
@@ -174,6 +184,8 @@ public class Shower extends AppCompatActivity {
     private void stopShower()
     {
         isOn = false;
+        saveStatistics();
+        // Should save shower session to database
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));
         startShowerButton.setText(getResources().getText(R.string.start_shower));
     }
@@ -186,4 +198,30 @@ public class Shower extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void updateFlowRateDisplay() { flowRateDisplay.setText(String.format("water flow: %d%%", currentFlow));}
+
+
+    // Database tasks
+    private void saveStatistics() {
+        @SuppressLint("StaticFieldLeak")
+        class SaveStatisticsTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                // Adding to database
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                Statistics statistics = new Statistics(session);
+                db.statisticsDao().insertAll(statistics);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        SaveStatisticsTask task = new SaveStatisticsTask();
+        task.execute();
+    }
 }
