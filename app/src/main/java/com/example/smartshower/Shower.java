@@ -19,9 +19,6 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.Slider;
 
-import org.w3c.dom.Text;
-
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,6 +26,7 @@ public class Shower extends AppCompatActivity {
 
     public ShowerSession session;
 
+    private int presetId;
     private int timerSeconds;
     private int currentTemp;
     private int currentFlow;
@@ -69,6 +67,7 @@ public class Shower extends AppCompatActivity {
         int timeLimit = intent.getIntExtra("timeLimit", 10);
 
         // Initializing settings variables
+        this.presetId = presetId;
         timerSeconds = timeLimit;
         currentFlow = flowRate;
         currentTemp = temp;
@@ -175,7 +174,7 @@ public class Shower extends AppCompatActivity {
     private void startShower()
     {
         isOn = true;
-        session = new ShowerSession(0);
+        session = new ShowerSession(presetId);
 
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.red));
         startShowerButton.setText(getResources().getText(R.string.stop_shower));

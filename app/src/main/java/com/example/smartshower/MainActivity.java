@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 presets = db.userPresetDao().getAll();
+
                 return null;
             }
 
