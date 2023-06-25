@@ -213,11 +213,6 @@ public class Shower extends AppCompatActivity {
                 db.statisticsDao().insertAll(statistics);
                 return null;
             }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
-            }
         }
 
         SaveStatisticsTask task = new SaveStatisticsTask();
