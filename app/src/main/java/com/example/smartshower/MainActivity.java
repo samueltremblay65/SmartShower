@@ -2,8 +2,13 @@ package com.example.smartshower;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -30,8 +35,13 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView presetListView;
     RecyclerView recommendedListView;
     Button btn_showStats;
-
     PresetAdapter presetAdapter;
+
+    // View pager setup
+    private static final int NUM_PAGES = 5;
+    private ViewPager2 viewPager;
+    private FragmentStateAdapter pagerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,30 +60,19 @@ public class MainActivity extends AppCompatActivity {
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
 
-        // FIX ME: temporary preset list for development
-        UserPreset preset1 = new UserPreset("Good morning", 25, 50, 100, 300, "cold");
-
         // Setting preset recycler view adapter and layout manager
         presetListView = (RecyclerView) findViewById(R.id.rv_home_presets);
-        recommendedListView = (RecyclerView) findViewById(R.id.rv_home_recommended);
 
+        // View pager setup
+        viewPager = findViewById(R.id.sp_home_recommended);
 
-        List<UserPreset> recommendedPresets = new ArrayList<>();
-        recommendedPresets.add(preset1);
-
-        PresetAdapter recommendedAdapter = new PresetAdapter(recommendedPresets, new PresetClickListener() {
-            @Override
-            public void onItemClick(UserPreset preset) {
-                startPresetShower(preset);
-            }
-        });
-
-        recommendedListView.setAdapter(recommendedAdapter);
-        recommendedListView.setLayoutManager(new LinearLayoutManager(this));
+        // Sets margins when scrolling between pages of recommended view pager items
+        viewPager.setPageTransformer(new MarginPageTransformer(30));
 
         btn_showStats = findViewById(R.id.btn_home_viewStatistics);
 
         loadUserPresets();
+        loadRecommendedPresets();
 
         btn_showStats.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(myIntent);
             }
         });
-
     }
 
     public void startPresetShower(UserPreset preset) {
@@ -101,6 +99,37 @@ public class MainActivity extends AppCompatActivity {
         presetListView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    public void updateRecommended(List<UserPreset> presets){
+        pagerAdapter = new MainActivity.ScreenSlidePagerAdapter(this, presets);
+        viewPager.setAdapter(pagerAdapter);
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+        SmartRecommendationCreator recommendationCreator;
+        List<UserPreset> presets;
+
+        public ScreenSlidePagerAdapter(FragmentActivity fa, List<UserPreset> presets) {
+            super(fa);
+            this.presets = presets;
+        }
+
+        @Override
+        public Fragment createFragment(int position) {
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startPresetShower(presets.get(position));
+                }
+            };
+            return new RecommendedSliderFragment(presets.get(position), listener);
+        }
+
+        @Override
+        public int getItemCount() {
+            return presets.size();
+        }
+    }
+
     // Database tasks
     private void loadUserPresets() {
         @SuppressLint("StaticFieldLeak")
@@ -114,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 presets = db.userPresetDao().getAll();
-
                 return null;
             }
 
@@ -126,6 +154,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         LoadUserPresetsTask task = new LoadUserPresetsTask();
+        task.execute();
+    }
+
+    private void loadRecommendedPresets() {
+        @SuppressLint("StaticFieldLeak")
+        class LoadRecommendedPresetsTask extends AsyncTask<Void, Void, Void> {
+
+            List<UserPreset> presets;
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                // Adding to database
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                presets = db.userPresetDao().getAll();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                updateRecommended(presets);
+                Toast.makeText(getApplicationContext(), "Got presets", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        LoadRecommendedPresetsTask task = new LoadRecommendedPresetsTask();
         task.execute();
     }
 }
