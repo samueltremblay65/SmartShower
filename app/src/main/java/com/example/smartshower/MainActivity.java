@@ -115,7 +115,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment createFragment(int position) {
-            return new RecommendedSliderFragment(presets.get(position));
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startPresetShower(presets.get(position));
+                }
+            };
+            return new RecommendedSliderFragment(presets.get(position), listener);
         }
 
         @Override

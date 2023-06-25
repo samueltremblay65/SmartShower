@@ -7,18 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.util.List;
 
 public class RecommendedSliderFragment extends Fragment {
     UserPreset preset;
+    View.OnClickListener listener;
 
-    public RecommendedSliderFragment(UserPreset preset)
+    public RecommendedSliderFragment(UserPreset preset, View.OnClickListener listener)
     {
         this.preset = preset;
+        this.listener = listener;
     }
 
     @Override
@@ -31,12 +28,15 @@ public class RecommendedSliderFragment extends Fragment {
         TextView temperature = view.findViewById(R.id.tv_preset_temp);
         TextView temperatureLimit = view.findViewById(R.id.tv_preset_maxTemp);
         TextView flowRate = view.findViewById(R.id.tv_preset_flowrate);
+        LinearLayout presetContainer = view.findViewById(R.id.presetContainer);
 
         name.setText(preset.name);
         temperature.setText(String.format("%s degrees", preset.name));
         temperatureLimit.setText(String.format("%d degrees limit", preset.tempLimit));
         flowRate.setText(String.format("%d flow rate", preset.flowRate));
 
+        // Adding on click listener
+        presetContainer.setOnClickListener(listener);
         return view;
     }
 }
