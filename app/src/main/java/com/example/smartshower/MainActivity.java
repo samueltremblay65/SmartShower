@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void result) {
                 updateRecommended(presets);
-                Toast.makeText(getApplicationContext(), "Got presets", Toast.LENGTH_LONG).show();
             }
         }
 
