@@ -14,4 +14,9 @@
     <string name="stats_average_duration">Average shower duration</string>
     <string name="stats_average_temperature">Average shower temperature</string>
     <string name="stats_number_showers_monthly">Number of showers this month</string>
+    <string name="account_dropdown_my_profile">My profile</string>
+    <string name="account_dropdown_logout">Logout</string>
+    <string name="account_dropdown_contact">Contact us</string>
+    <string name="account_dropdown_settings">Settings</string>
+    <string name="my_account_button">My account button</string>
 </resources>

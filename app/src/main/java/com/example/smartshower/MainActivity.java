@@ -1,6 +1,8 @@
 package com.example.smartshower;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -11,16 +13,18 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import android.widget.Button;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Views
     RecyclerView presetListView;
-    RecyclerView recommendedListView;
-    Button btn_showStats;
+    Button showStatsButton;
     PresetAdapter presetAdapter;
+
+    ImageView accountButton;
 
     // View pager setup
     private static final int NUM_PAGES = 5;
@@ -69,17 +74,36 @@ public class MainActivity extends AppCompatActivity {
         // Sets margins when scrolling between pages of recommended view pager items
         viewPager.setPageTransformer(new MarginPageTransformer(30));
 
-        btn_showStats = findViewById(R.id.btn_home_viewStatistics);
+        showStatsButton = findViewById(R.id.btn_home_viewStatistics);
+
+        accountButton = findViewById(R.id.header_account_button);
+
+        // PopulateDatabase can be used to load some generic sample data in the preset table
+        // populateDatabase();
 
         loadUserPresets();
         loadRecommendedPresets();
 
-        btn_showStats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
-                MainActivity.this.startActivity(myIntent);
-            }
+        showStatsButton.setOnClickListener(v -> {
+            Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
+            MainActivity.this.startActivity(myIntent);
+        });
+
+        accountButton.setOnClickListener(v -> {
+            // Initializing the popup menu and giving the reference as current context
+
+            Context wrapper = new ContextThemeWrapper(MainActivity.this, R.style.PopupMenu);
+            PopupMenu popupMenu = new PopupMenu(wrapper, accountButton);
+
+            // Inflating popup menu from popup_menu.xml file
+            popupMenu.getMenuInflater().inflate(R.menu.account_dropdown, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                // Toast message on menu item clicked
+                Toast.makeText(MainActivity.this, "You Clicked " + menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                return true;
+            });
+            // Showing the popup menu
+            popupMenu.show();
         });
     }
 
@@ -178,6 +202,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         LoadRecommendedPresetsTask task = new LoadRecommendedPresetsTask();
+        task.execute();
+    }
+
+    private void populateDatabase() {
+        @SuppressLint("StaticFieldLeak")
+        class populateTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"green");
+                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"orange");
+                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"blue");
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.userPresetDao().insertAll(preset1, preset2, preset3);
+                return null;
+            }
+        }
+
+        populateTask task = new populateTask();
         task.execute();
     }
 }
