@@ -19,4 +19,6 @@
     <string name="account_dropdown_contact">Contact us</string>
     <string name="account_dropdown_settings">Settings</string>
     <string name="my_account_button">My account button</string>
+    <string name="manage_presets">manage presets</string>
+    <string name="plus_sign">+</string>
 </resources>
