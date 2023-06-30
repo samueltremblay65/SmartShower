@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="12dp" >
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="12dp">
 
     <!-- MAIN PART -->
     <LinearLayout
@@ -16,46 +15,107 @@
         <include layout="@layout/header"/>
 
         <TextView
-            android:id="@+id/tv_header_showers_monthly"
+            android:id="@+id/tv_cp_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/stats_number_showers_monthly"
+            android:text="@string/addpreset_createnewpreset"
             android:textSize="@dimen/heading3"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"/>
 
-        <TextView
-            android:id="@+id/tv_showers_monthly"
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24dp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_name"/>
 
         <TextView
-            android:id="@+id/tv_header_average_temperature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/stats_average_temperature"
-            android:textSize="@dimen/heading3"
-            android:textStyle="bold"/>
+            android:text="@string/addpreset_theme"
+            android:textSize="@dimen/heading4"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
 
         <TextView
-            android:id="@+id/tv_average_temperature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            android:text="@string/addpreset_temperature"
+            android:textSize="@dimen/heading4"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24sp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_temperature"/>
 
         <TextView
-            android:id="@+id/tv_header_average_duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/stats_average_duration"
-            android:textSize="@dimen/heading3"
-            android:textStyle="bold" />
+            android:text="@string/addpreset_flowrate"
+            android:textSize="@dimen/heading4"/>
 
-        <TextView
-            android:id="@+id/tv_average_duration"
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24sp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_flowrate"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_bool_timer"
+            android:textSize="18dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btn_shower_editPresets"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            android:backgroundTint="@color/light_red"
+            android:padding="10dp"
+            android:text="@string/discard_changes"
+            android:textColor="@color/black"
+            android:textColorHighlight="#F44336"
+            android:textColorHint="#000000"
+            android:textColorLink="#000000"
+            android:textSize="20sp"
+            app:cornerRadius="10dp"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/btn_shower_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/shower_blue300"
+            android:padding="10dp"
+            android:text="@string/create_preset"
+            android:textColor="@color/black"
+            android:textColorHighlight="#F44336"
+            android:textColorHint="#000000"
+            android:textColorLink="#000000"
+            android:textSize="20sp"
+            app:cornerRadius="10dp"
+            tools:ignore="VisualLintButtonSize" />
+
     </LinearLayout>
 
 </RelativeLayout>

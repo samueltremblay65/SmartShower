@@ -113,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
             Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
             MainActivity.this.startActivity(myIntent);
         });
-
-
     }
 
     public void startPresetShower(UserPreset preset) {
