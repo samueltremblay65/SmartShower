@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="@string/account_dropdown_my_profile" android:id="@+id/my_profile" />
+    <item android:title="My statistics" android:id="@+id/my_statistics"/>
     <item android:title="@string/account_dropdown_settings" android:id="@+id/settings" />
     <item android:title="@string/account_dropdown_contact" android:id="@+id/contact_us" />
     <item android:title="@string/account_dropdown_logout" android:id="@+id/logout" />

@@ -27,6 +27,7 @@
     <string name="addpreset_flowrate">Flowrate</string>
     <string name="addpreset_theme">Theme</string>
     <string name="addpreset_bool_timer">Enable shower timer</string>
+    <string name="addpreset_bool_templimit">Enable  safe temperature limit</string>
     <string name="discard_changes">Discard changes</string>
     <string name="create_preset">Create preset</string>
 </resources>

@@ -24,10 +24,11 @@
             android:layout_marginBottom="10dp"/>
 
         <EditText
+            android:id="@+id/et_preset_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:layout_marginBottom="20dp"
             android:autofillHints="preset name"
             android:hint="@string/addpreset_name"/>
@@ -49,7 +50,8 @@
             android:textSize="@dimen/heading4"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:id="@+id/et_preset_temperature"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
             android:textSize="24sp"
@@ -64,7 +66,8 @@
             android:textSize="@dimen/heading4"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:id="@+id/et_preset_flow"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
             android:textSize="24sp"
@@ -72,11 +75,38 @@
             android:autofillHints="preset name"
             android:hint="@string/addpreset_flowrate"/>
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addpreset_bool_timer"
-            android:textSize="18dp"/>
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/et_preset_temperature_limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24sp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:inputType="number"
+            android:hint="@string/addpreset_name"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_bool_templimit"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/et_preset_time_limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24dp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_name"/>
 
     </LinearLayout>
 
@@ -102,7 +132,7 @@
             tools:ignore="VisualLintButtonSize" />
 
         <Button
-            android:id="@+id/btn_shower_start"
+            android:id="@+id/btn_create_preset"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/shower_blue300"
