@@ -53,11 +53,11 @@ public class CreatePreset extends AppCompatActivity {
         createPreset = findViewById(R.id.btn_create_preset);
 
         createPreset.setOnClickListener(v -> {
+            String presetName = nameInput.getText().toString().trim();
             int temperature = Integer.parseInt(temperatureInput.getText().toString());
             int flowrate = Integer.parseInt(flowrateInput.getText().toString());
-            String presetName = nameInput.getText().toString().trim();
 
-            UserPreset preset = new UserPreset(presetName, temperature, flowrate, getResources().getInteger(R.integer.default_temperature_limit), getResources().getInteger(R.integer.null_timelimit_db_value), "default");
+            UserPreset preset = new UserPreset(presetName, temperature, getResources().getInteger(R.integer.default_temperature_limit), flowrate, getResources().getInteger(R.integer.null_timelimit_db_value), "default");
 
             addPresetToDatabase(preset);
 

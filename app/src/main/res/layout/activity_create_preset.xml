@@ -27,8 +27,8 @@
             android:id="@+id/et_preset_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:labelFor="@+id/tv_cp_name"
             android:textSize="24sp"
+            android:inputType="text"
             android:layout_marginBottom="20dp"
             android:autofillHints="preset name"
             android:hint="@string/addpreset_name"/>
@@ -55,8 +55,9 @@
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
             android:textSize="24sp"
+            android:inputType="number"
             android:layout_marginBottom="20dp"
-            android:autofillHints="preset name"
+            android:autofillHints="Temperature"
             android:hint="@string/addpreset_temperature"/>
 
         <TextView
@@ -71,8 +72,9 @@
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
             android:textSize="24sp"
+            android:inputType="number"
             android:layout_marginBottom="20dp"
-            android:autofillHints="preset name"
+            android:autofillHints="Flowrate"
             android:hint="@string/addpreset_flowrate"/>
 
         <Switch
