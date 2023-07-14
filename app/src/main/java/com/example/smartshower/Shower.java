@@ -69,6 +69,10 @@ public class Shower extends AppCompatActivity {
         // Initializing settings variables
         this.presetId = presetId;
         timerSeconds = timeLimit;
+        if(timerSeconds <= 0)
+        {
+            timerSeconds = 3600;
+        }
         currentFlow = flowRate;
         currentTemp = temp;
         maxTemp = tempLimit;
@@ -154,12 +158,12 @@ public class Shower extends AppCompatActivity {
 
                     // Update timer text
                     timerDisplay.setText(formatTime(timerSeconds));
-                }
 
-                if(timerSeconds <= 0)
-                {
-                    stopShower();
-                    this.cancel();
+                    if(timerSeconds <= 0)
+                    {
+                        stopShower();
+                        this.cancel();
+                    }
                 }
             }
         }, 0, 1000);

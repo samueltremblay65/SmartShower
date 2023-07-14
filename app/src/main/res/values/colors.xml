@@ -5,5 +5,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="shower_blue300">#1fb4c4</color>
     <color name="red">#e3685b</color>
+    <color name="light_red">#eb8175</color>
     <color name="transparent">#00FFFFFF</color>
 </resources>

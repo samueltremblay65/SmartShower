@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="12dp">
+
+    <!-- MAIN PART -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/header"/>
+
+        <TextView
+            android:id="@+id/tv_cp_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_createnewpreset"
+            android:textSize="@dimen/heading3"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"/>
+
+        <EditText
+            android:id="@+id/et_preset_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:inputType="text"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_name"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_theme"
+            android:textSize="@dimen/heading4"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_temperature"
+            android:textSize="@dimen/heading4"/>
+
+        <EditText
+            android:id="@+id/et_preset_temperature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24sp"
+            android:inputType="number"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="Temperature"
+            android:hint="@string/addpreset_temperature"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_flowrate"
+            android:textSize="@dimen/heading4"/>
+
+        <EditText
+            android:id="@+id/et_preset_flow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24sp"
+            android:inputType="number"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="Flowrate"
+            android:hint="@string/addpreset_flowrate"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_bool_timer"
+            android:id="@+id/sw_cp_timer"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/et_preset_time_limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24sp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:inputType="number"
+            android:hint="@string/addpreset_timer"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addpreset_bool_templimit"
+            android:id="@+id/sw_cp_temp_limit"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/et_preset_temperature_limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_cp_name"
+            android:textSize="24dp"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_templimit"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btn_discard_preset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_red"
+            android:padding="10dp"
+            android:text="@string/discard_changes"
+            android:textColor="@color/black"
+            android:textColorHighlight="#F44336"
+            android:textColorHint="#000000"
+            android:textColorLink="#000000"
+            android:textSize="20sp"
+            app:cornerRadius="10dp"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/btn_create_preset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/shower_blue300"
+            android:padding="10dp"
+            android:text="@string/create_preset"
+            android:textColor="@color/black"
+            android:textColorHighlight="#F44336"
+            android:textColorHint="#000000"
+            android:textColorLink="#000000"
+            android:textSize="20sp"
+            app:cornerRadius="10dp"
+            tools:ignore="VisualLintButtonSize" />
+
+    </LinearLayout>
+
+</RelativeLayout>

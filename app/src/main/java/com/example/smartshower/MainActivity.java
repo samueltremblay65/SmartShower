@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     // Views
     RecyclerView presetListView;
     Button showStatsButton;
+    Button addPresetButton;
     PresetAdapter presetAdapter;
 
     ImageView accountButton;
@@ -78,8 +79,11 @@ public class MainActivity extends AppCompatActivity {
 
         accountButton = findViewById(R.id.header_account_button);
 
+        addPresetButton = findViewById(R.id.btn_home_add_preset);
+
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
+        // deleteAllPresetsFromDatabase();
 
         loadUserPresets();
         loadRecommendedPresets();
@@ -104,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
             });
             // Showing the popup menu
             popupMenu.show();
+        });
+
+        addPresetButton.setOnClickListener(v -> {
+            Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
+            MainActivity.this.startActivity(myIntent);
         });
     }
 
@@ -220,6 +229,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         populateTask task = new populateTask();
+        task.execute();
+    }
+
+    private void deleteAllPresetsFromDatabase()
+    {
+        @SuppressLint("StaticFieldLeak")
+        class clearPresetTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.userPresetDao().deleteAll();
+                return null;
+            }
+        }
+
+        clearPresetTask task = new clearPresetTask();
         task.execute();
     }
 }

@@ -57,7 +57,7 @@
                 android:backgroundTint="@color/transparent"
                 android:minWidth="80dp"
                 android:minHeight="48dp"
-                android:text="manage presets"
+                android:text="@string/manage_presets"
                 android:textSize="@dimen/smallText"
                 android:textColor="@color/black_300"
                 android:translationX="5dp"
@@ -78,11 +78,31 @@
         android:background="#FFFFFF"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_home_presets"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_home_presets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_home_add_preset"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_preset"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="8dp"
+                app:rippleColor="#33AAAAAA"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
     </ScrollView>
 
     <LinearLayout
