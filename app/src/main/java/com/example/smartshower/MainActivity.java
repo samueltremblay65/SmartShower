@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
+        // deleteAllPresetsFromDatabase();
 
         loadUserPresets();
         loadRecommendedPresets();
@@ -228,6 +229,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         populateTask task = new populateTask();
+        task.execute();
+    }
+
+    private void deleteAllPresetsFromDatabase()
+    {
+        @SuppressLint("StaticFieldLeak")
+        class clearPresetTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.userPresetDao().deleteAll();
+                return null;
+            }
+        }
+
+        clearPresetTask task = new clearPresetTask();
         task.execute();
     }
 }

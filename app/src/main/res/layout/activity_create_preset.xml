@@ -81,10 +81,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addpreset_bool_timer"
+            android:id="@+id/sw_cp_timer"
             android:textSize="18sp"/>
 
         <EditText
-            android:id="@+id/et_preset_temperature_limit"
+            android:id="@+id/et_preset_time_limit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
@@ -98,10 +99,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addpreset_bool_templimit"
+            android:id="@+id/sw_cp_temp_limit"
             android:textSize="18sp"/>
 
         <EditText
-            android:id="@+id/et_preset_time_limit"
+            android:id="@+id/et_preset_temperature_limit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/tv_cp_name"
