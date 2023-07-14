@@ -30,4 +30,6 @@
     <string name="addpreset_bool_templimit">Enable  safe temperature limit</string>
     <string name="discard_changes">Discard changes</string>
     <string name="create_preset">Create preset</string>
+    <string name="addpreset_templimit">Safe temperature limit</string>
+    <string name="addpreset_timer">Duration limit</string>
 </resources>

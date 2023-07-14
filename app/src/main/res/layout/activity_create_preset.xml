@@ -93,7 +93,7 @@
             android:layout_marginBottom="20dp"
             android:autofillHints="preset name"
             android:inputType="number"
-            android:hint="@string/addpreset_name"/>
+            android:hint="@string/addpreset_timer"/>
 
         <Switch
             android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
             android:textSize="24dp"
             android:layout_marginBottom="20dp"
             android:autofillHints="preset name"
-            android:hint="@string/addpreset_name"/>
+            android:hint="@string/addpreset_templimit"/>
 
     </LinearLayout>
 
@@ -121,7 +121,7 @@
         android:layout_alignParentBottom="true">
 
         <Button
-            android:id="@+id/btn_shower_editPresets"
+            android:id="@+id/btn_discard_preset"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/light_red"

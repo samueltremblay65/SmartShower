@@ -63,6 +63,7 @@ public class CreatePreset extends AppCompatActivity {
         timerEnable = findViewById(R.id.sw_cp_timer);
 
         createPreset = findViewById(R.id.btn_create_preset);
+        discardChanges = findViewById(R.id.btn_discard_preset);
 
         createPreset.setOnClickListener(v -> {
             // Mandatory field checks
@@ -96,6 +97,11 @@ public class CreatePreset extends AppCompatActivity {
             UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, "default");
             addPresetToDatabase(preset);
 
+            Intent intent= new Intent(CreatePreset.this, MainActivity.class);
+            CreatePreset.this.startActivity(intent);
+        });
+
+        discardChanges.setOnClickListener(v -> {
             Intent intent= new Intent(CreatePreset.this, MainActivity.class);
             CreatePreset.this.startActivity(intent);
         });
