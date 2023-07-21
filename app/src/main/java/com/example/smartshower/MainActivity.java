@@ -30,7 +30,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ActivityWithHeader {
 
     // Local variables
     ArrayList<UserPreset> userPresets;
@@ -41,30 +41,16 @@ public class MainActivity extends AppCompatActivity {
     Button addPresetButton;
     PresetAdapter presetAdapter;
 
-    ImageView accountButton;
-
     // View pager setup
-    private static final int NUM_PAGES = 5;
     private ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Changing system bar color
-        Window window = this.getWindow();
-
-        // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-        // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
+        super.setupUIElements();
 
         // Setting preset recycler view adapter and layout manager
         presetListView = (RecyclerView) findViewById(R.id.rv_home_presets);
@@ -76,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setPageTransformer(new MarginPageTransformer(30));
 
         showStatsButton = findViewById(R.id.btn_home_viewStatistics);
-
-        accountButton = findViewById(R.id.header_account_button);
 
         addPresetButton = findViewById(R.id.btn_home_add_preset);
 
@@ -91,23 +75,6 @@ public class MainActivity extends AppCompatActivity {
         showStatsButton.setOnClickListener(v -> {
             Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
             MainActivity.this.startActivity(myIntent);
-        });
-
-        accountButton.setOnClickListener(v -> {
-            // Initializing the popup menu and giving the reference as current context
-
-            Context wrapper = new ContextThemeWrapper(MainActivity.this, R.style.PopupMenu);
-            PopupMenu popupMenu = new PopupMenu(wrapper, accountButton);
-
-            // Inflating popup menu from popup_menu.xml file
-            popupMenu.getMenuInflater().inflate(R.menu.account_dropdown, popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(menuItem -> {
-                // Toast message on menu item clicked
-                Toast.makeText(MainActivity.this, "You Clicked " + menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-                return true;
-            });
-            // Showing the popup menu
-            popupMenu.show();
         });
 
         addPresetButton.setOnClickListener(v -> {

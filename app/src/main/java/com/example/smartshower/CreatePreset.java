@@ -17,7 +17,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CreatePreset extends AppCompatActivity {
+public class CreatePreset extends ActivityWithHeader {
 
     // TextEdits
     EditText nameInput;
@@ -38,18 +38,7 @@ public class CreatePreset extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_preset);
-
-        // Changing system bar color
-        Window window = this.getWindow();
-
-        // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-        // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
+        super.setupUIElements();
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
