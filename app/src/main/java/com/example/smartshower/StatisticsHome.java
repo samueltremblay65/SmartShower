@@ -50,7 +50,8 @@ public class StatisticsHome extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
 
         // Use following line to generate a year's worth of example shower data in the database
-        populateStatisticsWithExampleData();
+        // populateStatisticsWithExampleData();
+        loadStatistics();
     }
 
     private void createAverageTemperatureChart()
@@ -60,7 +61,9 @@ public class StatisticsHome extends AppCompatActivity {
         ArrayList<Entry> entries = new ArrayList<>();
 
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
-        int[] dataset = new int[]{38, 39, 38, 37, 32, 26, 24, 26, 28, 33, 37, 37};
+        int[] dataset = calculateAverageTemperaturePerMonth();
+
+        // Get monthly shower data
 
         int i = 0;
         for (int data: dataset) {
@@ -105,6 +108,34 @@ public class StatisticsHome extends AppCompatActivity {
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
         chart.invalidate(); // refresh
+    }
+
+    public int[] calculateAverageTemperaturePerMonth()
+    {
+        List<Integer>[] monthDividedStatistics = new List[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthDividedStatistics[i] = new ArrayList<Integer>();
+        }
+        for (Statistics statistic: allStatistics) {
+            int month = statistic.getMonth();
+            monthDividedStatistics[month].add(statistic.averageTemperature);
+        }
+        int[] monthAverages = new int[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
+        }
+        return monthAverages;
+    }
+
+    public int calculateAverage(List<Integer> values)
+    {
+        int sum = 0;
+        for (Integer value: values) {
+            sum += value;
+        }
+        return sum / values.size();
     }
 
     public int calculateAverageDuration()
@@ -176,7 +207,7 @@ public class StatisticsHome extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void results)
             {
-                showStatistics();
+
             }
 
             private List<Statistics> generateExampleStatistics()
@@ -192,9 +223,14 @@ public class StatisticsHome extends AppCompatActivity {
 
                 for(int i = 0; i < days; i++)
                 {
+                    int probabilityShower = PROBABILITY_SHOWER;
                     Date date = generateDateTime(i);
                     int month = date.getMonth();
-                    while(random.nextInt(100) < PROBABILITY_SHOWER)
+                    if(month > 4 && month < 9)
+                    {
+                        probabilityShower += 20;
+                    }
+                    while(random.nextInt(100) < probabilityShower)
                     {
                         int temperature = generateTemperature(month);
                         int flow = 100;
@@ -202,8 +238,9 @@ public class StatisticsHome extends AppCompatActivity {
                         int energy = generateEnergyUsed(duration, temperature, flow);
                         int waterUsage = generateWaterUsage(duration, flow);
 
-                        Statistics showerStatistics = new Statistics(generatePresetId(), duration, temperature, energy, waterUsage, date.toString());
+                        Statistics showerStatistics = new Statistics(generatePresetId(), duration, temperature, energy, waterUsage, date.getTime());
                         exampleStatistics.add(showerStatistics);
+                        probabilityShower = probabilityShower / 2;
                     }
                 }
                 return exampleStatistics;
@@ -211,7 +248,8 @@ public class StatisticsHome extends AppCompatActivity {
 
             private int generateTemperature(int month)
             {
-                return 37;
+                int[] monthAverages = new int[]{37, 37, 35, 33, 28, 24, 22, 22, 24, 30, 35, 37};
+                return monthAverages[month] += randBetween(-5, 5);
             }
 
             private int generateShowerDuration(int month)
@@ -232,16 +270,16 @@ public class StatisticsHome extends AppCompatActivity {
             private Date generateDateTime(int dayNumber)
             {
                 GregorianCalendar gc = new GregorianCalendar();
-                gc.set(gc.YEAR, 2023 - 1900);
+                gc.set(gc.YEAR, 2022 - 1900);
                 // int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
                 gc.set(gc.DAY_OF_YEAR, dayNumber);
 
                 int year = gc.get(gc.YEAR);
                 int month = gc.get(gc.MONTH);
                 int day = gc.get(gc.DAY_OF_MONTH);
-                int hours = 7;
-                int min = 0;
-                int sec = 0;
+                int hours = randBetween(5, 22);
+                int min = random.nextInt(60);
+                int sec = random.nextInt(60);
                 Date date = new Date(year, month, day, hours, min, sec);
                 return date;
             }

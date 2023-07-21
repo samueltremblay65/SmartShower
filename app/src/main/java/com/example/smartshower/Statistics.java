@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity
 public class Statistics {
     @PrimaryKey(autoGenerate = true)
@@ -27,7 +29,18 @@ public class Statistics {
     public int averageTemperature;
 
     @ColumnInfo(name = "date_time")
-    public String dateTime;
+    public long dateTime;
+
+    public int getMonth()
+    {
+        Date date = new Date(this.dateTime);
+        return date.getMonth();
+    }
+
+    public Date parseDate()
+    {
+        return new Date(this.dateTime);
+    }
 
     public Statistics()
     {
@@ -42,11 +55,11 @@ public class Statistics {
         this.waterUsage = session.getWaterUsage();
         this.energy = session.getEnergy();
         this.averageTemperature = session.getAverageTemperature();
-        this.dateTime = "6/7/2023:10/24";
+        this.dateTime = 1843983424;
     }
 
     @Ignore
-    public Statistics(int presetId, int duration, int averageTemperature, int energy, float waterUsage, String dateTime)
+    public Statistics(int presetId, int duration, int averageTemperature, int energy, float waterUsage, long dateTime)
     {
         this.presetId = presetId;
         this.duration = duration;
