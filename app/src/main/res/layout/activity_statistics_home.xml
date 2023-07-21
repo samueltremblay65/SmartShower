@@ -15,45 +15,18 @@
         <include layout="@layout/header"/>
 
         <TextView
-            android:id="@+id/tv_header_showers_monthly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/stats_number_showers_monthly"
-            android:textSize="@dimen/heading3"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_showers_monthly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
-
-        <TextView
-            android:id="@+id/tv_header_average_temperature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/stats_average_temperature"
-            android:textSize="@dimen/heading3"
-            android:textStyle="bold"/>
-
-        <TextView
             android:id="@+id/tv_average_temperature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
-
-        <TextView
-            android:id="@+id/tv_header_average_duration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/stats_average_duration"
+            android:layout_marginBottom="15dp"
+            android:textStyle="bold"
             android:textSize="@dimen/heading3"
-            android:textStyle="bold" />
+            android:text="@string/stats_average_temperature"/>
 
-        <TextView
-            android:id="@+id/tv_average_duration"
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            android:layout_height="200dp" />
+
     </LinearLayout>
 </RelativeLayout>
