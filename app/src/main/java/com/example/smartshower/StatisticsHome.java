@@ -22,7 +22,11 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Random;
 
 public class StatisticsHome extends AppCompatActivity {
 
@@ -45,15 +49,14 @@ public class StatisticsHome extends AppCompatActivity {
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
 
-        loadStatistics();
-
-        createAverageTemperatureChart();
+        // Use following line to generate a year's worth of example shower data in the database
+        populateStatisticsWithExampleData();
     }
 
     private void createAverageTemperatureChart()
     {
         // Generate graph
-        LineChart chart = (LineChart) findViewById(R.id.chart);
+        LineChart chart = findViewById(R.id.chart);
         ArrayList<Entry> entries = new ArrayList<>();
 
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
@@ -124,6 +127,11 @@ public class StatisticsHome extends AppCompatActivity {
         return sum / allStatistics.size();
     }
 
+    public void showStatistics()
+    {
+        createAverageTemperatureChart();
+    }
+
     // Database tasks
     private void loadStatistics() {
         class LoadStatisticsTask extends AsyncTask<Void, Void, Void> {
@@ -140,11 +148,115 @@ public class StatisticsHome extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void results)
             {
-
+                showStatistics();
             }
         }
 
         LoadStatisticsTask task = new LoadStatisticsTask();
+        task.execute();
+    }
+
+    private void populateStatisticsWithExampleData() {
+        class populateStatisticsTask extends AsyncTask<Void, Void, Void> {
+            Random random;
+            List<Statistics> exampleStatistics;
+            @Override
+            protected Void doInBackground(Void... voids) {
+                random = new Random();
+
+                exampleStatistics = generateExampleStatistics();
+
+                // Adding to database
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.statisticsDao().deleteAll();
+                db.statisticsDao().insertList(exampleStatistics);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void results)
+            {
+                showStatistics();
+            }
+
+            private List<Statistics> generateExampleStatistics()
+            {
+                List<Statistics> exampleStatistics = new ArrayList<>();
+
+                // Parameters
+                final int PROBABILITY_SHOWER = 80;
+
+                GregorianCalendar gc = new GregorianCalendar();
+                gc.set(Calendar.YEAR, 2023);
+                int days = gc.getActualMaximum(Calendar.DAY_OF_YEAR);
+
+                for(int i = 0; i < days; i++)
+                {
+                    Date date = generateDateTime(i);
+                    int month = date.getMonth();
+                    while(random.nextInt(100) < PROBABILITY_SHOWER)
+                    {
+                        int temperature = generateTemperature(month);
+                        int flow = 100;
+                        int duration = generateShowerDuration(month);
+                        int energy = generateEnergyUsed(duration, temperature, flow);
+                        int waterUsage = generateWaterUsage(duration, flow);
+
+                        Statistics showerStatistics = new Statistics(generatePresetId(), duration, temperature, energy, waterUsage, date.toString());
+                        exampleStatistics.add(showerStatistics);
+                    }
+                }
+                return exampleStatistics;
+            }
+
+            private int generateTemperature(int month)
+            {
+                return 37;
+            }
+
+            private int generateShowerDuration(int month)
+            {
+                return 125;
+            }
+
+            private int generateEnergyUsed(int duration, int temperature, int flowrate)
+            {
+                return duration * temperature * flowrate / 100;
+            }
+
+            private int generateWaterUsage(int duration, int flowRate)
+            {
+                return duration * flowRate / 1200;
+            }
+
+            private Date generateDateTime(int dayNumber)
+            {
+                GregorianCalendar gc = new GregorianCalendar();
+                gc.set(gc.YEAR, 2023 - 1900);
+                // int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
+                gc.set(gc.DAY_OF_YEAR, dayNumber);
+
+                int year = gc.get(gc.YEAR);
+                int month = gc.get(gc.MONTH);
+                int day = gc.get(gc.DAY_OF_MONTH);
+                int hours = 7;
+                int min = 0;
+                int sec = 0;
+                Date date = new Date(year, month, day, hours, min, sec);
+                return date;
+            }
+
+            private int generatePresetId()
+            {
+                return 0;
+            }
+
+            private int randBetween(int start, int end) {
+                return start + (int)Math.round(Math.random() * (end - start));
+            }
+        }
+
+        populateStatisticsTask task = new populateStatisticsTask();
         task.execute();
     }
 }

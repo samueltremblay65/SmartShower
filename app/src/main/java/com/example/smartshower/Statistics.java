@@ -46,10 +46,11 @@ public class Statistics {
     }
 
     @Ignore
-    public Statistics(int presetId, int duration, int energy, float waterUsage, String dateTime)
+    public Statistics(int presetId, int duration, int averageTemperature, int energy, float waterUsage, String dateTime)
     {
         this.presetId = presetId;
         this.duration = duration;
+        this.averageTemperature = averageTemperature;
         this.energy = energy;
         this.waterUsage = waterUsage;
         this.dateTime = dateTime;

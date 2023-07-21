@@ -1,5 +1,7 @@
 package com.example.smartshower;
 
+import android.util.StatsLog;
+
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -17,6 +19,9 @@ public interface StatisticsDao {
 
     @Insert
     void insertAll(Statistics... statistics);
+
+    @Insert
+    void insertList(List<Statistics> statistics);
 
     @Query("DELETE FROM statistics")
     void deleteAll();
