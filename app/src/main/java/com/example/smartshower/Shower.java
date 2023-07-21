@@ -22,7 +22,7 @@ import com.google.android.material.slider.Slider;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Shower extends AppCompatActivity {
+public class Shower extends ActivityWithHeader {
 
     public ShowerSession session;
 
@@ -51,12 +51,7 @@ public class Shower extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shower);
-
-        // Changing system bar color
-        Window window = this.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this,R.color.shower_blue300));
+        super.setupUIElements();
 
         // Get extra variables
         Intent intent = this.getIntent();
