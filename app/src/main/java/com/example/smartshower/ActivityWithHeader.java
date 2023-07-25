@@ -1,8 +1,9 @@
 package com.example.smartshower;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -43,12 +44,40 @@ public class ActivityWithHeader extends AppCompatActivity {
 
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
+
+        // Setting the menu when user clicks on the account button
         accountButton = findViewById(R.id.header_account_button);
         accountButton.setOnClickListener(v -> {
             // Initializing the popup menu and giving the reference as current context
-
             Context wrapper = new ContextThemeWrapper(ActivityWithHeader.this, R.style.PopupMenu);
             PopupMenu popupMenu = new PopupMenu(wrapper, accountButton);
+
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Toast.makeText(ActivityWithHeader.this, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
+
+                    Intent intent;
+                    switch (item.getTitle().toString())
+                    {
+                        case "My profile":
+                            intent = new Intent(ActivityWithHeader.this, MyProfile.class);
+                            break;
+                        case "Settings":
+                            intent = new Intent(ActivityWithHeader.this, Settings.class);
+                            break;
+                            case "Contact us":
+                            intent = new Intent(ActivityWithHeader.this, ContactUs.class);
+                            break;
+                        default:
+                            Toast.makeText(wrapper, "Unexpected error occurred", Toast.LENGTH_SHORT).show();
+                            throw new IllegalStateException("Invalid menu item clicked");
+                    }
+
+                    startActivity(intent);
+                    return true;
+                }
+            });
 
             // Inflating popup menu from popup_menu.xml file
             popupMenu.getMenuInflater().inflate(R.menu.account_dropdown, popupMenu.getMenu());
@@ -71,6 +100,5 @@ public class ActivityWithHeader extends AppCompatActivity {
         {
             greeting.setText("Good evening");
         }
-        Log.i("jiraf", Integer.toString(date.getHours()));
     }
 }
