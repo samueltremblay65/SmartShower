@@ -36,4 +36,8 @@
     <string name="settings_header">Settings</string>
     <string name="myprofile_header">My profile</string>
     <string name="contact_us_header">Contact us</string>
+    <string name="my_statistics">My statistics</string>
+    <string name="greeting_good_morning">Good morning</string>
+    <string name="greeting_good_afternoon">Good afternoon</string>
+    <string name="greeting_good_evening">Good evening</string>
 </resources>
