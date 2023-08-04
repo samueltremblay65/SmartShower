@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,8 +20,7 @@ public class RecommendedSliderFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.shower_preset, container, false);
 
         // Setup elements within the fragment with preset info
@@ -29,6 +29,8 @@ public class RecommendedSliderFragment extends Fragment {
         TextView temperatureLimit = view.findViewById(R.id.tv_preset_maxTemp);
         TextView flowRate = view.findViewById(R.id.tv_preset_flowrate);
         LinearLayout presetContainer = view.findViewById(R.id.presetContainer);
+        ImageView backgroundView = view.findViewById(R.id.presetThemeBackground);
+        ViewHelpers.setBackgroundTheme(backgroundView, preset);
 
         name.setText(preset.name);
         temperature.setText(String.format("%s degrees", preset.name));
