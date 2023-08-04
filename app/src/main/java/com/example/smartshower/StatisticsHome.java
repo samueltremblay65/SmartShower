@@ -1,24 +1,15 @@
 package com.example.smartshower;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.ArrayList;
@@ -127,7 +118,7 @@ public class StatisticsHome extends ActivityWithHeader {
         return sum / values.size();
     }
 
-    public int calculateAverageDuration()
+    public int calculateAverageDupo0o0o0o0o0o0o0ration()
     {
         int sum = 0;
         for(Statistics statistic: allStatistics)

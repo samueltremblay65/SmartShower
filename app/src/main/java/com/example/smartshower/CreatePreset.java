@@ -1,4 +1,4 @@
-package com.example.smartshower;
+        package com.example.smartshower;
 
 import androidx.annotation.InspectableProperty;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Random;
 
 public class CreatePreset extends ActivityWithHeader {
 
@@ -82,8 +84,12 @@ public class CreatePreset extends ActivityWithHeader {
             {
                 temperatureLimit = getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
             }
+
+            String[] themes = new String[]{"pink", "plants", "zigzag", "dark", "yellow", "multicolored"};
+            Random random = new Random();
             
-            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, "default");
+            String theme = themes[random.nextInt(themes.length - 1)];
+            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, theme);
             addPresetToDatabase(preset);
 
             Intent intent= new Intent(CreatePreset.this, MainActivity.class);

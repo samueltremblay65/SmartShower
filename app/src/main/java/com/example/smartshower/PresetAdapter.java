@@ -2,12 +2,15 @@ package com.example.smartshower;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -61,6 +64,9 @@ public class PresetAdapter extends
         TextView flowRateView = holder.flowRateTextView;
         flowRateView.setText(String.format("%d flow rate", userPreset.flowRate));
 
+        ImageView backgroundView = holder.backgroundView;
+        setBackgroundTheme(backgroundView, userPreset);
+
         // Adding on click listener
         holder.presetContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +74,38 @@ public class PresetAdapter extends
                 presetClickListener.onItemClick(userPreset);
             }
         });
+    }
+
+    public void setBackgroundTheme(ImageView backgroundView, UserPreset preset)
+    {
+        String theme = preset.theme;
+        int drawableResource;
+        switch(theme)
+        {
+            case "pink":
+                drawableResource = R.drawable.bg1;
+                break;
+            case "plant":
+                // drawable = ContextCompat.getDrawable(backgroundView.getContext(), R.drawable.bg7);
+                drawableResource = R.drawable.bg7;
+                break;
+            case "multicolored":
+                drawableResource = R.drawable.bg4;
+                break;
+            case "dark":
+                drawableResource = R.drawable.bg3;
+                break;
+            case "zigzag":
+                drawableResource = R.drawable.bg5;
+                break;
+            case "yellow":
+                drawableResource = R.drawable.bg2;
+                break;
+            default:
+                return;
+        }
+
+        backgroundView.setImageResource(drawableResource);
     }
 
     // Returns the total count of items in the list
@@ -88,6 +126,8 @@ public class PresetAdapter extends
 
         public LinearLayout presetContainer;
 
+        public ImageView backgroundView;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
         public ViewHolder(View itemView) {
@@ -95,11 +135,12 @@ public class PresetAdapter extends
             // to access the context from any ViewHolder instance.
             super(itemView);
 
-            nameTextView = (TextView) itemView.findViewById(R.id.tv_preset_name);
-            tempTextView = (TextView) itemView.findViewById(R.id.tv_preset_temp);
-            maxTempTextView = (TextView) itemView.findViewById(R.id.tv_preset_maxTemp);
-            flowRateTextView = (TextView) itemView.findViewById(R.id.tv_preset_flowrate);
-            presetContainer = (LinearLayout) itemView.findViewById(R.id.presetContainer);
+            nameTextView = itemView.findViewById(R.id.tv_preset_name);
+            tempTextView = itemView.findViewById(R.id.tv_preset_temp);
+            maxTempTextView = itemView.findViewById(R.id.tv_preset_maxTemp);
+            flowRateTextView = itemView.findViewById(R.id.tv_preset_flowrate);
+            presetContainer = itemView.findViewById(R.id.presetContainer);
+            backgroundView = itemView.findViewById(R.id.presetThemeBackground);
         }
     }
 }
