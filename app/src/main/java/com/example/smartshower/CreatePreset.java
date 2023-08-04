@@ -23,9 +23,10 @@ public class CreatePreset extends ActivityWithHeader {
 
     // TextEdits
     EditText nameInput;
+
+    EditText themeInput;
     EditText temperatureInput;
     EditText flowrateInput;
-    EditText themeInput;
     EditText temperatureLimitInput;
     EditText timerInput;
 
@@ -44,6 +45,7 @@ public class CreatePreset extends ActivityWithHeader {
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
+        themeInput = findViewById(R.id.et_preset_theme);
         temperatureInput = findViewById(R.id.et_preset_temperature);
         flowrateInput = findViewById(R.id.et_preset_flow);
 
@@ -85,10 +87,8 @@ public class CreatePreset extends ActivityWithHeader {
                 temperatureLimit = getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
             }
 
-            String[] themes = new String[]{"pink", "plants", "zigzag", "dark", "yellow", "multicolored"};
-            Random random = new Random();
-            
-            String theme = themes[random.nextInt(themes.length - 1)];
+            String theme = themeInput.getText().toString();
+
             UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, theme);
             addPresetToDatabase(preset);
 

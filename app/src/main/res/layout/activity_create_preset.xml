@@ -39,9 +39,15 @@
             android:text="@string/addpreset_theme"
             android:textSize="@dimen/heading4"/>
 
-        <Space
+        <EditText
+            android:id="@+id/et_preset_theme"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:inputType="text"
+            android:layout_marginBottom="20dp"
+            android:autofillHints="preset name"
+            android:hint="@string/addpreset_theme"/>
 
         <TextView
             android:layout_width="match_parent"
