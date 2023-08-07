@@ -75,8 +75,9 @@ public class CreatePreset extends ActivityWithHeader {
             int temperature = getIntegerFromEditText(temperatureInput, "temperature");
             int flowrate = getIntegerFromEditText(flowrateInput, "flow rate");
 
-            int timerSeconds = -1;
+            int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
             int temperatureLimit = getResources().getInteger(R.integer.max_temperature_c);
+
             if(timerEnable.isChecked())
             {
                 timerSeconds = getIntegerFromEditText(timerInput, "time limit");
