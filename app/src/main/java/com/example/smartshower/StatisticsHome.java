@@ -166,7 +166,7 @@ public class StatisticsHome extends ActivityWithHeader {
         LoadStatisticsTask task = new LoadStatisticsTask();
         task.execute();
     }
-
+    // Class with methods to populate database with example shower data
     private void populateStatisticsWithExampleData() {
         class populateStatisticsTask extends AsyncTask<Void, Void, Void> {
             Random random;
