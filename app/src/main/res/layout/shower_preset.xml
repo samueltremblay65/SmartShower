@@ -43,20 +43,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="24 degrees"
-                android:id="@+id/tv_preset_temp"/>
+                android:text="24°C"
+                android:id="@+id/tv_preset_temp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="100% water flow"
-                android:id="@+id/tv_preset_maxTemp"/>
+                android:id="@+id/tv_preset_maxTemp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10 minute limit"
-                android:id="@+id/tv_preset_flowrate"/>
+                android:text="@string/defaulttext_preset_timelimit"
+                android:id="@+id/tv_preset_flowrate" />
         </LinearLayout>
 
     </LinearLayout>

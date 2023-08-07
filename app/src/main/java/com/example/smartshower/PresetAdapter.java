@@ -56,10 +56,10 @@ public class PresetAdapter extends
         nameView.setText(userPreset.name);
 
         TextView tempView = holder.tempTextView;
-        tempView.setText(String.format("%s degrees", userPreset.temp));
+        tempView.setText(String.format("%s°C", userPreset.temp));
 
         TextView maxTempView = holder.maxTempTextView;
-        maxTempView.setText(String.format("%d degrees limit", userPreset.tempLimit));
+        maxTempView.setText(String.format("%d°C limit", userPreset.tempLimit));
 
         TextView flowRateView = holder.flowRateTextView;
         flowRateView.setText(String.format("%d flow rate", userPreset.flowRate));

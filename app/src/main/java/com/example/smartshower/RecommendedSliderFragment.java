@@ -33,8 +33,8 @@ public class RecommendedSliderFragment extends Fragment {
         ViewHelpers.setBackgroundTheme(backgroundView, preset);
 
         name.setText(preset.name);
-        temperature.setText(String.format("%s degrees", preset.name));
-        temperatureLimit.setText(String.format("%d degrees limit", preset.tempLimit));
+        temperature.setText(String.format("%d°C", preset.temp));
+        temperatureLimit.setText(String.format("%d°C limit", preset.tempLimit));
         flowRate.setText(String.format("%d flow rate", preset.flowRate));
 
         // Adding on click listener
