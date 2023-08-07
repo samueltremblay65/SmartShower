@@ -64,10 +64,6 @@ public class Shower extends ActivityWithHeader {
         // Initializing settings variables
         this.presetId = presetId;
         timerSeconds = timeLimit;
-        if(timerSeconds <= 0)
-        {
-            timerSeconds = 3600;
-        }
         currentFlow = flowRate;
         currentTemp = temp;
         maxTemp = tempLimit;
@@ -90,7 +86,15 @@ public class Shower extends ActivityWithHeader {
         // Initialize indicators to preset settings
         updateTempDisplay();
         updateFlowRateDisplay();
-        timerDisplay.setText(formatTime(timerSeconds));
+
+        if(timerSeconds == -1)
+        {
+            timerDisplay.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            timerDisplay.setText(formatTime(timerSeconds));
+        }
 
         // Setting system state
         isOn = false;
@@ -192,6 +196,16 @@ public class Shower extends ActivityWithHeader {
     private void updateTempDisplay()
     {
         tempDisplay.setText(String.format("%d°C", currentTemp));
+    }
+
+    private void updateTimerDisplay()
+    {
+        if(timerSeconds == getResources().getInteger(R.integer.null_timelimit_db_value))
+        {
+            return;
+        }
+
+        timerDisplay.setText(formatTime(timerSeconds));
     }
 
     @SuppressLint("DefaultLocale")
