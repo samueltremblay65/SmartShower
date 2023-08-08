@@ -68,7 +68,7 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/sv_home_main"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -103,7 +103,7 @@
                 app:strokeColor="@color/black"
                 app:strokeWidth="1dp" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/bottom_menu"
