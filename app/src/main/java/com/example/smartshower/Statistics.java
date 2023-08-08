@@ -55,7 +55,7 @@ public class Statistics {
         this.waterUsage = session.getWaterUsage();
         this.energy = session.getEnergy();
         this.averageTemperature = session.getAverageTemperature();
-        this.dateTime = 1843983424;
+        this.dateTime = session.getDateTime();
     }
 
     @Ignore

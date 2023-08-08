@@ -1,4 +1,4 @@
-package com.example.smartshower;
+        package com.example.smartshower;
 
 import androidx.annotation.InspectableProperty;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,13 +17,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 public class CreatePreset extends ActivityWithHeader {
 
     // TextEdits
     EditText nameInput;
+
+    EditText themeInput;
     EditText temperatureInput;
     EditText flowrateInput;
-    EditText themeInput;
     EditText temperatureLimitInput;
     EditText timerInput;
 
@@ -42,6 +45,7 @@ public class CreatePreset extends ActivityWithHeader {
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
+        themeInput = findViewById(R.id.et_preset_theme);
         temperatureInput = findViewById(R.id.et_preset_temperature);
         flowrateInput = findViewById(R.id.et_preset_flow);
 
@@ -71,8 +75,9 @@ public class CreatePreset extends ActivityWithHeader {
             int temperature = getIntegerFromEditText(temperatureInput, "temperature");
             int flowrate = getIntegerFromEditText(flowrateInput, "flow rate");
 
-            int timerSeconds = -1;
+            int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
             int temperatureLimit = getResources().getInteger(R.integer.max_temperature_c);
+
             if(timerEnable.isChecked())
             {
                 timerSeconds = getIntegerFromEditText(timerInput, "time limit");
@@ -82,8 +87,10 @@ public class CreatePreset extends ActivityWithHeader {
             {
                 temperatureLimit = getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
             }
-            
-            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, "default");
+
+            String theme = themeInput.getText().toString();
+
+            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, theme);
             addPresetToDatabase(preset);
 
             Intent intent= new Intent(CreatePreset.this, MainActivity.class);

@@ -2,12 +2,15 @@ package com.example.smartshower;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -53,13 +56,16 @@ public class PresetAdapter extends
         nameView.setText(userPreset.name);
 
         TextView tempView = holder.tempTextView;
-        tempView.setText(String.format("%s degrees", userPreset.temp));
+        tempView.setText(String.format("%s°C", userPreset.temp));
 
         TextView maxTempView = holder.maxTempTextView;
-        maxTempView.setText(String.format("%d degrees limit", userPreset.tempLimit));
+        maxTempView.setText(String.format("%d°C limit", userPreset.tempLimit));
 
         TextView flowRateView = holder.flowRateTextView;
         flowRateView.setText(String.format("%d flow rate", userPreset.flowRate));
+
+        ImageView backgroundView = holder.backgroundView;
+        ViewHelpers.setBackgroundTheme(backgroundView, userPreset);
 
         // Adding on click listener
         holder.presetContainer.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +94,8 @@ public class PresetAdapter extends
 
         public LinearLayout presetContainer;
 
+        public ImageView backgroundView;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
         public ViewHolder(View itemView) {
@@ -95,11 +103,12 @@ public class PresetAdapter extends
             // to access the context from any ViewHolder instance.
             super(itemView);
 
-            nameTextView = (TextView) itemView.findViewById(R.id.tv_preset_name);
-            tempTextView = (TextView) itemView.findViewById(R.id.tv_preset_temp);
-            maxTempTextView = (TextView) itemView.findViewById(R.id.tv_preset_maxTemp);
-            flowRateTextView = (TextView) itemView.findViewById(R.id.tv_preset_flowrate);
-            presetContainer = (LinearLayout) itemView.findViewById(R.id.presetContainer);
+            nameTextView = itemView.findViewById(R.id.tv_preset_name);
+            tempTextView = itemView.findViewById(R.id.tv_preset_temp);
+            maxTempTextView = itemView.findViewById(R.id.tv_preset_maxTemp);
+            flowRateTextView = itemView.findViewById(R.id.tv_preset_flowrate);
+            presetContainer = itemView.findViewById(R.id.presetContainer);
+            backgroundView = itemView.findViewById(R.id.presetThemeBackground);
         }
     }
 }

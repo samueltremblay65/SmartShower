@@ -99,7 +99,7 @@ public class MainActivity extends ActivityWithHeader {
         presetListView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    public void updateRecommended(List<UserPreset> presets){
+    public void updateRecommended(List<UserPreset> presets) {
         pagerAdapter = new MainActivity.ScreenSlidePagerAdapter(this, presets);
         viewPager.setAdapter(pagerAdapter);
     }

@@ -44,4 +44,9 @@ public class ShowerSession {
         }
         return total / showerData.size();
     }
+
+    public long getDateTime()
+    {
+        return this.currentTime.getTime();
+    }
 }
