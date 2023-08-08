@@ -57,7 +57,7 @@ public class ActivityWithHeader extends AppCompatActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     Toast.makeText(ActivityWithHeader.this, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
 
-                    Intent intent;
+                    Intent intent = null;
                     switch (item.getTitle().toString())
                     {
                         case "My profile":
@@ -66,15 +66,21 @@ public class ActivityWithHeader extends AppCompatActivity {
                         case "Settings":
                             intent = new Intent(ActivityWithHeader.this, Settings.class);
                             break;
-                            case "Contact us":
+                        case "Contact us":
                             intent = new Intent(ActivityWithHeader.this, ContactUs.class);
+                            break;
+                        case "My statistics":
+                            intent = new Intent(ActivityWithHeader.this, StatisticsHome.class);
+                            break;
+                        case "Log out":
                             break;
                         default:
                             Toast.makeText(wrapper, "Unexpected error occurred", Toast.LENGTH_SHORT).show();
                             throw new IllegalStateException("Invalid menu item clicked");
                     }
 
-                    startActivity(intent);
+                    if(intent != null) startActivity(intent);
+
                     return true;
                 }
             });
@@ -90,15 +96,15 @@ public class ActivityWithHeader extends AppCompatActivity {
         Date date = Calendar.getInstance().getTime();
         if(date.getHours() < 12)
         {
-            greeting.setText("Good morning");
+            greeting.setText(R.string.greeting_good_morning);
         }
         else if(date.getHours() < 18)
         {
-            greeting.setText("Good afternoon");
+            greeting.setText(R.string.greeting_good_afternoon);
         }
         else
         {
-            greeting.setText("Good evening");
+            greeting.setText(R.string.greeting_good_evening);
         }
     }
 }
