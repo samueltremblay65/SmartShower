@@ -66,6 +66,7 @@ public class PresetAdapter extends
 
         ImageView backgroundView = holder.backgroundView;
         ViewHelpers.setBackgroundTheme(backgroundView, userPreset);
+        ViewHelpers.setTranslucentBox(holder.translucentBox, userPreset.theme);
 
         // Adding on click listener
         holder.presetContainer.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +95,8 @@ public class PresetAdapter extends
 
         public LinearLayout presetContainer;
 
+        public LinearLayout translucentBox;
+
         public ImageView backgroundView;
 
         // We also create a constructor that accepts the entire item row
@@ -109,6 +112,7 @@ public class PresetAdapter extends
             flowRateTextView = itemView.findViewById(R.id.tv_preset_flowrate);
             presetContainer = itemView.findViewById(R.id.presetContainer);
             backgroundView = itemView.findViewById(R.id.presetThemeBackground);
+            translucentBox = itemView.findViewById(R.id.presetTextContainer);
         }
     }
 }

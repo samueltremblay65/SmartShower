@@ -1,6 +1,7 @@
 package com.example.smartshower;
 
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 public class ViewHelpers {
 
@@ -34,5 +35,10 @@ public class ViewHelpers {
         }
 
         backgroundView.setImageResource(drawableResource);
+    }
+
+    public static void setTranslucentBox(LinearLayout translucentBox, String theme)
+    {
+
     }
 }

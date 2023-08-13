@@ -1,7 +1,14 @@
 package com.example.smartshower;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -23,11 +30,15 @@ public class StatisticsHome extends ActivityWithHeader {
 
     List<Statistics> allStatistics;
 
+    LinearLayout statisticsLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics_home);
         super.setupUIElements();
+
+        statisticsLayout = findViewById(R.id.statistics_home_ll);
 
         // Use following line to generate a year's worth of example shower data in the database
         // populateStatisticsWithExampleData();
@@ -36,8 +47,20 @@ public class StatisticsHome extends ActivityWithHeader {
 
     private void createAverageTemperatureChart()
     {
-        // Generate graph
-        LineChart chart = findViewById(R.id.chart);
+        // Generate header
+        TextView label = new TextView(getApplicationContext());
+        label.setText(R.string.statistics_labels_monthly_temp);
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
         ArrayList<Entry> entries = new ArrayList<>();
 
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
@@ -59,10 +82,87 @@ public class StatisticsHome extends ActivityWithHeader {
         chart.getLegend().setTextSize(16);
 
         // Dataset and related properties
-        LineDataSet dataSet = new LineDataSet(entries, "Label");
+        LineDataSet dataSet = new LineDataSet(entries, "Average temperature");
         dataSet.setCircleRadius(6);
         dataSet.setValueTextSize(0);
-        dataSet.setLabel("Average temperature");
+
+        // Left axis
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTextSize(12);
+        xAxis.setDrawGridLines(false);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return monthLabels[(int) value];
+            }
+        });
+
+        // Right axis
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawGridLines(false);
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setTextSize(12);
+        leftAxis.setDrawGridLines(false);
+
+        // Do the thing with the chart
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate(); // refresh
+    }
+
+    private void createAverageDurationChart()
+    {
+        // Generate label
+        TextView label = new TextView(getApplicationContext());
+        label.setText(R.string.statistics_labels_monthly_duration);
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+
+        // Set label top margin
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        float top = 24.0f;
+        float dpRatio = getApplicationContext().getResources().getDisplayMetrics().density;
+        int pixelsForDp = (int)(top * dpRatio);
+
+        params.setMargins(0, pixelsForDp,0,0);
+        label.setLayoutParams(params);
+
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
+        int[] dataset = calculateAverageDurationPerMonth();
+
+        // Get monthly shower data
+
+        int i = 0;
+        for (int data: dataset) {
+            entries.add(new Entry(i, data));
+            i++;
+        }
+
+        // Main chart properties
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.disableScroll();
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        LineDataSet dataSet = new LineDataSet(entries, "Average duration");
+        dataSet.setCircleRadius(6);
+        dataSet.setValueTextSize(0);
 
         // Left axis
         XAxis xAxis = chart.getXAxis();
@@ -109,6 +209,25 @@ public class StatisticsHome extends ActivityWithHeader {
         return monthAverages;
     }
 
+    public int[] calculateAverageDurationPerMonth()
+    {
+        List<Integer>[] monthDividedStatistics = new List[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthDividedStatistics[i] = new ArrayList<Integer>();
+        }
+        for (Statistics statistic: allStatistics) {
+            int month = statistic.getMonth();
+            monthDividedStatistics[month].add(statistic.duration);
+        }
+        int[] monthAverages = new int[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
+        }
+        return monthAverages;
+    }
+
     public int calculateAverage(List<Integer> values)
     {
         int sum = 0;
@@ -118,7 +237,7 @@ public class StatisticsHome extends ActivityWithHeader {
         return sum / values.size();
     }
 
-    public int calculateAverageDupo0o0o0o0o0o0o0ration()
+    public int calculateAverageDuration()
     {
         int sum = 0;
         for(Statistics statistic: allStatistics)
@@ -138,9 +257,11 @@ public class StatisticsHome extends ActivityWithHeader {
         return sum / allStatistics.size();
     }
 
+    // This method calls the creation of all graphs in the home activity
     public void showStatistics()
     {
         createAverageTemperatureChart();
+        createAverageDurationChart();
     }
 
     // Database tasks
@@ -234,7 +355,8 @@ public class StatisticsHome extends ActivityWithHeader {
 
             private int generateShowerDuration(int month)
             {
-                return 125;
+                int[] monthAverages = new int[]{460, 420, 300, 297, 240, 412, 678, 614, 235, 259, 590, 780};
+                return monthAverages[month] += randBetween(-100, 100);
             }
 
             private int generateEnergyUsed(int duration, int temperature, int flowrate)
