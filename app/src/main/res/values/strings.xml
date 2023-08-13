@@ -41,4 +41,6 @@
     <string name="greeting_good_afternoon">Good afternoon</string>
     <string name="greeting_good_evening">Good evening</string>
     <string name="defaulttext_preset_timelimit">Unlimited duration</string>
+    <string name="statistics_labels_monthly_temp">Monthly average shower temperatures</string>
+    <string name="statistics_labels_monthly_duration">Monthly average shower duration</string>
 </resources>
