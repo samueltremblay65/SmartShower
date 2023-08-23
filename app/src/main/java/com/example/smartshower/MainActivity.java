@@ -1,11 +1,13 @@
 package com.example.smartshower;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -28,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends ActivityWithHeader {
@@ -39,6 +42,8 @@ public class MainActivity extends ActivityWithHeader {
     RecyclerView presetListView;
     Button showStatsButton;
     Button addPresetButton;
+
+    Button managePresetButton;
     PresetAdapter presetAdapter;
 
     // View pager setup
@@ -62,8 +67,8 @@ public class MainActivity extends ActivityWithHeader {
         viewPager.setPageTransformer(new MarginPageTransformer(30));
 
         showStatsButton = findViewById(R.id.btn_home_viewStatistics);
-
         addPresetButton = findViewById(R.id.btn_home_add_preset);
+        managePresetButton = findViewById(R.id.btn_home_manage_presets);
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
@@ -81,6 +86,10 @@ public class MainActivity extends ActivityWithHeader {
             Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
             MainActivity.this.startActivity(myIntent);
         });
+
+        managePresetButton.setOnClickListener(v -> {
+            Toast.makeText(getApplicationContext(), "Clicked on manage presets", Toast.LENGTH_SHORT).show();
+        });
     }
 
     public void startPresetShower(UserPreset preset) {
@@ -97,6 +106,29 @@ public class MainActivity extends ActivityWithHeader {
         presetAdapter = new PresetAdapter(presets, this::startPresetShower);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Code for reordering items
+        ItemTouchHelper.SimpleCallback reorderCallback = new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                Collections.swap(presets, fromPosition, toPosition);
+                recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                presets.remove(viewHolder.getAdapterPosition());
+                presetAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(reorderCallback);
+        itemTouchHelper.attachToRecyclerView(presetListView);
     }
 
     public void updateRecommended(List<UserPreset> presets) {
