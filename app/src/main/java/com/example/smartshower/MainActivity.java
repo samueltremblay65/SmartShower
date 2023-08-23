@@ -109,7 +109,7 @@ public class MainActivity extends ActivityWithHeader {
 
         // Code for reordering items
         ItemTouchHelper.SimpleCallback reorderCallback = new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -122,7 +122,8 @@ public class MainActivity extends ActivityWithHeader {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                presets.remove(viewHolder.getAdapterPosition());
+                presetAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
             }
         };
 
