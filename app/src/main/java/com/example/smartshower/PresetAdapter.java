@@ -2,7 +2,6 @@ package com.example.smartshower;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.apachat.swipereveallayout.core.SwipeLayout;
+import com.apachat.swipereveallayout.core.ViewBinder;
 
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class PresetAdapter extends
 
     // Store a member variable for the contacts
     private List<UserPreset> allPresets;
+
+    // Used for swipe reveal layout
+    private final ViewBinder viewBinder = new ViewBinder();
+    private SwipeLayout swipeRevealLayout;
 
     // Pass in the contact array into the constructor
     public PresetAdapter(List<UserPreset> presets, PresetClickListener presetClickListener) {
@@ -50,6 +55,8 @@ public class PresetAdapter extends
     public void onBindViewHolder(PresetAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         UserPreset userPreset = allPresets.get(position);
+
+        viewBinder.bind(holder.swipeLayout, Integer.toString(userPreset.uid));
 
         // Setting text in each textView of the preset layout
         TextView nameView = holder.nameTextView;
@@ -99,6 +106,8 @@ public class PresetAdapter extends
 
         public ImageView backgroundView;
 
+        public SwipeLayout swipeLayout;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
         public ViewHolder(View itemView) {
@@ -113,6 +122,7 @@ public class PresetAdapter extends
             presetContainer = itemView.findViewById(R.id.presetContainer);
             backgroundView = itemView.findViewById(R.id.presetThemeBackground);
             translucentBox = itemView.findViewById(R.id.presetTextContainer);
+            swipeLayout = itemView.findViewById(R.id.home_swipereveallayout);
         }
     }
 }

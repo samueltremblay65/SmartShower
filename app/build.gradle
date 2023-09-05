@@ -64,4 +64,6 @@ dependencies {
     implementation "androidx.room:room-rxjava3:$room_version"
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    implementation group: 'com.apachat', name: 'swipereveallayout-android', version: '1.1.2'
 }
