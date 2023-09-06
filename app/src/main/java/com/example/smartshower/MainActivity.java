@@ -44,7 +44,7 @@ public class MainActivity extends ActivityWithHeader {
     // Views
     RecyclerView presetListView;
     Button showStatsButton;
-    Button addPresetButton;
+    ImageView addPresetButton;
 
     PresetAdapter presetAdapter;
 
@@ -72,8 +72,8 @@ public class MainActivity extends ActivityWithHeader {
         addPresetButton = findViewById(R.id.btn_home_add_preset);
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
-        populateDatabase();
-        // deleteAllPresetsFromDatabase();
+        // populateDatabase();
+        //deleteAllPresetsFromDatabase();
 
         loadUserPresets();
         loadRecommendedPresets();
@@ -223,9 +223,9 @@ public class MainActivity extends ActivityWithHeader {
         class populateTask extends AsyncTask<Void, Void, Void> {
             @Override
             protected Void doInBackground(Void... voids) {
-                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"green");
-                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"orange");
-                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"blue");
+                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"zigzag");
+                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink");
+                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored");
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 db.userPresetDao().insertAll(preset1, preset2, preset3);
                 return null;
