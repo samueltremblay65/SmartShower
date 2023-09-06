@@ -17,6 +17,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -32,11 +33,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 public class MainActivity extends ActivityWithHeader {
 
     // Local variables
-    ArrayList<UserPreset> userPresets;
+    List<UserPreset> presets;
 
     // Views
     RecyclerView presetListView;
@@ -69,7 +72,7 @@ public class MainActivity extends ActivityWithHeader {
         addPresetButton = findViewById(R.id.btn_home_add_preset);
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
-        // populateDatabase();
+        populateDatabase();
         // deleteAllPresetsFromDatabase();
 
         loadUserPresets();
@@ -96,8 +99,13 @@ public class MainActivity extends ActivityWithHeader {
         MainActivity.this.startActivity(myIntent);
     }
 
-    public void updatePresets(List<UserPreset> presets) {
-        presetAdapter = new PresetAdapter(presets, this::startPresetShower);
+    public void deletePreset(UserPreset preset) {
+        deletePresetFromDatabase(preset);
+    }
+
+    public void updatePresets(List<UserPreset> returnedPresets) {
+        presets = returnedPresets;
+        presetAdapter = new PresetAdapter(presets, this::startPresetShower, this::deletePreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -168,6 +176,10 @@ public class MainActivity extends ActivityWithHeader {
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 presets = db.userPresetDao().getAll();
+                if(presets == null)
+                {
+                    presets = new ArrayList<UserPreset>();
+                }
                 return null;
             }
 
@@ -237,6 +249,37 @@ public class MainActivity extends ActivityWithHeader {
         }
 
         clearPresetTask task = new clearPresetTask();
+        task.execute();
+    }
+
+    private void deletePresetFromDatabase(UserPreset preset)
+    {
+        @SuppressLint("StaticFieldLeak")
+        class deletePresetTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.userPresetDao().delete(preset);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                try {
+                    presets.remove(preset);
+                    presetListView.getAdapter().notifyDataSetChanged();
+                }
+                catch(Exception e)
+                {
+                    Log.i("DeletePresets", "Caught exception while trying to remove preset from display list (UI only)");
+                }
+
+                // Can improve by using notifyItemRemoved if we can obtain the position
+                Toast.makeText(MainActivity.this, "Successfully deleted preset", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        deletePresetTask task = new deletePresetTask();
         task.execute();
     }
 }
