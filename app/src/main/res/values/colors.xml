@@ -7,4 +7,5 @@
     <color name="red">#e3685b</color>
     <color name="light_red">#eb8175</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="gray">#dedede</color>
 </resources>

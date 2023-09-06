@@ -17,6 +17,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -32,18 +33,19 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 public class MainActivity extends ActivityWithHeader {
 
     // Local variables
-    ArrayList<UserPreset> userPresets;
+    List<UserPreset> presets;
 
     // Views
     RecyclerView presetListView;
     Button showStatsButton;
-    Button addPresetButton;
+    ImageView addPresetButton;
 
-    Button managePresetButton;
     PresetAdapter presetAdapter;
 
     // View pager setup
@@ -68,11 +70,10 @@ public class MainActivity extends ActivityWithHeader {
 
         showStatsButton = findViewById(R.id.btn_home_viewStatistics);
         addPresetButton = findViewById(R.id.btn_home_add_preset);
-        managePresetButton = findViewById(R.id.btn_home_manage_presets);
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
-        // deleteAllPresetsFromDatabase();
+        //deleteAllPresetsFromDatabase();
 
         loadUserPresets();
         loadRecommendedPresets();
@@ -86,10 +87,6 @@ public class MainActivity extends ActivityWithHeader {
             Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
             MainActivity.this.startActivity(myIntent);
         });
-
-        managePresetButton.setOnClickListener(v -> {
-            Toast.makeText(getApplicationContext(), "Clicked on manage presets", Toast.LENGTH_SHORT).show();
-        });
     }
 
     public void startPresetShower(UserPreset preset) {
@@ -102,14 +99,19 @@ public class MainActivity extends ActivityWithHeader {
         MainActivity.this.startActivity(myIntent);
     }
 
-    public void updatePresets(List<UserPreset> presets) {
-        presetAdapter = new PresetAdapter(presets, this::startPresetShower);
+    public void deletePreset(UserPreset preset) {
+        deletePresetFromDatabase(preset);
+    }
+
+    public void updatePresets(List<UserPreset> returnedPresets) {
+        presets = returnedPresets;
+        presetAdapter = new PresetAdapter(presets, this::startPresetShower, this::deletePreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 
         // Code for reordering items
         ItemTouchHelper.SimpleCallback reorderCallback = new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -122,8 +124,7 @@ public class MainActivity extends ActivityWithHeader {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                presets.remove(viewHolder.getAdapterPosition());
-                presetAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
             }
         };
 
@@ -175,6 +176,10 @@ public class MainActivity extends ActivityWithHeader {
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 presets = db.userPresetDao().getAll();
+                if(presets == null)
+                {
+                    presets = new ArrayList<UserPreset>();
+                }
                 return null;
             }
 
@@ -218,9 +223,9 @@ public class MainActivity extends ActivityWithHeader {
         class populateTask extends AsyncTask<Void, Void, Void> {
             @Override
             protected Void doInBackground(Void... voids) {
-                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"green");
-                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"orange");
-                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"blue");
+                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"zigzag");
+                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink");
+                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored");
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 db.userPresetDao().insertAll(preset1, preset2, preset3);
                 return null;
@@ -244,6 +249,37 @@ public class MainActivity extends ActivityWithHeader {
         }
 
         clearPresetTask task = new clearPresetTask();
+        task.execute();
+    }
+
+    private void deletePresetFromDatabase(UserPreset preset)
+    {
+        @SuppressLint("StaticFieldLeak")
+        class deletePresetTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.userPresetDao().delete(preset);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                try {
+                    presets.remove(preset);
+                    presetListView.getAdapter().notifyDataSetChanged();
+                }
+                catch(Exception e)
+                {
+                    Log.i("DeletePresets", "Caught exception while trying to remove preset from display list (UI only)");
+                }
+
+                // Can improve by using notifyItemRemoved if we can obtain the position
+                Toast.makeText(MainActivity.this, "Successfully deleted preset", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        deletePresetTask task = new deletePresetTask();
         task.execute();
     }
 }

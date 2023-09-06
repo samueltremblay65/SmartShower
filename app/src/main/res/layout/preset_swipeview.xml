@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.apachat.swipereveallayout.core.SwipeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:mode="same_level"
+    app:dragEdge="right"
+    android:id="@+id/home_swipereveallayout"
+    android:layout_marginBottom="10dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            app:icon="@drawable/edit"
+            app:iconGravity="textStart"
+            android:layout_gravity="center"
+            app:iconSize="40dp"
+            app:iconPadding="0dp"
+            app:backgroundTint="@color/gray"
+            app:strokeWidth="0dp"
+            app:cornerRadius="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/swipe_edit_button"/>
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            app:icon="@drawable/trash"
+            app:iconGravity="textStart"
+            android:layout_gravity="center"
+            app:iconSize="40dp"
+            app:iconPadding="0dp"
+            app:backgroundTint="@color/light_red"
+            app:cornerRadius="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/swipe_delete_button"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/shower_preset" />
+
+    </FrameLayout>
+
+</com.apachat.swipereveallayout.core.SwipeLayout>

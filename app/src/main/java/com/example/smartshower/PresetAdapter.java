@@ -2,16 +2,19 @@ package com.example.smartshower;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.apachat.swipereveallayout.core.SwipeLayout;
+import com.apachat.swipereveallayout.core.ViewBinder;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -21,14 +24,27 @@ public class PresetAdapter extends
     // Store a member variable for the contacts
     private List<UserPreset> allPresets;
 
+    // Used for swipe reveal layout
+    private final ViewBinder viewBinder = new ViewBinder();
+    private SwipeLayout swipeRevealLayout;
+
     // Pass in the contact array into the constructor
-    public PresetAdapter(List<UserPreset> presets, PresetClickListener presetClickListener) {
+    public PresetAdapter(
+            List<UserPreset> presets,
+            PresetClickListener presetClickListener,
+            PresetClickListener presetDeleteListener,
+            PresetClickListener presetEditListener) {
+
         allPresets = presets;
         this.presetClickListener = presetClickListener;
+        this.presetDeleteListener = presetDeleteListener;
+        this.presetEditListener = presetDeleteListener;
     }
 
     // Item click listener for selecting presets
     public PresetClickListener presetClickListener;
+    public PresetClickListener presetDeleteListener;
+    public PresetClickListener presetEditListener;
 
     // Usually involves inflating a layout from XML and returning the holder
     @Override
@@ -37,7 +53,7 @@ public class PresetAdapter extends
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View presetView = inflater.inflate(R.layout.shower_preset, parent, false);
+        View presetView = inflater.inflate(R.layout.preset_swipeview, parent, false);
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(presetView);
@@ -50,6 +66,9 @@ public class PresetAdapter extends
     public void onBindViewHolder(PresetAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         UserPreset userPreset = allPresets.get(position);
+
+        viewBinder.bind(holder.swipeLayout, Integer.toString(userPreset.uid));
+        viewBinder.setOpenOnlyOne(true);
 
         // Setting text in each textView of the preset layout
         TextView nameView = holder.nameTextView;
@@ -73,6 +92,13 @@ public class PresetAdapter extends
             @Override
             public void onClick(View v) {
                 presetClickListener.onItemClick(userPreset);
+            }
+        });
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                presetDeleteListener.onItemClick(userPreset);
             }
         });
     }
@@ -99,6 +125,10 @@ public class PresetAdapter extends
 
         public ImageView backgroundView;
 
+        public SwipeLayout swipeLayout;
+        
+        public MaterialButton deleteButton;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
         public ViewHolder(View itemView) {
@@ -113,6 +143,8 @@ public class PresetAdapter extends
             presetContainer = itemView.findViewById(R.id.presetContainer);
             backgroundView = itemView.findViewById(R.id.presetThemeBackground);
             translucentBox = itemView.findViewById(R.id.presetTextContainer);
+            swipeLayout = itemView.findViewById(R.id.home_swipereveallayout);
+            deleteButton = itemView.findViewById(R.id.swipe_delete_button);
         }
     }
 }

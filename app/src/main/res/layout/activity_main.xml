@@ -35,7 +35,9 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="15dp">
 
             <!--layout_weight=1 makes items show on opposite sides-->
             <TextView
@@ -47,23 +49,18 @@
                 android:textSize="@dimen/heading2"
                 android:textColor="#000000"
                 android:textStyle="bold"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginTop="15dp" />
 
-            <Button
-                android:id="@+id/btn_home_manage_presets"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/btn_home_add_preset"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="3dp"
+                android:contentDescription="@string/add_preset"
+                app:tint="@color/black"
                 android:layout_gravity="bottom"
-                android:backgroundTint="@color/transparent"
-                android:minWidth="80dp"
-                android:minHeight="48dp"
-                android:text="@string/manage_presets"
-                android:textSize="@dimen/smallText"
-                android:textColor="@color/black_300"
-                android:translationX="5dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+                android:src="@drawable/add_preset" />
 
         </LinearLayout>
 
@@ -79,31 +76,11 @@
         android:background="#FFFFFF"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_home_presets"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_home_presets"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_home_add_preset"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_preset"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:backgroundTint="@android:color/transparent"
-                app:cornerRadius="8dp"
-                app:rippleColor="#33AAAAAA"
-                app:strokeColor="@color/black"
-                app:strokeWidth="1dp" />
-        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
@@ -117,7 +94,7 @@
             android:id="@+id/btn_home_viewStatistics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#D1D1D1"
+            android:backgroundTint="@color/gray"
             android:padding="10dp"
             android:text="@string/view_stats"
             android:textColor="@color/black"
