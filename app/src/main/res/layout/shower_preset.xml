@@ -1,88 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.apachat.swipereveallayout.core.SwipeLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:mode="same_level"
-    app:dragEdge="right"
-    android:id="@+id/home_swipereveallayout"
-    android:layout_marginBottom="10dp">
+    android:layout_height="130dp"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="12dp"
+    app:cardMaxElevation="0dp">
 
-    <!-- Your secondary layout here -->
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-        <Button
-            android:text="Edit"
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:background="@color/red"/>
-    </FrameLayout>
-
-    <!-- Your main layout here -->
-    <androidx.cardview.widget.CardView
-
+    <ImageView
+        android:src="@drawable/bg1"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="12dp"
-        app:cardMaxElevation="0dp">
+        android:scaleType="centerCrop"
+        android:id="@+id/presetThemeBackground"/>
 
-        <ImageView
-            android:src="@drawable/bg1"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:scaleType="centerCrop"
-            android:id="@+id/presetThemeBackground"/>
+    <LinearLayout
+        android:id="@+id/presetContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="12dp">
 
         <LinearLayout
-            android:id="@+id/presetContainer"
-            android:layout_width="match_parent"
+            android:id="@+id/presetTextContainer"
+            android:minWidth="200dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="12dp">
+            android:padding="12dp"
+            android:background="@drawable/rounded_border"
+            android:layout_width="wrap_content">
 
-            <LinearLayout
-                android:id="@+id/presetTextContainer"
-                android:minWidth="200dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:background="@drawable/rounded_border"
-                android:layout_width="wrap_content">
+                android:text="Morning shower"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:id="@+id/tv_preset_name" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Morning shower"
-                    android:textAllCaps="true"
-                    android:textStyle="bold"
-                    android:id="@+id/tv_preset_name" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="24°C"
+                android:id="@+id/tv_preset_temp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="24°C"
-                    android:id="@+id/tv_preset_temp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100% water flow"
+                android:id="@+id/tv_preset_maxTemp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="100% water flow"
-                    android:id="@+id/tv_preset_maxTemp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/defaulttext_preset_timelimit"
-                    android:id="@+id/tv_preset_flowrate" />
-            </LinearLayout>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/defaulttext_preset_timelimit"
+                android:id="@+id/tv_preset_flowrate" />
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
-</com.apachat.swipereveallayout.core.SwipeLayout>
+</androidx.cardview.widget.CardView>

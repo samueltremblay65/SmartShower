@@ -42,7 +42,7 @@ public class PresetAdapter extends
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View presetView = inflater.inflate(R.layout.shower_preset, parent, false);
+        View presetView = inflater.inflate(R.layout.preset_swipeview, parent, false);
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(presetView);

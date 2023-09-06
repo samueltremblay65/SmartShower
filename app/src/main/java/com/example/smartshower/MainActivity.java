@@ -43,7 +43,6 @@ public class MainActivity extends ActivityWithHeader {
     Button showStatsButton;
     Button addPresetButton;
 
-    Button managePresetButton;
     PresetAdapter presetAdapter;
 
     // View pager setup
@@ -68,7 +67,6 @@ public class MainActivity extends ActivityWithHeader {
 
         showStatsButton = findViewById(R.id.btn_home_viewStatistics);
         addPresetButton = findViewById(R.id.btn_home_add_preset);
-        managePresetButton = findViewById(R.id.btn_home_manage_presets);
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
@@ -85,10 +83,6 @@ public class MainActivity extends ActivityWithHeader {
         addPresetButton.setOnClickListener(v -> {
             Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
             MainActivity.this.startActivity(myIntent);
-        });
-
-        managePresetButton.setOnClickListener(v -> {
-            Toast.makeText(getApplicationContext(), "Clicked on manage presets", Toast.LENGTH_SHORT).show();
         });
     }
 
