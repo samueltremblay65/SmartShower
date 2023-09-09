@@ -11,5 +11,7 @@ public class MyProfile extends ActivityWithHeader {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
         super.setupUIElements();
+        
+        setHeader(getResources().getString(R.string.myprofile_header));
     }
 }

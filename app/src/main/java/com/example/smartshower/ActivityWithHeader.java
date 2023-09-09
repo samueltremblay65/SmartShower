@@ -62,8 +62,6 @@ public class ActivityWithHeader extends AppCompatActivity {
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Toast.makeText(ActivityWithHeader.this, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
-
                     Intent intent = null;
                     switch (item.getTitle().toString())
                     {
