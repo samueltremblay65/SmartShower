@@ -9,5 +9,7 @@ public class Settings extends ActivityWithHeader {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         super.setupUIElements();
+
+        setHeader(getResources().getString(R.string.settings_header));
     }
 }

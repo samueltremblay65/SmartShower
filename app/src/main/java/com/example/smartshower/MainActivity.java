@@ -1,10 +1,6 @@
 package com.example.smartshower;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -15,26 +11,22 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.widget.Button;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 public class MainActivity extends ActivityWithHeader {
 
@@ -74,6 +66,23 @@ public class MainActivity extends ActivityWithHeader {
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
         //deleteAllPresetsFromDatabase();
+
+        // Load user profile from file
+        List<String> files = Arrays.asList(getApplicationContext().fileList());
+
+        String filename = "users.txt";
+        File directory = getApplicationContext().getFilesDir();
+
+        if(files.contains(filename))
+        {
+            File file = new File(directory, filename);
+        }
+        else
+        {
+            // Create file with user info
+        }
+
+        String displayName = "Sam";
 
         loadUserPresets();
         loadRecommendedPresets();

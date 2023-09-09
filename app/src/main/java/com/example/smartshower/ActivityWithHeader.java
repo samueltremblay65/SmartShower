@@ -2,11 +2,16 @@ package com.example.smartshower;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +28,9 @@ import java.util.Date;
 // the common event listeners e.g. account button
 public class ActivityWithHeader extends AppCompatActivity {
     ImageView accountButton;
-    TextView greeting;
+    TextView header;
+
+    String displayName = "Sam";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +62,6 @@ public class ActivityWithHeader extends AppCompatActivity {
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Toast.makeText(ActivityWithHeader.this, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
-
                     Intent intent = null;
                     switch (item.getTitle().toString())
                     {
@@ -92,19 +97,49 @@ public class ActivityWithHeader extends AppCompatActivity {
             popupMenu.show();
         });
 
-        greeting = findViewById(R.id.header);
+        header = findViewById(R.id.header);
         Date date = Calendar.getInstance().getTime();
         if(date.getHours() < 12)
         {
-            greeting.setText(R.string.greeting_good_morning);
+            String text = getResources().getString(R.string.greeting_good_morning, displayName);
+            header.setText(text);
         }
         else if(date.getHours() < 18)
         {
-            greeting.setText(R.string.greeting_good_afternoon);
+            String text = getResources().getString(R.string.greeting_good_afternoon, displayName);
+            header.setText(text);
         }
         else
         {
-            greeting.setText(R.string.greeting_good_evening);
+            String text = getResources().getString(R.string.greeting_good_evening, displayName);
+            header.setText(text);
         }
+    }
+
+    public void setHeader(String title)
+    {
+        header.setText(title);
+        header.setTextSize((float) getResources().getDimension(R.dimen.sectionName));
+        header.setTypeface(header.getTypeface(), Typeface.BOLD);
+    }
+
+    public void removeBottomMargin()
+    {
+        LinearLayout mainLayout = findViewById(R.id.home_header);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        // Convert desired value in dp to pixels
+        Resources r = getApplicationContext().getResources();
+        int px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                5, // Desired margin in dp
+                r.getDisplayMetrics()
+        );
+
+        params.setMargins(0, 0, 0, px);
+        mainLayout.setLayoutParams(params);
     }
 }
