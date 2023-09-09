@@ -4,4 +4,5 @@
     <dimen name="heading3">24sp</dimen>
     <dimen name="heading4">20sp</dimen>
     <dimen name="smallText">16sp</dimen>
+    <dimen name="sectionName">18sp</dimen>
 </resources>

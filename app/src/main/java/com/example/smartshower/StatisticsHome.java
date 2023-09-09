@@ -38,6 +38,9 @@ public class StatisticsHome extends ActivityWithHeader {
         setContentView(R.layout.activity_statistics_home);
         super.setupUIElements();
 
+        // Set the header text in the parent class
+        this.setHeader("Statistics");
+
         statisticsLayout = findViewById(R.id.statistics_home_ll);
 
         // Use following line to generate a year's worth of example shower data in the database

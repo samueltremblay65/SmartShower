@@ -34,6 +34,7 @@ public class UserPreset {
 
     // Default constructor : creates object with default values
     public UserPreset(){
+
     }
 
     // Main constructor to specify custom preset
