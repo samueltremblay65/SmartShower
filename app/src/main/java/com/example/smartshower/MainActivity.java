@@ -94,6 +94,7 @@ public class MainActivity extends ActivityWithHeader {
 
         addPresetButton.setOnClickListener(v -> {
             Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
+            myIntent.putExtra("presetOrder", presets.size());
             MainActivity.this.startActivity(myIntent);
         });
     }
@@ -114,6 +115,10 @@ public class MainActivity extends ActivityWithHeader {
 
     public void updatePresets(List<UserPreset> returnedPresets) {
         presets = returnedPresets;
+
+        // Sort the list by orderIndex to display presets in order set by user
+        presets.sort((p1, p2) -> p1.orderIndex - p2.orderIndex);
+
         presetAdapter = new PresetAdapter(presets, this::startPresetShower, this::deletePreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
@@ -126,7 +131,16 @@ public class MainActivity extends ActivityWithHeader {
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
+
+                int index = presets.get(fromPosition).orderIndex;
+                presets.get(fromPosition).orderIndex = presets.get(toPosition).orderIndex;
+                presets.get(toPosition).orderIndex = index;
+
                 Collections.swap(presets, fromPosition, toPosition);
+
+                updatePreset(presets.get(fromPosition));
+                updatePreset(presets.get(toPosition));
+
                 recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
@@ -149,7 +163,6 @@ public class MainActivity extends ActivityWithHeader {
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         SmartRecommendationCreator recommendationCreator;
         List<UserPreset> presets;
-
         public ScreenSlidePagerAdapter(FragmentActivity fa, List<UserPreset> presets) {
             super(fa);
             this.presets = presets;
@@ -232,9 +245,9 @@ public class MainActivity extends ActivityWithHeader {
         class populateTask extends AsyncTask<Void, Void, Void> {
             @Override
             protected Void doInBackground(Void... voids) {
-                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"zigzag");
-                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink");
-                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored");
+                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"zigzag", 0);
+                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink", 0);
+                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored", 0);
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 db.userPresetDao().insertAll(preset1, preset2, preset3);
                 return null;
@@ -289,6 +302,22 @@ public class MainActivity extends ActivityWithHeader {
         }
 
         deletePresetTask task = new deletePresetTask();
+        task.execute();
+    }
+
+    private void updatePreset(UserPreset preset)
+    {
+        @SuppressLint("StaticFieldLeak")
+        class updatePresetTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                db.userPresetDao().update(preset);
+                return null;
+            }
+        }
+
+        updatePresetTask task = new updatePresetTask();
         task.execute();
     }
 }

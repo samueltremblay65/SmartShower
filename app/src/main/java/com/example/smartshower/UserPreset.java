@@ -1,7 +1,5 @@
 package com.example.smartshower;
 
-import static java.sql.Types.ROWID;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -32,14 +30,17 @@ public class UserPreset {
     @ColumnInfo(name = "theme")
     public String theme;
 
+    @ColumnInfo(name = "order")
+    public int orderIndex;
+
     // Default constructor : creates object with default values
     public UserPreset(){
-
+        orderIndex = -1;
     }
 
     // Main constructor to specify custom preset
     @Ignore
-    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme)
+    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex)
     {
         this.name = name;
         this.flowRate = flowRate;
@@ -47,10 +48,11 @@ public class UserPreset {
         this.tempLimit = tempLimit;
         this.theme = theme;
         this.secondsLimit = secondsLimit;
+        this.orderIndex = orderIndex;
     }
 
     @Ignore
-    public UserPreset(String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme )
+    public UserPreset(String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex )
     {
         this.name = name;
         this.flowRate = flowRate;
@@ -58,5 +60,10 @@ public class UserPreset {
         this.tempLimit = tempLimit;
         this.theme = theme;
         this.secondsLimit = secondsLimit;
+        this.orderIndex = orderIndex;
+    }
+
+    public void updateOrder(int newOrder){
+        this.orderIndex = newOrder;
     }
 }
