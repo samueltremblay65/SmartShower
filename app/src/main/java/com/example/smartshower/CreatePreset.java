@@ -37,11 +37,20 @@ public class CreatePreset extends ActivityWithHeader {
     Button createPreset;
     Button discardChanges;
 
+    int presetOrder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_preset);
         super.setupUIElements();
+
+        presetOrder = getIntent().getIntExtra("presetOrder", -1);
+
+        if(presetOrder == -1)
+        {
+            throw new IllegalStateException("No valid presetOrder provided for preset creation");
+        }
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
@@ -90,7 +99,9 @@ public class CreatePreset extends ActivityWithHeader {
 
             String theme = themeInput.getText().toString();
 
-            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, theme);
+            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit,
+                    flowrate, timerSeconds, theme, presetOrder);
+
             addPresetToDatabase(preset);
 
             Intent intent= new Intent(CreatePreset.this, MainActivity.class);
