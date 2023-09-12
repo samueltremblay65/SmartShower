@@ -99,6 +99,8 @@ public class MainActivity extends ActivityWithHeader {
         });
     }
 
+    // Starts the shower activity passing in the preset information
+    // TODO: Should we get the other info from the preset ID?
     public void startPresetShower(UserPreset preset) {
         Intent myIntent = new Intent(MainActivity.this, Shower.class);
         myIntent.putExtra("presetId", preset.uid); //Optional parameters
@@ -113,6 +115,7 @@ public class MainActivity extends ActivityWithHeader {
         deletePresetFromDatabase(preset);
     }
 
+    // Populates the User Presets section
     public void updatePresets(List<UserPreset> returnedPresets) {
         presets = returnedPresets;
 
@@ -155,6 +158,7 @@ public class MainActivity extends ActivityWithHeader {
         itemTouchHelper.attachToRecyclerView(presetListView);
     }
 
+    // Populates the recommended bar
     public void updateRecommended(List<UserPreset> presets) {
         pagerAdapter = new MainActivity.ScreenSlidePagerAdapter(this, presets);
         viewPager.setAdapter(pagerAdapter);
