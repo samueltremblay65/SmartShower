@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -44,7 +45,7 @@ public class StatisticsHome extends ActivityWithHeader {
         statisticsLayout = findViewById(R.id.statistics_home_ll);
 
         // Use following line to generate a year's worth of example shower data in the database
-        // populateStatisticsWithExampleData();
+        populateStatisticsWithExampleData();
         loadStatistics();
     }
 
@@ -191,6 +192,12 @@ public class StatisticsHome extends ActivityWithHeader {
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
         chart.invalidate(); // refresh
+
+        // Stats that will be displayed
+        Log.i("Statistics", String.format("Number of shower records: %d", numberShowers()));
+        Log.i("Statistics", String.format("Average water usage: %d litres per day", calculateAverageWaterUsage()));
+        Log.i("Statistics", String.format("Average shower temperature: %d degrees", calculateAverageTemperature()));
+        Log.i("Statistics", String.format("Average shower duration: %d seconds", calculateAverageDuration()));
     }
 
     public int[] calculateAverageTemperaturePerMonth()
@@ -250,6 +257,21 @@ public class StatisticsHome extends ActivityWithHeader {
         return sum / allStatistics.size();
     }
 
+    public int calculateAverageWaterUsage()
+    {
+        return calculateAverageDuration() * 7 / 60;
+    }
+
+    public int calculateAverageWaterUsagePerDay()
+    {
+        int sum = 0;
+        for(Statistics statistic: allStatistics)
+        {
+            sum += statistic.duration;
+        }
+        return sum / 365; // TODO: calculate the number of days from the first day
+    }
+
     public int calculateAverageTemperature()
     {
         int sum = 0;
@@ -258,6 +280,11 @@ public class StatisticsHome extends ActivityWithHeader {
             sum += statistic.averageTemperature;
         }
         return sum / allStatistics.size();
+    }
+
+    public int numberShowers()
+    {
+        return allStatistics.size();
     }
 
     // This method calls the creation of all graphs in the home activity
@@ -321,19 +348,36 @@ public class StatisticsHome extends ActivityWithHeader {
                 // Parameters
                 final int PROBABILITY_SHOWER = 80;
 
-                GregorianCalendar gc = new GregorianCalendar();
-                gc.set(Calendar.YEAR, 2023);
-                int days = gc.getActualMaximum(Calendar.DAY_OF_YEAR);
+                int dayNumber = 56; // Day number of first day of data
+                int year = 2022;
 
-                for(int i = 0; i < days; i++)
+                // End date
+                Date currentDate = generateDateTime(getCurrentDayNumber(), getCurrentYear());
+
+                // Find days in current year
+                GregorianCalendar gc = new GregorianCalendar();
+                gc.set(Calendar.YEAR, year);
+                int daysInYear = gc.getActualMaximum(Calendar.DAY_OF_YEAR);
+
+                Date date;
+
+                do
                 {
+                    if(++dayNumber == daysInYear - 1)
+                    {
+                        year++;
+                        dayNumber = 1;
+                    }
+
+                    date = generateDateTime(dayNumber, year);
+
                     int probabilityShower = PROBABILITY_SHOWER;
-                    Date date = generateDateTime(i);
                     int month = date.getMonth();
                     if(month > 4 && month < 9)
                     {
                         probabilityShower += 20;
                     }
+
                     while(random.nextInt(100) < probabilityShower)
                     {
                         int temperature = generateTemperature(month);
@@ -346,8 +390,31 @@ public class StatisticsHome extends ActivityWithHeader {
                         exampleStatistics.add(showerStatistics);
                         probabilityShower = probabilityShower / 2;
                     }
-                }
+
+                } while(!isSameDay(date, currentDate));
+
                 return exampleStatistics;
+            }
+
+            private boolean isSameDay(Date date1, Date date2)
+            {
+                boolean result = true;
+                if(date1.getYear() != date2.getYear())
+                {
+                    result = false;
+                }
+
+                if(date1.getMonth() != date2.getMonth())
+                {
+                    result = false;
+                }
+
+                if(date1.getDate() != date2.getDate())
+                {
+                    result = false;
+                }
+
+                return result;
             }
 
             private int generateTemperature(int month)
@@ -372,21 +439,34 @@ public class StatisticsHome extends ActivityWithHeader {
                 return duration * flowRate / 1200;
             }
 
-            private Date generateDateTime(int dayNumber)
+            private Date generateDateTime(int dayNumber, int year)
             {
                 GregorianCalendar gc = new GregorianCalendar();
-                gc.set(gc.YEAR, 2022 - 1900);
+                gc.set(gc.YEAR, year - 1900);
+
                 // int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
+
                 gc.set(gc.DAY_OF_YEAR, dayNumber);
 
-                int year = gc.get(gc.YEAR);
                 int month = gc.get(gc.MONTH);
                 int day = gc.get(gc.DAY_OF_MONTH);
                 int hours = randBetween(5, 22);
                 int min = random.nextInt(60);
                 int sec = random.nextInt(60);
-                Date date = new Date(year, month, day, hours, min, sec);
+                Date date = new Date(year - 1900, month, day, hours, min, sec);
                 return date;
+            }
+
+            private int getCurrentDayNumber()
+            {
+                GregorianCalendar gc = new GregorianCalendar();
+                return gc.get(gc.DAY_OF_YEAR);
+            }
+
+            private int getCurrentYear()
+            {
+                GregorianCalendar gc = new GregorianCalendar();
+                return gc.get(Calendar.YEAR);
             }
 
             private int generatePresetId()
