@@ -111,7 +111,8 @@ public class CreatePreset extends ActivityWithHeader {
         });
 
         discardChanges.setOnClickListener(v -> {
-            Intent intent= new Intent(CreatePreset.this, MainActivity.class);
+            Intent intent = new Intent(CreatePreset.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             CreatePreset.this.startActivity(intent);
         });
     }
