@@ -68,4 +68,6 @@ dependencies {
     implementation group: 'com.apachat', name: 'swipereveallayout-android', version: '1.1.2'
 
     implementation 'io.sulek.ssml:simpleswipemenulayout:1.0.4'
+
+    implementation 'com.github.samueltremblay65:ColorArcProgressBar:1.0.0'
 }

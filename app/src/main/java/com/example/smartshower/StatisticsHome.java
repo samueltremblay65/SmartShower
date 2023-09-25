@@ -6,9 +6,14 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -28,9 +33,12 @@ import java.util.Random;
 
 public class StatisticsHome extends ActivityWithHeader {
 
-    List<Statistics> allStatistics;
+    private List<Statistics> allStatistics;
 
-    LinearLayout statisticsLayout;
+    private LinearLayout statisticsLayout;
+
+    private ViewPager2 gaugePager;
+    private FragmentStateAdapter gaugePagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,12 @@ public class StatisticsHome extends ActivityWithHeader {
         this.setHeader("Statistics");
 
         statisticsLayout = findViewById(R.id.statistics_home_ll);
+
+        // View pager setup
+        gaugePager = findViewById(R.id.vp_stats_gauges);
+
+        gaugePagerAdapter = new StatisticsHome.ScreenSlidePagerAdapter(this);
+        gaugePager.setAdapter(gaugePagerAdapter);
 
         // Use following line to generate a year's worth of example shower data in the database
         // populateStatisticsWithExampleData();
@@ -191,6 +205,53 @@ public class StatisticsHome extends ActivityWithHeader {
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
         chart.invalidate(); // refresh
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+
+        public ScreenSlidePagerAdapter(FragmentActivity fa) {
+            super(fa);
+        }
+
+        @Override
+        public Fragment createFragment(int position) {
+            String title = "";
+            float currentValue = 0;
+            float maxValue = 100;
+            String unit = "";
+            String message = "";
+            int color = ContextCompat.getColor(getApplicationContext(), R.color.shower_blue300);
+
+            switch(position)
+            {
+                case 0:
+                    title = "Water usage";
+                    currentValue = 45;
+                    unit = "L";
+                    message = "You have used 40 litres of water today. This is 30% less than your average usage.";
+                    break;
+                case 1:
+                    title = "Total shower time";
+                    currentValue = 14;
+                    maxValue = 60;
+                    unit = " mins";
+                    color = Color.GREEN;
+                    break;
+                case 2:
+                    title = "Cost of operation";
+                    currentValue = 2.12f;
+                    maxValue = 5;
+                    unit = "$";
+                    color = Color.YELLOW;
+                    break;
+            }
+            return new GaugeFragment(title, currentValue, maxValue, unit, color, message);
+        }
+
+        @Override
+        public int getItemCount() {
+            return 3;
+        }
     }
 
     public int[] calculateAverageTemperaturePerMonth()

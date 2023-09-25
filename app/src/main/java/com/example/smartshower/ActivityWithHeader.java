@@ -58,7 +58,6 @@ public class ActivityWithHeader extends AppCompatActivity {
             // Initializing the popup menu and giving the reference as current context
             Context wrapper = new ContextThemeWrapper(ActivityWithHeader.this, R.style.PopupMenu);
             PopupMenu popupMenu = new PopupMenu(wrapper, accountButton);
-
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
