@@ -8,11 +8,15 @@
 
     <include layout="@layout/header"/>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_above="@id/bottom_menu"
         android:layout_below="@id/home_header"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="10dp"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,12 +45,15 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"/>
 
+            <include layout="@layout/theme_picker"/>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_create_preset_preset_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/addpreset_theme"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_preset_theme"
@@ -154,7 +161,7 @@
                 android:layout_marginVertical="20dp"/>
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/bottom_menu"

@@ -5,16 +5,25 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class CreatePreset extends ActivityWithHeader {
@@ -34,6 +43,8 @@ public class CreatePreset extends ActivityWithHeader {
     // Buttons
     Button createPreset;
     Button discardChanges;
+
+    RecyclerView themePicker;
 
     int presetOrder;
 
@@ -137,6 +148,63 @@ public class CreatePreset extends ActivityWithHeader {
 
         presetThemeInput.setBoxStrokeColorStateList(editTextColorStateList);
         presetThemeInput.setHintTextColor(editTextColorStateList);
+
+        // Theme picker initialization
+        themePicker = findViewById(R.id.theme_picker_recyclerview);
+
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(CreatePreset.this, LinearLayoutManager.HORIZONTAL, false);
+        themePicker.setLayoutManager(horizontalLayoutManager);
+
+        class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+            private int space;
+
+            public SpacesItemDecoration(int space) {
+                this.space = space;
+            }
+
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.top = 0;
+                outRect.right = 0;
+                outRect.bottom = 0;
+
+                // Add top margin only for the first item to avoid double space between items
+                if (parent.getChildLayoutPosition(view) == 0) {
+                    outRect.left = 0;
+                } else {
+                    outRect.left = space;
+                }
+            }
+        }
+
+        // Add horizontal spacing between cardview items
+        float marginPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                10, // value in dp
+                getResources().getDisplayMetrics()
+        );
+
+        SpacesItemDecoration horizontalSpacingDecoration = new SpacesItemDecoration((int) marginPx);
+        themePicker.addItemDecoration(horizontalSpacingDecoration);
+
+        // List of theme sources
+        List<String> themeSources = new ArrayList<String>();
+        
+        themeSources.add("1");
+        themeSources.add("2");
+        themeSources.add("3");
+        themeSources.add("4");
+        themeSources.add("5");
+
+        ThemePickerAdapter adapter = new ThemePickerAdapter(this, themeSources);
+
+        adapter.setClickListener(this::selectTheme);
+        themePicker.setAdapter(adapter);
+    }
+
+    public void selectTheme(String themeSource)
+    {
+
     }
 
     private void showErrorDialog(String message)
