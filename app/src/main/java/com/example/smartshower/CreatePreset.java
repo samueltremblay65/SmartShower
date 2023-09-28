@@ -1,8 +1,5 @@
-        package com.example.smartshower;
+package com.example.smartshower;
 
-import androidx.annotation.InspectableProperty;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,13 +7,9 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -49,6 +42,9 @@ public class CreatePreset extends ActivityWithHeader {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_preset);
         super.setupUIElements();
+
+        setHeader("Create preset");
+        setSmallVerticalMargins();
 
         presetOrder = getIntent().getIntExtra("presetOrder", -1);
 
