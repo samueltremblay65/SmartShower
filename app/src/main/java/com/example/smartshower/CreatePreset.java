@@ -6,6 +6,8 @@ import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,9 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Random;
 
@@ -115,6 +120,27 @@ public class CreatePreset extends ActivityWithHeader {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             CreatePreset.this.startActivity(intent);
         });
+
+        int[][] states = new int[][] {
+            new int[] { android.R.attr.state_active}, // Normal state
+            new int[] { android.R.attr.state_enabled}, // Typing state
+        };
+
+        int[] colors = new int[] {
+            Color.BLACK,
+            Color.BLACK
+        };
+
+        ColorStateList editTextColorStateList = new ColorStateList(states, colors);
+
+        TextInputLayout presetNameInput = findViewById(R.id.ti_create_preset_preset_name);
+        TextInputLayout presetThemeInput = findViewById(R.id.ti_create_preset_preset_theme);
+
+        presetNameInput.setBoxStrokeColorStateList(editTextColorStateList);
+        presetNameInput.setHintTextColor(editTextColorStateList);
+
+        presetThemeInput.setBoxStrokeColorStateList(editTextColorStateList);
+        presetThemeInput.setHintTextColor(editTextColorStateList);
     }
 
     private void showErrorDialog(String message)
@@ -125,6 +151,30 @@ public class CreatePreset extends ActivityWithHeader {
     private boolean validateEditTextInput_Text(EditText editText, String fieldName)
     {
         return validateEditTextInput_Text(editText, 64, fieldName);
+    }
+
+    private boolean validateEditTextInput_Text(TextInputEditText editText, String fieldName)
+    {
+        return validateEditTextInput_Text(editText, 64, fieldName);
+    }
+
+    private boolean validateEditTextInput_Text(TextInputEditText editText, int charLimit, String fieldName)
+    {
+        String value = editText.getText().toString().trim();
+        if(value.equals(""))
+        {
+            // TODO: add error message element
+            showErrorDialog("Error: mandatory field is empty");
+            return false;
+        }
+
+        if(value.length() > charLimit)
+        {
+            showErrorDialog("Error: input is too long");
+            // TODO: add error message
+        }
+
+        return true;
     }
 
     private boolean validateEditTextInput_Text(EditText editText, int charLimit, String fieldName)
