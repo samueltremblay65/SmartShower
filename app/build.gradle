@@ -70,4 +70,6 @@ dependencies {
     implementation 'io.sulek.ssml:simpleswipemenulayout:1.0.4'
 
     implementation 'com.github.samueltremblay65:ColorArcProgressBar:1.0.0'
+
+    implementation 'com.google.android.material:material:1.0.0'
 }

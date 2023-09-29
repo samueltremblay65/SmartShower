@@ -6,122 +6,162 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="12dp">
 
-    <!-- MAIN PART -->
+    <include layout="@layout/header"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_above="@id/bottom_menu"
+        android:layout_below="@id/home_header"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="10dp"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_preset_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addpreset_name"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addpreset_theme"
+                android:textSize="@dimen/heading3"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <include layout="@layout/theme_picker"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_preset_theme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addpreset_theme"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_theme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addpreset_settings"
+                android:textSize="@dimen/heading3"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_preset_temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addpreset_temperature"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_temperature"
+                    android:labelFor="@+id/tv_cp_name"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_preset_flow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addpreset_flowrate"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_flow"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginBottom="20dp"/>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addpreset_bool_timer"
+                android:id="@+id/sw_cp_timer"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/et_preset_time_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/tv_cp_name"
+                android:textSize="24sp"
+                android:layout_marginBottom="20dp"
+                android:autofillHints="preset name"
+                android:inputType="number"
+                android:hint="@string/addpreset_timer"
+                android:visibility="gone"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginVertical="20dp"/>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addpreset_bool_templimit"
+                android:id="@+id/sw_cp_temp_limit"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/et_preset_temperature_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/tv_cp_name"
+                android:textSize="24dp"
+                android:layout_marginBottom="20dp"
+                android:autofillHints="preset name"
+                android:inputType="number"
+                android:hint="@string/addpreset_templimit"
+                android:visibility="gone"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginVertical="20dp"/>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <include layout="@layout/header"/>
-
-        <TextView
-            android:id="@+id/tv_cp_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/addpreset_createnewpreset"
-            android:textSize="@dimen/heading3"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
-
-        <EditText
-            android:id="@+id/et_preset_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:inputType="text"
-            android:layout_marginBottom="20dp"
-            android:autofillHints="preset name"
-            android:hint="@string/addpreset_name"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/addpreset_theme"
-            android:textSize="@dimen/heading4"/>
-
-        <EditText
-            android:id="@+id/et_preset_theme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:inputType="text"
-            android:layout_marginBottom="20dp"
-            android:autofillHints="preset name"
-            android:hint="@string/addpreset_theme"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/addpreset_temperature"
-            android:textSize="@dimen/heading4"/>
-
-        <EditText
-            android:id="@+id/et_preset_temperature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@+id/tv_cp_name"
-            android:textSize="24sp"
-            android:inputType="number"
-            android:layout_marginBottom="20dp"
-            android:autofillHints="Temperature"
-            android:hint="@string/addpreset_temperature"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/addpreset_flowrate"
-            android:textSize="@dimen/heading4"/>
-
-        <EditText
-            android:id="@+id/et_preset_flow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@+id/tv_cp_name"
-            android:textSize="24sp"
-            android:inputType="number"
-            android:layout_marginBottom="20dp"
-            android:autofillHints="Flowrate"
-            android:hint="@string/addpreset_flowrate"/>
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/addpreset_bool_timer"
-            android:id="@+id/sw_cp_timer"
-            android:textSize="18sp"/>
-
-        <EditText
-            android:id="@+id/et_preset_time_limit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@+id/tv_cp_name"
-            android:textSize="24sp"
-            android:layout_marginBottom="20dp"
-            android:autofillHints="preset name"
-            android:inputType="number"
-            android:hint="@string/addpreset_timer"/>
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/addpreset_bool_templimit"
-            android:id="@+id/sw_cp_temp_limit"
-            android:textSize="18sp"/>
-
-        <EditText
-            android:id="@+id/et_preset_temperature_limit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@+id/tv_cp_name"
-            android:textSize="24dp"
-            android:layout_marginBottom="20dp"
-            android:autofillHints="preset name"
-            android:inputType="number"
-            android:hint="@string/addpreset_templimit"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+        android:id="@+id/bottom_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"

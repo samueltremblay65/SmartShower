@@ -141,4 +141,44 @@ public class ActivityWithHeader extends AppCompatActivity {
         params.setMargins(0, 0, 0, px);
         mainLayout.setLayoutParams(params);
     }
+
+    public void setSmallBottomMargin()
+    {
+        LinearLayout mainLayout = findViewById(R.id.home_header);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        // Convert desired value in dp to pixels
+        Resources r = getApplicationContext().getResources();
+        int px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                20, // Desired margin in dp
+                r.getDisplayMetrics()
+        );
+
+        params.setMargins(0, 0, 0, px);
+        mainLayout.setLayoutParams(params);
+    }
+
+    public void setSmallVerticalMargins()
+    {
+        LinearLayout mainLayout = findViewById(R.id.home_header);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        // Convert desired value in dp to pixels
+        Resources r = getApplicationContext().getResources();
+        int px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                20, // Desired margin in dp
+                r.getDisplayMetrics()
+        );
+
+        params.setMargins(0, px, 0, px);
+        mainLayout.setLayoutParams(params);
+    }
 }

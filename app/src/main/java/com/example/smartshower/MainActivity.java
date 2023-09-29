@@ -122,7 +122,7 @@ public class MainActivity extends ActivityWithHeader {
         // Sort the list by orderIndex to display presets in order set by user
         presets.sort((p1, p2) -> p1.orderIndex - p2.orderIndex);
 
-        presetAdapter = new PresetAdapter(presets, this::startPresetShower, this::deletePreset, this::deletePreset);
+        presetAdapter = new PresetAdapter(getApplicationContext(), presets, this::startPresetShower, this::deletePreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 

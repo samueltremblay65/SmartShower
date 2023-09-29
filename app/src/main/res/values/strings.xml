@@ -23,9 +23,10 @@
     <string name="plus_sign">+</string>
     <string name="addpreset_createnewpreset">Create a new preset</string>
     <string name="addpreset_name">Preset name</string>
+    <string name="addpreset_settings">Shower settings</string>
     <string name="addpreset_temperature">Temperature</string>
     <string name="addpreset_flowrate">Flowrate</string>
-    <string name="addpreset_theme">Theme</string>
+    <string name="addpreset_theme">Select theme</string>
     <string name="addpreset_bool_timer">Enable shower timer</string>
     <string name="addpreset_bool_templimit">Enable  safe temperature limit</string>
     <string name="discard_changes">Discard changes</string>

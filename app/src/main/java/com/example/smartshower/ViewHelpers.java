@@ -1,7 +1,10 @@
 package com.example.smartshower;
 
+import android.content.Context;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 public class ViewHelpers {
 
@@ -11,34 +14,54 @@ public class ViewHelpers {
         String theme = preset.theme;
         int drawableResource;
         switch (theme) {
-            case "pink":
+            case "bg1":
                 drawableResource = R.drawable.bg1;
                 break;
-            case "plant":
-                // drawable = ContextCompat.getDrawable(backgroundView.getContext(), R.drawable.bg7);
-                drawableResource = R.drawable.bg7;
+            case "bg2":
+                drawableResource = R.drawable.bg2;
                 break;
-            case "multicolored":
-                drawableResource = R.drawable.bg4;
-                break;
-            case "dark":
+            case "bg3":
                 drawableResource = R.drawable.bg3;
                 break;
-            case "zigzag":
+            case "bg4":
+                drawableResource = R.drawable.bg4;
+                break;
+            case "bg5":
                 drawableResource = R.drawable.bg5;
                 break;
-            case "yellow":
-                drawableResource = R.drawable.bg2;
+            case "bg6":
+                drawableResource = R.drawable.bg6;
+                break;
+            case "bg7":
+                drawableResource = R.drawable.bg7;
+                break;
+            case "bg8":
+                drawableResource = R.drawable.bg8;
+                break;
+            case "bg9":
+                drawableResource = R.drawable.bg9;
                 break;
             default:
                 drawableResource = R.drawable.bg1;
+                break;
         }
 
         backgroundView.setImageResource(drawableResource);
     }
 
-    public static void setTranslucentBox(LinearLayout translucentBox, String theme)
+    public static void setTranslucentBox(Context context, LinearLayout translucentBox, String theme)
     {
+        // List of the themes that require a more opaque background
+        ArrayList<String> darkThemes = new ArrayList();
 
+        darkThemes.add("bg2");
+        darkThemes.add("bg6");
+        darkThemes.add("bg7");
+        darkThemes.add("bg8");
+
+        if(darkThemes.contains(theme))
+        {
+            translucentBox.setBackground(context.getResources().getDrawable(R.drawable.semi_opaque_box));
+        }
     }
 }

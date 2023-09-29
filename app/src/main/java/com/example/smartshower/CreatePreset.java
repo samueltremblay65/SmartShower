@@ -1,22 +1,29 @@
-        package com.example.smartshower;
+package com.example.smartshower;
 
-import androidx.annotation.InspectableProperty;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class CreatePreset extends ActivityWithHeader {
@@ -37,6 +44,10 @@ public class CreatePreset extends ActivityWithHeader {
     Button createPreset;
     Button discardChanges;
 
+    RecyclerView themePicker;
+
+    String selectedTheme;
+
     int presetOrder;
 
     @Override
@@ -44,6 +55,9 @@ public class CreatePreset extends ActivityWithHeader {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_preset);
         super.setupUIElements();
+
+        setHeader("Create preset");
+        setSmallVerticalMargins();
 
         presetOrder = getIntent().getIntExtra("presetOrder", -1);
 
@@ -69,9 +83,15 @@ public class CreatePreset extends ActivityWithHeader {
 
         createPreset.setOnClickListener(v -> {
             // Mandatory field checks
-            if(!validateEditTextInput_Text(nameInput,"Please enter a valid name") ||
+            if(!validateEditTextInput_Text(nameInput,"preset name") ||
                     !validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
                     !validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return;
+
+            // Theme selection check
+            if(this.selectedTheme == null || this.selectedTheme.isEmpty())
+            {
+                Toast.makeText(this, "Please select a theme", Toast.LENGTH_SHORT).show();
+            }
 
             // Optional field checks
             if((timerEnable.isChecked() && !validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
@@ -97,10 +117,8 @@ public class CreatePreset extends ActivityWithHeader {
                 temperatureLimit = getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
             }
 
-            String theme = themeInput.getText().toString();
-
             UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit,
-                    flowrate, timerSeconds, theme, presetOrder);
+                    flowrate, timerSeconds, selectedTheme, presetOrder);
 
             addPresetToDatabase(preset);
 
@@ -115,6 +133,88 @@ public class CreatePreset extends ActivityWithHeader {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             CreatePreset.this.startActivity(intent);
         });
+
+        int[][] states = new int[][] {
+            new int[] { android.R.attr.state_active}, // Normal state
+            new int[] { android.R.attr.state_enabled}, // Typing state
+        };
+
+        int[] colors = new int[] {
+            Color.BLACK,
+            Color.BLACK
+        };
+
+        ColorStateList editTextColorStateList = new ColorStateList(states, colors);
+
+        TextInputLayout presetNameInput = findViewById(R.id.ti_create_preset_preset_name);
+        TextInputLayout presetThemeInput = findViewById(R.id.ti_create_preset_preset_theme);
+
+        presetNameInput.setBoxStrokeColorStateList(editTextColorStateList);
+        presetNameInput.setHintTextColor(editTextColorStateList);
+
+        presetThemeInput.setBoxStrokeColorStateList(editTextColorStateList);
+        presetThemeInput.setHintTextColor(editTextColorStateList);
+
+        // Theme picker initialization
+        themePicker = findViewById(R.id.theme_picker_recyclerview);
+
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(CreatePreset.this, LinearLayoutManager.HORIZONTAL, false);
+        themePicker.setLayoutManager(horizontalLayoutManager);
+
+        class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+            private int space;
+
+            public SpacesItemDecoration(int space) {
+                this.space = space;
+            }
+
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.top = 0;
+                outRect.right = 0;
+                outRect.bottom = 0;
+
+                // Add top margin only for the first item to avoid double space between items
+                if (parent.getChildLayoutPosition(view) == 0) {
+                    outRect.left = 0;
+                } else {
+                    outRect.left = space;
+                }
+            }
+        }
+
+        // Add horizontal spacing between cardview items
+        float marginPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                10, // value in dp
+                getResources().getDisplayMetrics()
+        );
+
+        SpacesItemDecoration horizontalSpacingDecoration = new SpacesItemDecoration((int) marginPx);
+        themePicker.addItemDecoration(horizontalSpacingDecoration);
+
+        // List of theme sources
+        List<String> themeSources = new ArrayList<String>();
+        
+        themeSources.add("bg1");
+        themeSources.add("bg2");
+        themeSources.add("bg3");
+        themeSources.add("bg4");
+        themeSources.add("bg5");
+        themeSources.add("bg6");
+        themeSources.add("bg7");
+        themeSources.add("bg8");
+        themeSources.add("bg9");
+
+        ThemePickerAdapter adapter = new ThemePickerAdapter(this, themeSources);
+
+        adapter.setClickListener(this::selectTheme);
+        themePicker.setAdapter(adapter);
+    }
+
+    public void selectTheme(String themeSource)
+    {
+        selectedTheme = themeSource;
     }
 
     private void showErrorDialog(String message)
@@ -125,6 +225,30 @@ public class CreatePreset extends ActivityWithHeader {
     private boolean validateEditTextInput_Text(EditText editText, String fieldName)
     {
         return validateEditTextInput_Text(editText, 64, fieldName);
+    }
+
+    private boolean validateEditTextInput_Text(TextInputEditText editText, String fieldName)
+    {
+        return validateEditTextInput_Text(editText, 64, fieldName);
+    }
+
+    private boolean validateEditTextInput_Text(TextInputEditText editText, int charLimit, String fieldName)
+    {
+        String value = editText.getText().toString().trim();
+        if(value.equals(""))
+        {
+            // TODO: add error message element
+            showErrorDialog("Error: mandatory field is empty");
+            return false;
+        }
+
+        if(value.length() > charLimit)
+        {
+            showErrorDialog("Error: input is too long");
+            // TODO: add error message
+        }
+
+        return true;
     }
 
     private boolean validateEditTextInput_Text(EditText editText, int charLimit, String fieldName)
