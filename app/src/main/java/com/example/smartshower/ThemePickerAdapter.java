@@ -1,6 +1,7 @@
 package com.example.smartshower;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,8 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
@@ -20,6 +23,8 @@ public class ThemePickerAdapter extends
     private List<String> themeSources;
 
     private Context context;
+
+    private MaterialCardView lastSelected;
 
     // data is passed into the constructor
     ThemePickerAdapter(Context context, List<String> themeSources) {
@@ -83,6 +88,7 @@ public class ThemePickerAdapter extends
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView imageView;
+        MaterialCardView cardView;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -90,11 +96,24 @@ public class ThemePickerAdapter extends
             itemView.setOnClickListener(this);
 
             imageView = itemView.findViewById(R.id.theme_image);
+
+            cardView = itemView.findViewById(R.id.theme_picker_item_card);
         }
 
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(themeSources.get(getAdapterPosition()));
+
+            cardView.setStrokeWidth(8);
+            cardView.setStrokeColor(context.getResources().getColor(R.color.shower_blue300));
+
+            // Remove border from last selected element
+            if(lastSelected != null)
+            {
+                lastSelected.setStrokeWidth(0);
+            }
+
+            lastSelected = cardView;
         }
     }
 

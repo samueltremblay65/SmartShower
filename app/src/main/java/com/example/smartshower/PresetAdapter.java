@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,13 +27,17 @@ public class PresetAdapter extends
     private final ViewBinder viewBinder = new ViewBinder();
     private SwipeLayout swipeRevealLayout;
 
+    private Context context;
+
     // Pass in the contact array into the constructor
     public PresetAdapter(
+            Context context,
             List<UserPreset> presets,
             PresetClickListener presetClickListener,
             PresetClickListener presetDeleteListener,
             PresetClickListener presetEditListener) {
 
+        this.context = context;
         allPresets = presets;
         this.presetClickListener = presetClickListener;
         this.presetDeleteListener = presetDeleteListener;
@@ -85,7 +88,7 @@ public class PresetAdapter extends
 
         ImageView backgroundView = holder.backgroundView;
         ViewHelpers.setBackgroundTheme(backgroundView, userPreset);
-        ViewHelpers.setTranslucentBox(holder.translucentBox, userPreset.theme);
+        ViewHelpers.setTranslucentBox(context, holder.translucentBox, userPreset.theme);
 
         // Adding on click listener
         holder.presetContainer.setOnClickListener(new View.OnClickListener() {

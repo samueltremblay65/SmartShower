@@ -46,6 +46,8 @@ public class CreatePreset extends ActivityWithHeader {
 
     RecyclerView themePicker;
 
+    String selectedTheme;
+
     int presetOrder;
 
     @Override
@@ -81,9 +83,15 @@ public class CreatePreset extends ActivityWithHeader {
 
         createPreset.setOnClickListener(v -> {
             // Mandatory field checks
-            if(!validateEditTextInput_Text(nameInput,"Please enter a valid name") ||
+            if(!validateEditTextInput_Text(nameInput,"preset name") ||
                     !validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
                     !validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return;
+
+            // Theme selection check
+            if(this.selectedTheme == null || this.selectedTheme.isEmpty())
+            {
+                Toast.makeText(this, "Please select a theme", Toast.LENGTH_SHORT).show();
+            }
 
             // Optional field checks
             if((timerEnable.isChecked() && !validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
@@ -109,10 +117,8 @@ public class CreatePreset extends ActivityWithHeader {
                 temperatureLimit = getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
             }
 
-            String theme = themeInput.getText().toString();
-
             UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit,
-                    flowrate, timerSeconds, theme, presetOrder);
+                    flowrate, timerSeconds, selectedTheme, presetOrder);
 
             addPresetToDatabase(preset);
 
@@ -208,7 +214,7 @@ public class CreatePreset extends ActivityWithHeader {
 
     public void selectTheme(String themeSource)
     {
-
+        selectedTheme = themeSource;
     }
 
     private void showErrorDialog(String message)
