@@ -70,45 +70,42 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"/>
 
-            <TextView
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_preset_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addpreset_temperature"
-                android:textSize="@dimen/heading4"/>
+                android:hint="@string/addpreset_temperature"
+                android:layout_marginBottom="20dp">
 
-            <EditText
-                android:id="@+id/et_preset_temperature"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tv_cp_name"
-                android:textSize="24sp"
-                android:inputType="number"
-                android:layout_marginBottom="20dp"
-                android:autofillHints="Temperature"
-                android:hint="@string/addpreset_temperature"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_temperature"
+                    android:labelFor="@+id/tv_cp_name"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/addpreset_flowrate"
-                android:textSize="@dimen/heading4"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/et_preset_flow"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_preset_flow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tv_cp_name"
-                android:textSize="24sp"
-                android:inputType="number"
-                android:layout_marginBottom="20dp"
-                android:autofillHints="Flowrate"
-                android:hint="@string/addpreset_flowrate"/>
+                android:hint="@string/addpreset_flowrate"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_flow"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#c0c0c0"
-                android:layout_marginVertical="20dp"/>
+                android:layout_marginBottom="20dp"/>
 
             <Switch
                 android:layout_width="wrap_content"
