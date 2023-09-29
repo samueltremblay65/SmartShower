@@ -190,11 +190,15 @@ public class CreatePreset extends ActivityWithHeader {
         // List of theme sources
         List<String> themeSources = new ArrayList<String>();
         
-        themeSources.add("1");
-        themeSources.add("2");
-        themeSources.add("3");
-        themeSources.add("4");
-        themeSources.add("5");
+        themeSources.add("bg1");
+        themeSources.add("bg2");
+        themeSources.add("bg3");
+        themeSources.add("bg4");
+        themeSources.add("bg5");
+        themeSources.add("bg6");
+        themeSources.add("bg7");
+        themeSources.add("bg8");
+        themeSources.add("bg9");
 
         ThemePickerAdapter adapter = new ThemePickerAdapter(this, themeSources);
 
