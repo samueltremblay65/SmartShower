@@ -29,6 +29,9 @@
             android:name=".StatisticsHome"
             android:exported="false" />
         <activity
+            android:name=".WelcomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".Shower"
             android:exported="false" />
         <activity

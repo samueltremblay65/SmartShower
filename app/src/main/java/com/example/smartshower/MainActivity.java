@@ -88,7 +88,7 @@ public class MainActivity extends ActivityWithHeader {
         loadRecommendedPresets();
 
         showStatsButton.setOnClickListener(v -> {
-            Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
+            Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);
             MainActivity.this.startActivity(myIntent);
         });
 
