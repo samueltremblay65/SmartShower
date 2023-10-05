@@ -30,6 +30,7 @@ public class SignupActivity extends AppCompatActivity {
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
 
+
         int[][] states = new int[][] {
                 new int[] { android.R.attr.state_active}, // Normal state
                 new int[] { android.R.attr.state_enabled}, // Typing state
@@ -42,9 +43,9 @@ public class SignupActivity extends AppCompatActivity {
 
         ColorStateList editTextColorStateList = new ColorStateList(states, colors);
 
-        TextInputLayout usernameInput = findViewById(R.id.su_username);
-        TextInputLayout emailInput = findViewById(R.id.su_email);
-        TextInputLayout passwordInput = findViewById(R.id.su_password);
+        TextInputLayout usernameInput = findViewById(R.id.su_username_lo);
+        TextInputLayout emailInput = findViewById(R.id.su_email_lo);
+        TextInputLayout passwordInput = findViewById(R.id.su_password_lo);
 
 
         usernameInput.setBoxStrokeColorStateList(editTextColorStateList);
