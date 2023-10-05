@@ -45,6 +45,11 @@
     <string name="defaulttext_preset_timelimit">Unlimited duration</string>
     <string name="statistics_labels_monthly_temp">Monthly average shower temperatures</string>
     <string name="statistics_labels_monthly_duration">Monthly average shower duration</string>
-    <string name="welcome_login">Log in</string>
-    <string name="welcome_signup">Sign up</string>
+    <string name="welcome_login">Sign in</string>
+    <string name="welcome_signup">Create an account</string>
+    <string name="signup_username">Username</string>
+    <string name="signup_email">Email address</string>
+    <string name="signup_password">Create a new password</string>
+    <string name="email">Email</string>
+    <string name="signup">Sign up</string>
 </resources>

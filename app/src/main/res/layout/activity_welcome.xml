@@ -29,25 +29,26 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome_logo">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/welcome_btn_signup"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/shower_blue300"
             android:padding="10dp"
             android:text="@string/welcome_signup"
-            android:textSize="22dp"
-            app:cornerRadius="10dp" />
+            android:textSize="18dp"
+            app:cornerRadius="20dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:layout_width="280dp"
+            android:id="@+id/welcome_btn_login"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/yellow"
             android:padding="10dp"
@@ -57,7 +58,7 @@
             android:textColorHint="#000000"
             android:textColorLink="#000000"
             android:textSize="18dp"
-            app:cornerRadius="10dp" />
+            app:cornerRadius="40dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
