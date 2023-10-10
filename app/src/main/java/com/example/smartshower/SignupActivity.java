@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Random;
+
 public class SignupActivity extends AppCompatActivity {
 
     Button signupButton;
@@ -96,7 +98,9 @@ public class SignupActivity extends AppCompatActivity {
             String password = passwordInput.getText().toString();
             String email = emailInput.getText().toString().trim();
 
-            createUserAccount(new UserAccount(username, password, email));
+            Random random = new Random();
+            int userId = random.nextInt();
+            createUserAccount(new UserAccount(userId, username, password, email));
             Toast.makeText(context, "Account successfully created", Toast.LENGTH_SHORT).show();
 
             Intent myIntent = new Intent(SignupActivity.this, MainActivity.class);
@@ -110,7 +114,8 @@ public class SignupActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getSharedPreferences(preferencesFile, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.keys_account_id), account.getUsername());
+        editor.putInt(getString(R.string.keys_account_id), account.getId());
+        editor.putString(getString(R.string.keys_account_username), account.getUsername());
         editor.putString(getString(R.string.keys_account_password), account.getPassword());
         editor.apply();
     }

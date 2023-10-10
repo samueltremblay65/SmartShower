@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +45,8 @@ public class MainActivity extends ActivityWithHeader {
     private ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
 
+    private int userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,26 +68,15 @@ public class MainActivity extends ActivityWithHeader {
 
         // PopulateDatabase can be used to load some generic sample data in the preset table
         // populateDatabase();
-        //deleteAllPresetsFromDatabase();
+        // deleteAllPresetsFromDatabase();
 
-        // Load user profile from file
-        List<String> files = Arrays.asList(getApplicationContext().fileList());
-
-        String filename = "users.txt";
-        File directory = getApplicationContext().getFilesDir();
-
-        if(files.contains(filename))
-        {
-            File file = new File(directory, filename);
-        }
-        else
-        {
-            // Create file with user info
-        }
+        String preferencesFile = getString(R.string.accounts_file);
+        SharedPreferences preferences = getSharedPreferences(preferencesFile, MODE_PRIVATE);
+        userId = preferences.getInt(getString(R.string.keys_account_id), 0);
 
         String displayName = "Sam";
 
-        loadUserPresets();
+        loadUserPresets(userId);
         loadRecommendedPresets();
 
         showStatsButton.setOnClickListener(v -> {
@@ -190,7 +182,7 @@ public class MainActivity extends ActivityWithHeader {
     }
 
     // Database tasks
-    private void loadUserPresets() {
+    private void loadUserPresets(int userId) {
         @SuppressLint("StaticFieldLeak")
         class LoadUserPresetsTask extends AsyncTask<Void, Void, Void> {
 
@@ -201,7 +193,7 @@ public class MainActivity extends ActivityWithHeader {
 
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                presets = db.userPresetDao().getAll();
+                presets = db.userPresetDao().getAllForUser(userId);
                 if(presets == null)
                 {
                     presets = new ArrayList<UserPreset>();
@@ -249,9 +241,9 @@ public class MainActivity extends ActivityWithHeader {
         class populateTask extends AsyncTask<Void, Void, Void> {
             @Override
             protected Void doInBackground(Void... voids) {
-                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300,"zigzag", 0);
-                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink", 0);
-                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored", 0);
+                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300, "zigzag", 0, userId);
+                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink", 1, userId);
+                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored", 2, userId);
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 db.userPresetDao().insertAll(preset1, preset2, preset3);
                 return null;

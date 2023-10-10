@@ -56,5 +56,6 @@
     <string name="signup">Sign up</string>
     <string name="accounts_file">com.example.sharedpreferences.Accounts</string>
     <string name="keys_account_id">accountId</string>
+    <string name="keys_account_username">accountUsername</string>
     <string name="keys_account_password">accountPassword</string>
 </resources>

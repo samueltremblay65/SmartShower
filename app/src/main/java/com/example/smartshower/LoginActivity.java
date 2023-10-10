@@ -100,7 +100,8 @@ public class LoginActivity extends AppCompatActivity {
     {
         String preferencesFile = getString(R.string.accounts_file);
         SharedPreferences preferences = getSharedPreferences(preferencesFile, MODE_PRIVATE);
-        String storedUsername = preferences.getString(getString(R.string.keys_account_id), "");
+        String storedUsername = preferences.getString(getString(R.string.keys_account_username), "");
+        int storedId = preferences.getInt(getString(R.string.keys_account_id), 0);
         String correctPassword = preferences.getString(getString(R.string.keys_account_password), "");
 
         if(username.equals(storedUsername) && password.equals(correctPassword)) {

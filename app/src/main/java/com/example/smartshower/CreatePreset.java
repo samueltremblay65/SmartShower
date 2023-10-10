@@ -120,7 +120,7 @@ public class CreatePreset extends ActivityWithHeader {
             }
 
             UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit,
-                    flowrate, timerSeconds, selectedTheme, presetOrder);
+                    flowrate, timerSeconds, selectedTheme, presetOrder, 0);
 
             addPresetToDatabase(preset);
 

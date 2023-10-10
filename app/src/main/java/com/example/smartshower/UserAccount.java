@@ -2,11 +2,13 @@ package com.example.smartshower;
 
 public class UserAccount {
     private String username;
-
+    
+    private int userId;
     private String password;
 
-    public UserAccount(String username, String password, String email)
+    public UserAccount(int userId, String username, String password, String email)
     {
+        this.userId = userId;
         this.username = username;
         this.password = password;
     }
@@ -19,5 +21,10 @@ public class UserAccount {
     public String getPassword()
     {
         return password;
+    }
+
+    public int getId()
+    {
+        return userId;
     }
 }

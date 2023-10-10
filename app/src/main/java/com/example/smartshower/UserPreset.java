@@ -33,6 +33,9 @@ public class UserPreset {
     @ColumnInfo(name = "order")
     public int orderIndex;
 
+    @ColumnInfo(name = "userId")
+    public int userId;
+
     // Default constructor : creates object with default values
     public UserPreset(){
         orderIndex = -1;
@@ -40,7 +43,7 @@ public class UserPreset {
 
     // Main constructor to specify custom preset
     @Ignore
-    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex)
+    public UserPreset(int uid, String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex, int userId)
     {
         this.name = name;
         this.flowRate = flowRate;
@@ -49,10 +52,11 @@ public class UserPreset {
         this.theme = theme;
         this.secondsLimit = secondsLimit;
         this.orderIndex = orderIndex;
+        this.userId = userId;
     }
 
     @Ignore
-    public UserPreset(String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex )
+    public UserPreset(String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex, int userId)
     {
         this.name = name;
         this.flowRate = flowRate;
@@ -61,6 +65,7 @@ public class UserPreset {
         this.theme = theme;
         this.secondsLimit = secondsLimit;
         this.orderIndex = orderIndex;
+        this.userId = userId;
     }
 
     public void updateOrder(int newOrder){
