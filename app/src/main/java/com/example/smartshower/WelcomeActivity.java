@@ -34,5 +34,12 @@ public class WelcomeActivity extends ActivityWithHeader{
             }
         });
 
+        findViewById(R.id.welcome_btn_login).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                WelcomeActivity.this.startActivity(myIntent);
+            }
+        });
     }
 }

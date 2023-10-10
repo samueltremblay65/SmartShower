@@ -27,12 +27,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="15dp"
-            android:text="@string/signup"
+            android:text="@string/welcome_back"
             android:textSize="@dimen/heading2"
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/su_username_lo"
+            android:id="@+id/li_username_lo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
@@ -43,7 +43,7 @@
             app:boxCornerRadiusTopStart="30dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/su_username"
+                android:id="@+id/li_username"
                 android:inputType="text"
                 android:maxLines="1"
                 android:layout_width="match_parent"
@@ -57,35 +57,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/su_email_lo"
+            android:id="@+id/li_password_lo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:hint="@string/signup_email"
-            app:boxCornerRadiusBottomEnd="30dp"
-            app:boxCornerRadiusTopEnd="30dp"
-            app:boxCornerRadiusBottomStart="30dp"
-            app:boxCornerRadiusTopStart="30dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/su_email"
-                android:inputType="text"
-                android:maxLines="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/drawable_email_icon"
-                android:drawablePadding="10dp"
-                android:padding="12dp"
-                android:paddingStart="12dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/su_password_lo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:hint="@string/signup_password"
+            android:hint="@string/login_password"
             app:startIconDrawable="@drawable/drawable_password_icon"
             app:passwordToggleEnabled="true"
             app:boxCornerRadiusBottomEnd="30dp"
@@ -94,23 +70,22 @@
             app:boxCornerRadiusTopStart="30dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/su_password"
+                android:id="@+id/li_password"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/drawable_password_icon"
-                android:drawablePadding="-9dp"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:drawablePadding="-9dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/su_btn_signup"
+            android:id="@+id/li_btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/yellow"
-            android:text="Get started!"
+            android:text="@string/welcome_login"
             android:textColor="@color/black" />
 
     </LinearLayout>
