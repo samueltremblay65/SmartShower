@@ -58,7 +58,7 @@ public class StatisticsHome extends ActivityWithHeader {
         gaugePager.setAdapter(gaugePagerAdapter);
 
         // Use following line to generate a year's worth of example shower data in the database
-        // populateStatisticsWithExampleData();
+        populateStatisticsWithExampleData();
         loadStatistics();
     }
 

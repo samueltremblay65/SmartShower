@@ -1,10 +1,14 @@
 package com.example.smartshower;
 
+import java.util.Dictionary;
+
 public class UserAccount {
     private String username;
     
     private int userId;
     private String password;
+
+    private Dictionary<String, Boolean> settings;
 
     public UserAccount(int userId, String username, String password, String email)
     {

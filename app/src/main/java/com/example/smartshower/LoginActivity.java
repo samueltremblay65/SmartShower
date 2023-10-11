@@ -98,8 +98,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public boolean checkCredentials(String username, String password)
     {
-        String preferencesFile = getString(R.string.accounts_file);
-        SharedPreferences preferences = getSharedPreferences(preferencesFile, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         String storedUsername = preferences.getString(getString(R.string.keys_account_username), "");
         int storedId = preferences.getInt(getString(R.string.keys_account_id), 0);
         String correctPassword = preferences.getString(getString(R.string.keys_account_password), "");

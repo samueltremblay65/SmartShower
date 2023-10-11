@@ -50,6 +50,16 @@ public class MainActivity extends ActivityWithHeader {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
+        int userId = preferences.getInt(getString(R.string.keys_account_id), 0);
+
+        if(userId == 0)
+        {
+            Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);
+            MainActivity.this.startActivity(myIntent);
+        }
+
         setContentView(R.layout.activity_main);
 
         super.setupUIElements();
@@ -70,17 +80,11 @@ public class MainActivity extends ActivityWithHeader {
         // populateDatabase();
         // deleteAllPresetsFromDatabase();
 
-        String preferencesFile = getString(R.string.accounts_file);
-        SharedPreferences preferences = getSharedPreferences(preferencesFile, MODE_PRIVATE);
-        userId = preferences.getInt(getString(R.string.keys_account_id), 0);
-
-        String displayName = "Sam";
-
         loadUserPresets(userId);
         loadRecommendedPresets();
 
         showStatsButton.setOnClickListener(v -> {
-            Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);
+            Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
             MainActivity.this.startActivity(myIntent);
         });
 
