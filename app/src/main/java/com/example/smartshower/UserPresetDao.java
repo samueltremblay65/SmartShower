@@ -13,8 +13,8 @@ public interface UserPresetDao {
     @Query("SELECT * FROM userpreset")
     List<UserPreset> getAll();
 
-    @Query("SELECT * FROM userpreset WHERE uid IN (:userIds)")
-    List<UserPreset> loadAllByIds(int[] userIds);
+    @Query("SELECT * FROM userpreset WHERE userId = (:userId)")
+    List<UserPreset> getAllForUser(int userId);
 
     @Update
     void update(UserPreset preset);

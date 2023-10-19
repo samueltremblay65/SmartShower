@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1065536940284",
+    "project_id": "smartshower-d62ba",
+    "storage_bucket": "smartshower-d62ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065536940284:android:acbf2ae986372627dbcf79",
+        "android_client_info": {
+          "package_name": "com.example.smartshower"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065536940284-2dd4vvnmm0f9vs5j2sg490dglikneffr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1_Xk--GS-jxxknZRi1kaikxzZtOnzUyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065536940284-2dd4vvnmm0f9vs5j2sg490dglikneffr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

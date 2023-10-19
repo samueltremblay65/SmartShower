@@ -20,8 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="6dp"
-        android:paddingVertical="12dp">
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="16dp">
 
         <LinearLayout
             android:id="@+id/presetTextContainer"

@@ -2,6 +2,7 @@ package com.example.smartshower;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -30,11 +31,15 @@ public class ActivityWithHeader extends AppCompatActivity {
     ImageView accountButton;
     TextView header;
 
-    String displayName = "Sam";
+    String displayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String preferencesFile = getString(R.string.accounts_file);
+        SharedPreferences preferences = getSharedPreferences(preferencesFile, MODE_PRIVATE);
+        displayName = preferences.getString(getString(R.string.keys_account_username), "");
     }
 
     // Should be called in the constructor of the child class
@@ -61,7 +66,7 @@ public class ActivityWithHeader extends AppCompatActivity {
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Intent intent = null;
+                    Intent intent;
                     switch (item.getTitle().toString())
                     {
                         case "My profile":
@@ -76,7 +81,10 @@ public class ActivityWithHeader extends AppCompatActivity {
                         case "My statistics":
                             intent = new Intent(ActivityWithHeader.this, StatisticsHome.class);
                             break;
-                        case "Log out":
+                        case "Logout":
+                            logout();
+                            intent = new Intent(ActivityWithHeader.this, WelcomeActivity.class);
+                            finish();
                             break;
                         default:
                             Toast.makeText(wrapper, "Unexpected error occurred", Toast.LENGTH_SHORT).show();
@@ -180,5 +188,13 @@ public class ActivityWithHeader extends AppCompatActivity {
 
         params.setMargins(0, px, 0, px);
         mainLayout.setLayoutParams(params);
+    }
+
+    private void logout()
+    {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.accounts_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.apply();
     }
 }

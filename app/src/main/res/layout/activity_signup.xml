@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/shower_blue300"
+    android:gravity="center_horizontal|center_vertical"
+    android:orientation="vertical"
+    android:padding="40dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/linear_layout_rounded_corners"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="80dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/signup"
+            android:textSize="@dimen/heading2"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/su_username_lo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/signup_username"
+            app:boxCornerRadiusBottomEnd="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusTopStart="30dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/su_username"
+                android:inputType="text"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/drawable_username_icon"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:paddingStart="12dp"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/su_email_lo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/signup_email"
+            app:boxCornerRadiusBottomEnd="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusTopStart="30dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/su_email"
+                android:inputType="text"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/drawable_email_icon"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:paddingStart="12dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/su_password_lo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/signup_password"
+            app:startIconDrawable="@drawable/drawable_password_icon"
+            app:passwordToggleEnabled="true"
+            app:boxCornerRadiusBottomEnd="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusTopStart="30dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/su_password"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/drawable_password_icon"
+                android:drawablePadding="-9dp"
+                android:padding="12dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/su_btn_signup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/yellow"
+            android:text="Get started!"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+</LinearLayout>

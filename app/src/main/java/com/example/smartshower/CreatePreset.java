@@ -81,11 +81,13 @@ public class CreatePreset extends ActivityWithHeader {
         createPreset = findViewById(R.id.btn_create_preset);
         discardChanges = findViewById(R.id.btn_discard_preset);
 
+        FormValidationHelper validator = new FormValidationHelper(getApplicationContext());
+
         createPreset.setOnClickListener(v -> {
             // Mandatory field checks
-            if(!validateEditTextInput_Text(nameInput,"preset name") ||
-                    !validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
-                    !validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return;
+            if(!validator.validateEditTextInput_Text(nameInput,"preset name") ||
+                    !validator.validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
+                    !validator.validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return;
 
             // Theme selection check
             if(this.selectedTheme == null || this.selectedTheme.isEmpty())
@@ -94,31 +96,31 @@ public class CreatePreset extends ActivityWithHeader {
             }
 
             // Optional field checks
-            if((timerEnable.isChecked() && !validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
-                    (temperatureLimitEnable.isChecked() && !validateEditTextInput_Number(temperatureLimitInput, getResources().getInteger(R.integer.min_temperature_c),
+            if((timerEnable.isChecked() && !validator.validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
+                    (temperatureLimitEnable.isChecked() && !validator.validateEditTextInput_Number(temperatureLimitInput, getResources().getInteger(R.integer.min_temperature_c),
                             getResources().getInteger(R.integer.max_temperature_c), "safe temperature limit"))) return;
 
 
             // Obtain values if all validations pass
             String presetName = nameInput.getText().toString().trim();
-            int temperature = getIntegerFromEditText(temperatureInput, "temperature");
-            int flowrate = getIntegerFromEditText(flowrateInput, "flow rate");
+            int temperature = validator.getIntegerFromEditText(temperatureInput, "temperature");
+            int flowrate = validator.getIntegerFromEditText(flowrateInput, "flow rate");
 
             int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
             int temperatureLimit = getResources().getInteger(R.integer.max_temperature_c);
 
             if(timerEnable.isChecked())
             {
-                timerSeconds = getIntegerFromEditText(timerInput, "time limit");
+                timerSeconds = validator.getIntegerFromEditText(timerInput, "time limit");
             }
 
             if(temperatureLimitEnable.isChecked())
             {
-                temperatureLimit = getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
+                temperatureLimit = validator.getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
             }
 
             UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit,
-                    flowrate, timerSeconds, selectedTheme, presetOrder);
+                    flowrate, timerSeconds, selectedTheme, presetOrder, 0);
 
             addPresetToDatabase(preset);
 
@@ -215,113 +217,6 @@ public class CreatePreset extends ActivityWithHeader {
     public void selectTheme(String themeSource)
     {
         selectedTheme = themeSource;
-    }
-
-    private void showErrorDialog(String message)
-    {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    private boolean validateEditTextInput_Text(EditText editText, String fieldName)
-    {
-        return validateEditTextInput_Text(editText, 64, fieldName);
-    }
-
-    private boolean validateEditTextInput_Text(TextInputEditText editText, String fieldName)
-    {
-        return validateEditTextInput_Text(editText, 64, fieldName);
-    }
-
-    private boolean validateEditTextInput_Text(TextInputEditText editText, int charLimit, String fieldName)
-    {
-        String value = editText.getText().toString().trim();
-        if(value.equals(""))
-        {
-            // TODO: add error message element
-            showErrorDialog("Error: mandatory field is empty");
-            return false;
-        }
-
-        if(value.length() > charLimit)
-        {
-            showErrorDialog("Error: input is too long");
-            // TODO: add error message
-        }
-
-        return true;
-    }
-
-    private boolean validateEditTextInput_Text(EditText editText, int charLimit, String fieldName)
-    {
-        String value = editText.getText().toString().trim();
-        if(value.equals(""))
-        {
-            // TODO: add error message element
-            showErrorDialog("Error: mandatory field is empty");
-            return false;
-        }
-
-        if(value.length() > charLimit)
-        {
-            showErrorDialog("Error: input is too long");
-            // TODO: add error message
-        }
-
-        return true;
-    }
-
-    private boolean validateEditTextInput_Number(EditText editText, String fieldName)
-    {
-        String input = editText.getText().toString().trim();
-
-        if(input.length() == 0)
-        {
-            // TODO: add error message
-            showErrorDialog("Error: mandatory field is empty");
-            return false;
-        }
-
-        try {
-            Integer.parseInt(input);
-        }
-        catch(NumberFormatException e) {
-            // TODO: add error message
-            showErrorDialog("Error: could not read integer from input");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateEditTextInput_Number(EditText editText, int lowerBound, int upperBound, String fieldName)
-    {
-        String input = editText.getText().toString().trim();
-        int value;
-
-        if(input.length() == 0)
-        {
-            // TODO: add error message
-            showErrorDialog("Error: mandatory field is empty");
-            return false;
-        }
-
-        try {
-            value = Integer.parseInt(input);
-        }
-        catch(NumberFormatException e) {
-            // TODO: add error message
-            showErrorDialog("Error: could not read integer from input");
-
-            return false;
-        }
-
-        return (value >= lowerBound && value <= upperBound);
-    }
-
-    // Should always be validated before call
-    private int getIntegerFromEditText(EditText editText, String fieldName)
-    {
-        String input = editText.getText().toString().trim();
-        return Integer.parseInt(input);
     }
 
     private void addPresetToDatabase(UserPreset preset) {
