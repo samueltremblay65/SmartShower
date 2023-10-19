@@ -54,6 +54,8 @@ public class MainActivity extends ActivityWithHeader {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         int userId = preferences.getInt(getString(R.string.keys_account_id), 0);
 
+        Log.i("Accounts Jiraf", Integer.toString(userId));
+
         if(userId == 0)
         {
             Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);

@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -36,6 +37,7 @@ android {
 
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+    implementation 'com.google.firebase:firebase-firestore:24.9.0'
 
     def core_version = "1.10.1"
 
@@ -72,4 +74,6 @@ dependencies {
     implementation 'com.github.samueltremblay65:ColorArcProgressBar:1.0.0'
 
     implementation 'com.google.android.material:material:1.0.0'
+
+    implementation platform('com.google.firebase:firebase-bom:32.3.1')
 }

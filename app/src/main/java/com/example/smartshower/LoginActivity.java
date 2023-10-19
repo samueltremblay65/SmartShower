@@ -17,12 +17,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class LoginActivity extends AppCompatActivity {
 
     Button loginButton;
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,28 +91,47 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("Accounts", "Invalid input provided");
         }
 
-        if(checkCredentials(usernameInput.getText().toString().trim(),
-                passwordInput.getText().toString().trim())) {
-            Toast.makeText(context, "Successfully logged in", Toast.LENGTH_SHORT).show();
-            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-            LoginActivity.this.startActivity(myIntent);
-        }
-        else {
-            Toast.makeText(context, "Unsuccessful login attempt", Toast.LENGTH_SHORT).show();
-        }
+        checkCredentials(usernameInput.getText().toString().trim(),
+                passwordInput.getText().toString().trim());
     }
 
-    public boolean checkCredentials(String username, String password)
+    public void checkCredentials(String username, String password)
     {
-        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
-        String storedUsername = preferences.getString(getString(R.string.keys_account_username), "");
-        int storedId = preferences.getInt(getString(R.string.keys_account_id), 0);
-        String correctPassword = preferences.getString(getString(R.string.keys_account_password), "");
+        DocumentReference docRef = db.collection("users").document(username);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                UserAccount account = documentSnapshot.toObject(UserAccount.class);
 
-        if(username.equals(storedUsername) && password.equals(correctPassword)) {
-            return true;
-        }
-
-        return false;
+                if(username == account.getUsername() && password == account.getPassword())
+                {
+                    loginSuccess(account);
+                }
+                else
+                {
+                    loginFailure();
+                }
+            }
+        });
     }
+
+    private void loginSuccess(UserAccount account)
+    {
+        // Add credentials to sharedPreferences
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.accounts_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.keys_account_id), account.getId());
+        editor.putString(getString(R.string.keys_account_username), account.getUsername());
+        editor.putString(getString(R.string.keys_account_password), account.getPassword());
+        editor.apply();
+
+        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        LoginActivity.this.startActivity(myIntent);
+    }
+
+    private void loginFailure()
+    {
+        Toast.makeText(this, "The credentials provided are incorrect", Toast.LENGTH_SHORT).show();
+    }
+
 }

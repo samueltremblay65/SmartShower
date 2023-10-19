@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,12 +17,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Random;
 
 public class SignupActivity extends AppCompatActivity {
 
     Button signupButton;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class SignupActivity extends AppCompatActivity {
 
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
+
 
 
         int[][] states = new int[][] {
@@ -76,7 +79,6 @@ public class SignupActivity extends AppCompatActivity {
                 signup();
             }
         });
-
     }
 
     public void signup()
@@ -110,16 +112,6 @@ public class SignupActivity extends AppCompatActivity {
 
     public void createUserAccount(UserAccount account)
     {
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.accounts_file), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.keys_account_id), account.getId());
-        editor.putString(getString(R.string.keys_account_username), account.getUsername());
-        editor.putString(getString(R.string.keys_account_password), account.getPassword());
-        editor.apply();
-    }
-
-    public void goToMaiActivity()
-    {
-        Log.i("Navigation", "Navigation to main activity not yet implemented");
+        db.collection("users").document(account.getUsername()).set(account);
     }
 }

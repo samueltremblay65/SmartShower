@@ -66,7 +66,7 @@ public class ActivityWithHeader extends AppCompatActivity {
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Intent intent = null;
+                    Intent intent;
                     switch (item.getTitle().toString())
                     {
                         case "My profile":
@@ -82,7 +82,9 @@ public class ActivityWithHeader extends AppCompatActivity {
                             intent = new Intent(ActivityWithHeader.this, StatisticsHome.class);
                             break;
                         case "Logout":
+                            logout();
                             intent = new Intent(ActivityWithHeader.this, WelcomeActivity.class);
+                            finish();
                             break;
                         default:
                             Toast.makeText(wrapper, "Unexpected error occurred", Toast.LENGTH_SHORT).show();
@@ -186,5 +188,13 @@ public class ActivityWithHeader extends AppCompatActivity {
 
         params.setMargins(0, px, 0, px);
         mainLayout.setLayoutParams(params);
+    }
+
+    private void logout()
+    {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.accounts_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.apply();
     }
 }
