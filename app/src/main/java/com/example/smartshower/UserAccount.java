@@ -12,6 +12,11 @@ public class UserAccount {
 
     private List<UserPreset> presets;
 
+    public UserAccount()
+    {
+
+    }
+
     public UserAccount(int userId, String username, String password, String email)
     {
         this.userId = userId;
@@ -35,7 +40,7 @@ public class UserAccount {
     {
         return password;
     }
-    public int getId()
+    public int getUserId()
     {
         return userId;
     }

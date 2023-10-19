@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserAccount account = documentSnapshot.toObject(UserAccount.class);
 
-                if(username == account.getUsername() && password == account.getPassword())
+                if(username.equals(account.getUsername()) && password.equals(account.getPassword()))
                 {
                     loginSuccess(account);
                 }
@@ -117,10 +117,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginSuccess(UserAccount account)
     {
+        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
         // Add credentials to sharedPreferences
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.accounts_file), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.keys_account_id), account.getId());
+        editor.putInt(getString(R.string.keys_account_id), account.getUserId());
+        Log.i("Jiraf", "Account id: " + Integer.toString(account.getUserId()));
         editor.putString(getString(R.string.keys_account_username), account.getUsername());
         editor.putString(getString(R.string.keys_account_password), account.getPassword());
         editor.apply();
