@@ -2,7 +2,9 @@ package com.example.smartshower;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -15,12 +17,18 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +58,10 @@ public class CreatePreset extends ActivityWithHeader {
 
     int presetOrder;
 
+    UserAccount account;
+    
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +77,8 @@ public class CreatePreset extends ActivityWithHeader {
         {
             throw new IllegalStateException("No valid presetOrder provided for preset creation");
         }
+
+        getUserAccountFromDatabase();
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
@@ -123,11 +137,6 @@ public class CreatePreset extends ActivityWithHeader {
                     flowrate, timerSeconds, selectedTheme, presetOrder, 0);
 
             addPresetToDatabase(preset);
-
-            Intent intent = new Intent(CreatePreset.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            CreatePreset.this.startActivity(intent);
-            finish();
         });
 
         discardChanges.setOnClickListener(v -> {
@@ -220,22 +229,46 @@ public class CreatePreset extends ActivityWithHeader {
     }
 
     private void addPresetToDatabase(UserPreset preset) {
-        @SuppressLint("StaticFieldLeak")
-        class addPresetTask extends AsyncTask<Void, Void, Void> {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                db.userPresetDao().insertAll(preset);
-                return null;
-            }
+        account.addPreset(preset);
 
+        db.collection("users").document(account.getUsername()).set(account).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            protected void onPostExecute(Void result) {
-                Toast.makeText(CreatePreset.this, "Successfully created new preset", Toast.LENGTH_LONG).show();
+            public void onSuccess(Void unused) {
+                Toast.makeText(CreatePreset.this, "Successfully created new preset", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CreatePreset.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                CreatePreset.this.startActivity(intent);
+                finish();
             }
-        }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CreatePreset.this, "Could not create preset", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-        addPresetTask task = new addPresetTask();
-        task.execute();
+    private void getUserAccountFromDatabase()
+    {
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
+        String username = preferences.getString(getString(R.string.keys_account_username), "");
+
+        DocumentReference docRef = db.collection("users").document(username);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                account = documentSnapshot.toObject(UserAccount.class);
+
+                if(account == null)
+                {
+                    throw new IllegalStateException("Could not find user account");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 }

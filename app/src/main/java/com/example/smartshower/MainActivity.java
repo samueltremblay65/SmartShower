@@ -23,6 +23,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +38,7 @@ import java.util.List;
 public class MainActivity extends ActivityWithHeader {
 
     // Local variables
+    UserAccount account;
     List<UserPreset> presets;
 
     // Views
@@ -47,6 +54,8 @@ public class MainActivity extends ActivityWithHeader {
 
     private int userId;
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +63,7 @@ public class MainActivity extends ActivityWithHeader {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         int userId = preferences.getInt(getString(R.string.keys_account_id), 0);
 
-        Log.i("Accounts Jiraf", Integer.toString(userId));
+        getUserAccountFromDatabase();
 
         if(userId == 0)
         {
@@ -82,17 +91,10 @@ public class MainActivity extends ActivityWithHeader {
         // populateDatabase();
         // deleteAllPresetsFromDatabase();
 
-        loadUserPresets(userId);
         loadRecommendedPresets();
 
         showStatsButton.setOnClickListener(v -> {
             Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
-            MainActivity.this.startActivity(myIntent);
-        });
-
-        addPresetButton.setOnClickListener(v -> {
-            Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
-            myIntent.putExtra("presetOrder", presets.size());
             MainActivity.this.startActivity(myIntent);
         });
     }
@@ -142,6 +144,8 @@ public class MainActivity extends ActivityWithHeader {
                 updatePreset(presets.get(fromPosition));
                 updatePreset(presets.get(toPosition));
 
+                db.collection("users").document(account.getUsername()).set(account);
+
                 recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
@@ -164,6 +168,7 @@ public class MainActivity extends ActivityWithHeader {
 
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         SmartRecommendationCreator recommendationCreator;
+        
         List<UserPreset> presets;
         public ScreenSlidePagerAdapter(FragmentActivity fa, List<UserPreset> presets) {
             super(fa);
@@ -188,34 +193,6 @@ public class MainActivity extends ActivityWithHeader {
     }
 
     // Database tasks
-    private void loadUserPresets(int userId) {
-        @SuppressLint("StaticFieldLeak")
-        class LoadUserPresetsTask extends AsyncTask<Void, Void, Void> {
-
-            List<UserPreset> presets;
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                // Adding to database
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                presets = db.userPresetDao().getAllForUser(userId);
-                if(presets == null)
-                {
-                    presets = new ArrayList<UserPreset>();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                updatePresets(presets);
-            }
-        }
-
-        LoadUserPresetsTask task = new LoadUserPresetsTask();
-        task.execute();
-    }
 
     private void loadRecommendedPresets() {
         @SuppressLint("StaticFieldLeak")
@@ -242,69 +219,24 @@ public class MainActivity extends ActivityWithHeader {
         task.execute();
     }
 
-    private void populateDatabase() {
-        @SuppressLint("StaticFieldLeak")
-        class populateTask extends AsyncTask<Void, Void, Void> {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                UserPreset preset1 = new UserPreset("Relax", 38, 50, 100, 300, "zigzag", 0, userId);
-                UserPreset preset2 = new UserPreset("Good morning", 25, 50, 100, 300,"pink", 1, userId);
-                UserPreset preset3 = new UserPreset("Cold", 12, 25, 100, 120,"multicolored", 2, userId);
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                db.userPresetDao().insertAll(preset1, preset2, preset3);
-                return null;
-            }
-        }
-
-        populateTask task = new populateTask();
-        task.execute();
-    }
-
-    private void deleteAllPresetsFromDatabase()
-    {
-        @SuppressLint("StaticFieldLeak")
-        class clearPresetTask extends AsyncTask<Void, Void, Void> {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                db.userPresetDao().deleteAll();
-                return null;
-            }
-        }
-
-        clearPresetTask task = new clearPresetTask();
-        task.execute();
-    }
-
     private void deletePresetFromDatabase(UserPreset preset)
     {
-        @SuppressLint("StaticFieldLeak")
-        class deletePresetTask extends AsyncTask<Void, Void, Void> {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                db.userPresetDao().delete(preset);
-                return null;
-            }
+        account.removePreset(preset);
 
-            @Override
-            protected void onPostExecute(Void result) {
-                try {
-                    presets.remove(preset);
-                    presetListView.getAdapter().notifyDataSetChanged();
-                }
-                catch(Exception e)
-                {
-                    Log.i("DeletePresets", "Caught exception while trying to remove preset from display list (UI only)");
-                }
-
-                // Can improve by using notifyItemRemoved if we can obtain the position
-                Toast.makeText(MainActivity.this, "Successfully deleted preset", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        deletePresetTask task = new deletePresetTask();
-        task.execute();
+        db.collection("users").document(account.getUsername()).set(account)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        presets = account.getPresets();
+                        updatePresets(presets);
+                        Toast.makeText(MainActivity.this, "Successfully deleted preset", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Failed to delete preset, please try again later", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void updatePreset(UserPreset preset)
@@ -321,5 +253,45 @@ public class MainActivity extends ActivityWithHeader {
 
         updatePresetTask task = new updatePresetTask();
         task.execute();
+    }
+
+    private void getUserAccountFromDatabase()
+    {
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
+        String username = preferences.getString(getString(R.string.keys_account_username), "");
+
+        Log.i("Jirafi", "Username: " + username);
+
+        DocumentReference docRef = db.collection("users").document(username);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                account = documentSnapshot.toObject(UserAccount.class);
+
+                if(account == null)
+                {
+                    throw new IllegalStateException("Could not find user account");
+                }
+
+                loadPresets();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    private void loadPresets()
+    {
+        presets = account.getPresets();
+        updatePresets(presets);
+
+        addPresetButton.setOnClickListener(v -> {
+            Intent myIntent = new Intent(MainActivity.this, CreatePreset.class);
+            myIntent.putExtra("presetOrder", presets.size());
+            MainActivity.this.startActivity(myIntent);
+        });
     }
 }

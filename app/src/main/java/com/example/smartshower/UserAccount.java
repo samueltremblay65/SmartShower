@@ -11,7 +11,6 @@ public class UserAccount {
     private Dictionary<String, Boolean> settings;
 
     private List<UserPreset> presets;
-
     public UserAccount()
     {
 
@@ -43,5 +42,28 @@ public class UserAccount {
     public int getUserId()
     {
         return userId;
+    }
+
+    public void addPreset(UserPreset preset)
+    {
+        if(presets == null)
+        {
+            presets = new ArrayList<>();
+        }
+        presets.add(preset);
+    }
+
+    public void removePreset(UserPreset preset)
+    {
+        presets.remove(preset);
+    }
+
+    public List<UserPreset> getPresets()
+    {
+        if(presets == null)
+        {
+            presets = new ArrayList<>();
+        }
+        return presets;
     }
 }
