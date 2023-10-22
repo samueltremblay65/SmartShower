@@ -97,18 +97,18 @@ public class CreatePreset extends ActivityWithHeader {
         createPreset = findViewById(R.id.btn_create_preset);
         discardChanges = findViewById(R.id.btn_discard_preset);
 
-        UserPreset preset = (UserPreset) getIntent().getSerializableExtra("preset");
+        UserPreset existingPreset = (UserPreset) getIntent().getSerializableExtra("preset");
 
         // Edit preset code path
-        if(preset != null)
+        if(existingPreset != null)
         {
             editMode = true;
 
             // Insert values into inputs
-            nameInput.setText(preset.name);
-            temperatureInput.setText(Integer.toString(preset.temp));
-            flowrateInput.setText(Integer.toString(preset.temp));
-            presetOrder = preset.orderIndex;
+            nameInput.setText(existingPreset.name);
+            temperatureInput.setText(Integer.toString(existingPreset.temp));
+            flowrateInput.setText(Integer.toString(existingPreset.temp));
+            presetOrder = existingPreset.orderIndex;
         }
         else
         {
@@ -144,6 +144,8 @@ public class CreatePreset extends ActivityWithHeader {
                 if(editMode)
                 {
                     // Update firebase document
+                    account.updatePreset(existingPreset);
+                    db.collection("users").document(account.getUsername()).update("presets", account.getPresets());
                 }
                 else
                 {
