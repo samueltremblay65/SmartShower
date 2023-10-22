@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -58,9 +60,14 @@ public class CreatePreset extends ActivityWithHeader {
 
     int presetOrder;
 
+    boolean editMode = false;
+
     UserAccount account;
     
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    FormValidationHelper validator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +78,9 @@ public class CreatePreset extends ActivityWithHeader {
         setHeader("Create preset");
         setSmallVerticalMargins();
 
-        presetOrder = getIntent().getIntExtra("presetOrder", -1);
-
-        if(presetOrder == -1)
-        {
-            throw new IllegalStateException("No valid presetOrder provided for preset creation");
-        }
-
         getUserAccountFromDatabase();
+
+        validator = new FormValidationHelper(getApplicationContext());
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
@@ -95,48 +97,61 @@ public class CreatePreset extends ActivityWithHeader {
         createPreset = findViewById(R.id.btn_create_preset);
         discardChanges = findViewById(R.id.btn_discard_preset);
 
-        FormValidationHelper validator = new FormValidationHelper(getApplicationContext());
+        UserPreset preset = (UserPreset) getIntent().getSerializableExtra("preset");
+
+        // Edit preset code path
+        if(preset != null)
+        {
+            editMode = true;
+
+            // Insert values into inputs
+            nameInput.setText(preset.name);
+            temperatureInput.setText(Integer.toString(preset.temp));
+            flowrateInput.setText(Integer.toString(preset.temp));
+            presetOrder = preset.orderIndex;
+        }
+        else
+        {
+            presetOrder = getIntent().getIntExtra("presetOrder", -1);
+
+            if(presetOrder == -1)
+            {
+                throw new IllegalStateException("No valid presetOrder provided for preset creation");
+            }
+        }
 
         createPreset.setOnClickListener(v -> {
-            // Mandatory field checks
-            if(!validator.validateEditTextInput_Text(nameInput,"preset name") ||
-                    !validator.validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
-                    !validator.validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return;
-
-            // Theme selection check
-            if(this.selectedTheme == null || this.selectedTheme.isEmpty())
+            if(validatePresetForm())
             {
-                Toast.makeText(this, "Please select a theme", Toast.LENGTH_SHORT).show();
+                // Obtain values if all validations pass
+                String presetName = nameInput.getText().toString().trim();
+                int temperature = validator.getIntegerFromEditText(temperatureInput, "temperature");
+                int flowrate = validator.getIntegerFromEditText(flowrateInput, "flow rate");
+
+                int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
+                int temperatureLimit = getResources().getInteger(R.integer.max_temperature_c);
+
+                if(timerEnable.isChecked())
+                {
+                    timerSeconds = validator.getIntegerFromEditText(timerInput, "time limit");
+                }
+
+                if(temperatureLimitEnable.isChecked())
+                {
+                    temperatureLimit = validator.getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
+                }
+
+                if(editMode)
+                {
+                    // Update firebase document
+                }
+                else
+                {
+                    UserPreset newPreset = new UserPreset(presetName, temperature, temperatureLimit,
+                            flowrate, timerSeconds, selectedTheme, presetOrder, 0);
+                    addPresetToDatabase(newPreset);
+                }
             }
-
-            // Optional field checks
-            if((timerEnable.isChecked() && !validator.validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
-                    (temperatureLimitEnable.isChecked() && !validator.validateEditTextInput_Number(temperatureLimitInput, getResources().getInteger(R.integer.min_temperature_c),
-                            getResources().getInteger(R.integer.max_temperature_c), "safe temperature limit"))) return;
-
-
-            // Obtain values if all validations pass
-            String presetName = nameInput.getText().toString().trim();
-            int temperature = validator.getIntegerFromEditText(temperatureInput, "temperature");
-            int flowrate = validator.getIntegerFromEditText(flowrateInput, "flow rate");
-
-            int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
-            int temperatureLimit = getResources().getInteger(R.integer.max_temperature_c);
-
-            if(timerEnable.isChecked())
-            {
-                timerSeconds = validator.getIntegerFromEditText(timerInput, "time limit");
-            }
-
-            if(temperatureLimitEnable.isChecked())
-            {
-                temperatureLimit = validator.getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
-            }
-
-            UserPreset preset = new UserPreset(presetName, temperature, temperatureLimit,
-                    flowrate, timerSeconds, selectedTheme, presetOrder, 0);
-
-            addPresetToDatabase(preset);
         });
 
         discardChanges.setOnClickListener(v -> {
@@ -223,9 +238,36 @@ public class CreatePreset extends ActivityWithHeader {
         themePicker.setAdapter(adapter);
     }
 
+    public boolean validatePresetForm()
+    {
+        // Mandatory field checks
+        if(!validator.validateEditTextInput_Text(nameInput,"preset name") ||
+                !validator.validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
+                !validator.validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return false;
+
+        // Theme selection check
+        if(this.selectedTheme == null || this.selectedTheme.isEmpty())
+        {
+            Toast.makeText(this, "Please select a theme", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // Optional field checks
+        if((timerEnable.isChecked() && !validator.validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
+                (temperatureLimitEnable.isChecked() && !validator.validateEditTextInput_Number(temperatureLimitInput, getResources().getInteger(R.integer.min_temperature_c),
+                        getResources().getInteger(R.integer.max_temperature_c), "safe temperature limit"))) return false;
+        return true;
+    }
+
     public void selectTheme(String themeSource)
     {
         selectedTheme = themeSource;
+        
+        int themePosition = ((ThemePickerAdapter) themePicker.getAdapter()).getPositionForTheme(themeSource);
+        if(themePosition != -1)
+        {
+            themePicker.findViewHolderForAdapterPosition(themePosition).itemView.performClick();
+        }
     }
 
     private void addPresetToDatabase(UserPreset preset) {

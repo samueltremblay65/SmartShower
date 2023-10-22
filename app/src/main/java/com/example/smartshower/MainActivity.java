@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends ActivityWithHeader {
@@ -87,10 +88,6 @@ public class MainActivity extends ActivityWithHeader {
         showStatsButton = findViewById(R.id.btn_home_viewStatistics);
         addPresetButton = findViewById(R.id.btn_home_add_preset);
 
-        // PopulateDatabase can be used to load some generic sample data in the preset table
-        // populateDatabase();
-        // deleteAllPresetsFromDatabase();
-
         loadRecommendedPresets();
 
         showStatsButton.setOnClickListener(v -> {
@@ -115,6 +112,12 @@ public class MainActivity extends ActivityWithHeader {
         deletePresetFromDatabase(preset);
     }
 
+    public void editPreset(UserPreset preset) {
+        Intent intent = new Intent(MainActivity.this, CreatePreset.class);
+        intent.putExtra("preset", preset);
+        MainActivity.this.startActivity(intent);
+    }
+
     // Populates the User Presets section
     public void updatePresets(List<UserPreset> returnedPresets) {
         presets = returnedPresets;
@@ -122,7 +125,7 @@ public class MainActivity extends ActivityWithHeader {
         // Sort the list by orderIndex to display presets in order set by user
         presets.sort((p1, p2) -> p1.orderIndex - p2.orderIndex);
 
-        presetAdapter = new PresetAdapter(getApplicationContext(), presets, this::startPresetShower, this::deletePreset, this::deletePreset);
+        presetAdapter = new PresetAdapter(getApplicationContext(), presets, this::startPresetShower, this::editPreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -168,7 +171,7 @@ public class MainActivity extends ActivityWithHeader {
 
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         SmartRecommendationCreator recommendationCreator;
-        
+
         List<UserPreset> presets;
         public ScreenSlidePagerAdapter(FragmentActivity fa, List<UserPreset> presets) {
             super(fa);
