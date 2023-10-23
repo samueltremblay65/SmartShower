@@ -100,6 +100,10 @@ public class CreatePreset extends ActivityWithHeader {
 
         UserPreset existingPreset = (UserPreset) getIntent().getSerializableExtra("preset");
 
+        TextInputLayout timerInputLayout = findViewById(R.id.ti_create_preset_time_limit);
+        TextInputLayout temperatureLimitInputLayout = findViewById(R.id.ti_create_preset_temperature_limit);
+
+
         // Edit preset code path
         if(existingPreset != null)
         {
@@ -108,8 +112,22 @@ public class CreatePreset extends ActivityWithHeader {
             // Insert values into inputs
             nameInput.setText(existingPreset.name);
             temperatureInput.setText(Integer.toString(existingPreset.temp));
-            flowrateInput.setText(Integer.toString(existingPreset.temp));
+            flowrateInput.setText(Integer.toString(existingPreset.flowRate));
             presetOrder = existingPreset.orderIndex;
+
+            if(existingPreset.tempLimit != getResources().getInteger(R.integer.max_temperature_c))
+            {
+                temperatureLimitEnable.setChecked(true);
+                temperatureLimitInput.setText(Integer.toString(existingPreset.tempLimit));
+                temperatureLimitInputLayout.setVisibility(View.VISIBLE);
+            }
+
+            if(existingPreset.secondsLimit != getResources().getInteger(R.integer.null_timelimit_db_value))
+            {
+                timerEnable.setChecked(true);
+                timerInput.setText(Integer.toString(existingPreset.secondsLimit));
+                timerInputLayout.setVisibility(View.VISIBLE);
+            }
         }
         else
         {
@@ -121,7 +139,7 @@ public class CreatePreset extends ActivityWithHeader {
             }
         }
 
-        TextInputLayout timerInputLayout = findViewById(R.id.ti_create_preset_time_limit);
+
         timerEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
@@ -135,7 +153,6 @@ public class CreatePreset extends ActivityWithHeader {
             }
         });
 
-        TextInputLayout temperatureLimitInputLayout = findViewById(R.id.ti_create_preset_temperature_limit);
         temperatureLimitEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
