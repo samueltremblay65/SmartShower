@@ -12,7 +12,6 @@ import android.widget.TextView;
 public class RecommendedSliderFragment extends Fragment {
     UserPreset preset;
     View.OnClickListener listener;
-
     public RecommendedSliderFragment(UserPreset preset, View.OnClickListener listener)
     {
         this.preset = preset;

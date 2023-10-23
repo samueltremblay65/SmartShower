@@ -9,7 +9,6 @@
     <include layout="@layout/header"/>
 
     <androidx.core.widget.NestedScrollView
-        android:layout_above="@id/bottom_menu"
         android:layout_below="@id/home_header"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -108,95 +107,93 @@
                 android:layout_marginBottom="20dp"/>
 
             <Switch
+                android:id="@+id/cp_switch_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/addpreset_bool_timer"
-                android:id="@+id/sw_cp_timer"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:layout_marginBottom="20dp"/>
 
-            <EditText
-                android:id="@+id/et_preset_time_limit"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_time_limit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tv_cp_name"
-                android:textSize="24sp"
+                android:layout_marginTop="-20dp"
                 android:layout_marginBottom="20dp"
-                android:autofillHints="preset name"
-                android:inputType="number"
                 android:hint="@string/addpreset_timer"
-                android:visibility="gone"/>
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_time_limit"
+                    android:layout_width="match_parent"
+                    android:inputType="number"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#c0c0c0"
-                android:layout_marginVertical="20dp"/>
+                android:layout_marginBottom="20dp"/>
 
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/addpreset_bool_templimit"
                 android:id="@+id/sw_cp_temp_limit"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:layout_marginBottom="20dp"/>
 
-            <EditText
-                android:id="@+id/et_preset_temperature_limit"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_create_preset_temperature_limit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tv_cp_name"
-                android:textSize="24dp"
                 android:layout_marginBottom="20dp"
-                android:autofillHints="preset name"
-                android:inputType="number"
+                android:layout_marginTop="-20dp"
                 android:hint="@string/addpreset_templimit"
-                android:visibility="gone"/>
+                android:visibility="gone">
 
-            <View
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_preset_temperature_limit"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btn_discard_preset"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#c0c0c0"
-                android:layout_marginVertical="20dp"/>
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/light_red"
+                android:padding="10dp"
+                android:text="@string/discard_changes"
+                android:textColor="@color/black"
+                android:textColorHighlight="#F44336"
+                android:textColorHint="#000000"
+                android:textColorLink="#000000"
+                android:textSize="20sp"
+                app:cornerRadius="10dp"
+                tools:ignore="VisualLintButtonSize" />
+
+            <Button
+                android:id="@+id/btn_create_preset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/shower_blue300"
+                android:padding="10dp"
+                android:text="@string/create_preset"
+                android:textColor="@color/black"
+                android:textColorHighlight="#F44336"
+                android:textColorHint="#000000"
+                android:textColorLink="#000000"
+                android:textSize="20sp"
+                app:cornerRadius="10dp"
+                tools:ignore="VisualLintButtonSize" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <LinearLayout
-        android:id="@+id/bottom_menu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/btn_discard_preset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/light_red"
-            android:padding="10dp"
-            android:text="@string/discard_changes"
-            android:textColor="@color/black"
-            android:textColorHighlight="#F44336"
-            android:textColorHint="#000000"
-            android:textColorLink="#000000"
-            android:textSize="20sp"
-            app:cornerRadius="10dp"
-            tools:ignore="VisualLintButtonSize" />
-
-        <Button
-            android:id="@+id/btn_create_preset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/shower_blue300"
-            android:padding="10dp"
-            android:text="@string/create_preset"
-            android:textColor="@color/black"
-            android:textColorHighlight="#F44336"
-            android:textColorHint="#000000"
-            android:textColorLink="#000000"
-            android:textSize="20sp"
-            app:cornerRadius="10dp"
-            tools:ignore="VisualLintButtonSize" />
-
-    </LinearLayout>
 
 </RelativeLayout>

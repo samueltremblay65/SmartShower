@@ -1,7 +1,6 @@
 package com.example.smartshower;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +75,43 @@ public class ThemePickerAdapter extends
                 break;
         }
 
+    }
+    
+    public int getPositionForTheme(String theme)
+    {
+        int position = -1;
+        switch(theme)
+        {
+            case "bg1":
+                position = 0;
+                break;
+            case "bg2":
+                position = 1;
+                break;
+            case "bg3":
+                position = 2;
+                break;
+            case "bg4":
+                position = 3;
+                break;
+            case "bg5":
+                position = 4;
+                break;
+            case "bg6":
+                position = 5;
+                break;
+            case "bg7":
+                position = 6;
+                break;
+            case "bg8":
+                position = 7;
+                break;
+            case "bg9":
+                position = 8;
+                break;
+        }
+
+        return position;
     }
 
     // total number of rows

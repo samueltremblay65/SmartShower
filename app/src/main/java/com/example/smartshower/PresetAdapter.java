@@ -34,14 +34,14 @@ public class PresetAdapter extends
             Context context,
             List<UserPreset> presets,
             PresetClickListener presetClickListener,
-            PresetClickListener presetDeleteListener,
-            PresetClickListener presetEditListener) {
+            PresetClickListener presetEditListener,
+            PresetClickListener presetDeleteListener) {
 
         this.context = context;
         allPresets = presets;
         this.presetClickListener = presetClickListener;
         this.presetDeleteListener = presetDeleteListener;
-        this.presetEditListener = presetDeleteListener;
+        this.presetEditListener = presetEditListener;
     }
 
     // Item click listener for selecting presets
@@ -104,6 +104,13 @@ public class PresetAdapter extends
                 presetDeleteListener.onItemClick(userPreset);
             }
         });
+
+        holder.editButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                presetEditListener.onItemClick(userPreset);
+            }
+        });
     }
 
     // Returns the total count of items in the list
@@ -132,6 +139,8 @@ public class PresetAdapter extends
         
         public MaterialButton deleteButton;
 
+        public MaterialButton editButton;
+
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
         public ViewHolder(View itemView) {
@@ -148,6 +157,7 @@ public class PresetAdapter extends
             translucentBox = itemView.findViewById(R.id.presetTextContainer);
             swipeLayout = itemView.findViewById(R.id.home_swipereveallayout);
             deleteButton = itemView.findViewById(R.id.swipe_delete_button);
+            editButton = itemView.findViewById(R.id.swipe_edit_button);
         }
     }
 }
