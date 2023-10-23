@@ -224,6 +224,7 @@ public class MainActivity extends ActivityWithHeader {
 
     private void deletePresetFromDatabase(UserPreset preset)
     {
+        Log.i("Jirafi", "Delete method called");
         account.removePreset(preset);
 
         db.collection("users").document(account.getUsername()).set(account)

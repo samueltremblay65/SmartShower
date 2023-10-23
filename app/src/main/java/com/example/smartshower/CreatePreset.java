@@ -143,9 +143,27 @@ public class CreatePreset extends ActivityWithHeader {
 
                 if(editMode)
                 {
-                    // Update firebase document
+                    // Update firebase document with form values
+                    existingPreset.name = presetName;
+                    existingPreset.temp = temperature;
+                    existingPreset.flowRate = flowrate;
+                    existingPreset.theme = selectedTheme;
+                    existingPreset.secondsLimit = timerSeconds;
+                    existingPreset.tempLimit = temperatureLimit;
+
                     account.updatePreset(existingPreset);
-                    db.collection("users").document(account.getUsername()).update("presets", account.getPresets());
+                    db.collection("users").document(account.getUsername()).update("presets", account.getPresets())
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(CreatePreset.this, "Successfully created new preset", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(CreatePreset.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    CreatePreset.this.startActivity(intent);
+                                    finish();
+                                }
+                            });
+                    Toast.makeText(this, "Updating...", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -264,12 +282,6 @@ public class CreatePreset extends ActivityWithHeader {
     public void selectTheme(String themeSource)
     {
         selectedTheme = themeSource;
-        
-        int themePosition = ((ThemePickerAdapter) themePicker.getAdapter()).getPositionForTheme(themeSource);
-        if(themePosition != -1)
-        {
-            themePicker.findViewHolderForAdapterPosition(themePosition).itemView.performClick();
-        }
     }
 
     private void addPresetToDatabase(UserPreset preset) {

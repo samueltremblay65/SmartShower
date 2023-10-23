@@ -16,12 +16,12 @@ import java.util.List;
 public class ThemePickerAdapter extends
         RecyclerView.Adapter<ThemePickerAdapter.ViewHolder> {
 
-    private final LayoutInflater mInflater;
+    private LayoutInflater mInflater;
     private ThemePickerClickListener mClickListener;
 
-    private final List<String> themeSources;
+    private List<String> themeSources;
 
-    private final Context context;
+    private Context context;
 
     private MaterialCardView lastSelected;
 
