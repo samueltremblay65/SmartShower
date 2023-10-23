@@ -34,14 +34,14 @@ public class PresetAdapter extends
             Context context,
             List<UserPreset> presets,
             PresetClickListener presetClickListener,
-            PresetClickListener presetDeleteListener,
-            PresetClickListener presetEditListener) {
+            PresetClickListener presetEditListener,
+            PresetClickListener presetDeleteListener) {
 
         this.context = context;
         allPresets = presets;
         this.presetClickListener = presetClickListener;
         this.presetDeleteListener = presetDeleteListener;
-        this.presetEditListener = presetDeleteListener;
+        this.presetEditListener = presetEditListener;
     }
 
     // Item click listener for selecting presets
