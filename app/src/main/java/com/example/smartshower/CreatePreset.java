@@ -93,7 +93,7 @@ public class CreatePreset extends ActivityWithHeader {
         timerInput = findViewById(R.id.et_preset_time_limit);
 
         temperatureLimitEnable = findViewById(R.id.sw_cp_temp_limit);
-        timerEnable = findViewById(R.id.sw_cp_temp_limit);
+        timerEnable = findViewById(R.id.cp_switch_timer);
 
         createPreset = findViewById(R.id.btn_create_preset);
         discardChanges = findViewById(R.id.btn_discard_preset);
@@ -121,7 +121,7 @@ public class CreatePreset extends ActivityWithHeader {
             }
         }
 
-        EditText timerInputLayout = findViewById(R.id.ti_create_preset_time_limit);
+        TextInputLayout timerInputLayout = findViewById(R.id.ti_create_preset_time_limit);
         timerEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
@@ -134,8 +134,8 @@ public class CreatePreset extends ActivityWithHeader {
                 }
             }
         });
-        
-        EditText temperatureLimitInputLayout = findViewById(R.id.ti_create_preset_temperature_limit);
+
+        TextInputLayout temperatureLimitInputLayout = findViewById(R.id.ti_create_preset_temperature_limit);
         temperatureLimitEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)

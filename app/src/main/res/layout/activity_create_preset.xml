@@ -111,12 +111,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/addpreset_bool_timer"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:layout_marginBottom="20dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_create_preset_time_limit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
                 android:layout_marginBottom="20dp"
                 android:hint="@string/addpreset_timer"
                 android:visibility="gone">
@@ -133,20 +135,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#c0c0c0"
-                android:layout_marginVertical="20dp"/>
+                android:layout_marginBottom="20dp"/>
 
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/addpreset_bool_templimit"
                 android:id="@+id/sw_cp_temp_limit"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:layout_marginBottom="20dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_create_preset_temperature_limit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginTop="-20dp"
                 android:hint="@string/addpreset_templimit"
                 android:visibility="gone">
 
@@ -157,12 +161,6 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#c0c0c0"
-                android:layout_marginVertical="20dp"/>
 
             <Button
                 android:id="@+id/btn_discard_preset"
