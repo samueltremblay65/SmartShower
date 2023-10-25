@@ -105,6 +105,7 @@ public class MainActivity extends ActivityWithHeader {
         myIntent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
         myIntent.putExtra("flowRate", preset.flowRate); //Optional parameters
         myIntent.putExtra("timeLimit", preset.secondsLimit);
+        intent.putExtra("preset", preset);
         MainActivity.this.startActivity(myIntent);
     }
 

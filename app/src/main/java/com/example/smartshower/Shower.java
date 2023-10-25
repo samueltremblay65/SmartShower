@@ -47,6 +47,8 @@ public class Shower extends ActivityWithHeader {
     private Button editPresetButton;
     private Button startShowerButton;
 
+    private UserPreset preset;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +62,8 @@ public class Shower extends ActivityWithHeader {
         int tempLimit = intent.getIntExtra("tempLimit", 50);
         int flowRate = intent.getIntExtra("flowRate", 100);
         int timeLimit = intent.getIntExtra("timeLimit", 10);
+
+        preset = (UserPreset) getIntent().getSerializableExtra("preset");
 
         // Initializing settings variables
         this.presetId = presetId;
@@ -139,6 +143,17 @@ public class Shower extends ActivityWithHeader {
                 {
                     startShower();
                 }
+            }
+        });
+
+        editPresetButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                stopShower();
+
+                Intent intent = new Intent(Shower.this, CreatePreset.class);
+                intent.putExtra("preset", preset);
+                Shower.this.startActivity(intent);
             }
         });
 

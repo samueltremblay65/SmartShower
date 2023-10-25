@@ -83,6 +83,17 @@ public class StatisticsHome extends ActivityWithHeader {
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
         int[] dataset = calculateAverageTemperaturePerMonth();
 
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentMonth = calendar.get(Calendar.MONTH);
+        String[] currentMonthLabels = new String[12];
+        for(int i = 0; i < 12; i++)
+        {
+            currentMonthLabels[i] = monthLabels[(i + currentMonth + 1) % 12];
+        }
+
         // Get monthly shower data
 
         int i = 0;
@@ -111,7 +122,7 @@ public class StatisticsHome extends ActivityWithHeader {
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return monthLabels[(int) value];
+                return currentMonthLabels[(int) value];
             }
         });
 
@@ -159,6 +170,18 @@ public class StatisticsHome extends ActivityWithHeader {
         ArrayList<Entry> entries = new ArrayList<>();
 
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentMonth = calendar.get(Calendar.MONTH);
+        String[] currentMonthLabels = new String[12];
+        for(int i = 0; i < 12; i++)
+        {
+            currentMonthLabels[i] = monthLabels[(i + currentMonth + 1) % 12];
+        }
+
         int[] dataset = calculateAverageDurationPerMonth();
 
         // Get monthly shower data
@@ -189,7 +212,7 @@ public class StatisticsHome extends ActivityWithHeader {
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return monthLabels[(int) value];
+                return currentMonthLabels[(int) value];
             }
         });
 
