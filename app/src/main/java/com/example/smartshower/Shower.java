@@ -150,19 +150,21 @@ public class Shower extends ActivityWithHeader {
                 // Runs every 1000 ms
                 if(isOn)
                 {
-                    timerSeconds--;
+                    if(timerSeconds != -1)
+                    {
+                        timerSeconds--;
+                        if(timerSeconds == 0)
+                        {
+                            stopShower();
+                            this.cancel();
+                        }
+                    }
 
                     // Update statistics
                     session.update(currentTemp, currentFlow);
 
                     // Update timer text
                     timerDisplay.setText(formatTime(timerSeconds));
-
-                    if(timerSeconds <= 0)
-                    {
-                        stopShower();
-                        this.cancel();
-                    }
                 }
             }
         }, 0, 1000);
