@@ -64,13 +64,13 @@ public class MainActivity extends ActivityWithHeader {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         int userId = preferences.getInt(getString(R.string.keys_account_id), 0);
 
-        getUserAccountFromDatabase();
-
         if(userId == 0)
         {
             Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);
             MainActivity.this.startActivity(myIntent);
         }
+
+        getUserAccountFromDatabase();
 
         setContentView(R.layout.activity_main);
 
@@ -99,14 +99,14 @@ public class MainActivity extends ActivityWithHeader {
     // Starts the shower activity passing in the preset information
     // TODO: Should we get the other info from the preset ID?
     public void startPresetShower(UserPreset preset) {
-        Intent myIntent = new Intent(MainActivity.this, Shower.class);
-        myIntent.putExtra("presetId", preset.uid); //Optional parameters
-        myIntent.putExtra("temperature", preset.temp); //Optional parameters
-        myIntent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
-        myIntent.putExtra("flowRate", preset.flowRate); //Optional parameters
-        myIntent.putExtra("timeLimit", preset.secondsLimit);
+        Intent intent = new Intent(MainActivity.this, Shower.class);
+        intent.putExtra("presetId", preset.uid); //Optional parameters
+        intent.putExtra("temperature", preset.temp); //Optional parameters
+        intent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
+        intent.putExtra("flowRate", preset.flowRate); //Optional parameters
+        intent.putExtra("timeLimit", preset.secondsLimit);
         intent.putExtra("preset", preset);
-        MainActivity.this.startActivity(myIntent);
+        MainActivity.this.startActivity(intent);
     }
 
     public void deletePreset(UserPreset preset) {
@@ -264,8 +264,8 @@ public class MainActivity extends ActivityWithHeader {
     {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         String username = preferences.getString(getString(R.string.keys_account_username), "");
-
-        Log.i("Jirafi", "Username: " + username);
+        
+        Log.i("JirafUsername", username);
 
         DocumentReference docRef = db.collection("users").document(username);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
