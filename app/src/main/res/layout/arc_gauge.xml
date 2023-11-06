@@ -17,6 +17,7 @@
         android:id="@+id/tv_gauge_explanation"
         android:text=""
         android:layout_width="260dp"
+        android:textAlignment="center"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content" />
 

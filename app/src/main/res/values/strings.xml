@@ -58,4 +58,5 @@
     <string name="keys_account_id">accountId</string>
     <string name="keys_account_username">accountUsername</string>
     <string name="keys_account_password">accountPassword</string>
+    <string name="view_history">View shower history</string>
 </resources>

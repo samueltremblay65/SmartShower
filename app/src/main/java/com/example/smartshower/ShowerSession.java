@@ -23,7 +23,7 @@ public class ShowerSession {
 
     public int getWaterUsage()
     {
-        return getDuration() / 8;
+        return getDuration() * getAverageFlowrate() / 8 / 100;
     }
 
     public int getEnergy()
@@ -41,6 +41,15 @@ public class ShowerSession {
         for(ShowerInstant instant: showerData)
         {
             total += instant.temperature;
+        }
+        return total / showerData.size();
+    }
+
+    public int getAverageFlowrate() {
+        int total = 0;
+        for(ShowerInstant instant: showerData)
+        {
+            total += instant.flow;
         }
         return total / showerData.size();
     }
