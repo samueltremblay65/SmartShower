@@ -19,6 +19,9 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 public class SignupActivity extends AppCompatActivity {
@@ -43,8 +46,6 @@ public class SignupActivity extends AppCompatActivity {
 
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.shower_blue300));
-
-
 
         int[][] states = new int[][] {
                 new int[] { android.R.attr.state_active}, // Normal state
@@ -113,5 +114,14 @@ public class SignupActivity extends AppCompatActivity {
     public void createUserAccount(UserAccount account)
     {
         db.collection("users").document(account.getUsername()).set(account);
+        HashMap<String, Object> statsMap = new HashMap<>();
+        statsMap.put("accountCreationDate", Calendar.getInstance().getTime().getTime());
+        db.collection("statistics").document(Integer.toString(account.getUserId())).set(statsMap);
+
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.accounts_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.keys_account_id), account.getUserId());
+        editor.putString(getString(R.string.keys_account_username), account.getUsername());
+        editor.commit();
     }
 }

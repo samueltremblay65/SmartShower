@@ -7,8 +7,10 @@ import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,9 +18,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.Slider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,26 +55,30 @@ public class Shower extends ActivityWithHeader {
     private Button editPresetButton;
     private Button startShowerButton;
 
+    private UserPreset preset;
+
+    private FirebaseFirestore db;
+
+    private UserAccount account;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shower);
         super.setupUIElements();
 
-        // Get extra variables
-        Intent intent = this.getIntent();
-        int presetId = intent.getIntExtra("presetId", 0);
-        int temp = intent.getIntExtra("temperature", 30);
-        int tempLimit = intent.getIntExtra("tempLimit", 50);
-        int flowRate = intent.getIntExtra("flowRate", 100);
-        int timeLimit = intent.getIntExtra("timeLimit", 10);
+        preset = (UserPreset) getIntent().getSerializableExtra("preset");
+
+        db = FirebaseFirestore.getInstance();
+
+        getUserAccountFromDatabase();
 
         // Initializing settings variables
-        this.presetId = presetId;
-        timerSeconds = timeLimit;
-        currentFlow = flowRate;
-        currentTemp = temp;
-        maxTemp = tempLimit;
+        presetId = preset.uid;
+        timerSeconds = preset.secondsLimit;
+        currentFlow = preset.flowRate;
+        currentTemp = preset.temp;
+        maxTemp = preset.tempLimit;
 
         // Initializing layout elements
         timerDisplay = findViewById(R.id.shower_clock);
@@ -81,7 +93,7 @@ public class Shower extends ActivityWithHeader {
         // Layout element set up
         flowRateSlider.setValueFrom(0);
         flowRateSlider.setValueTo(100);
-        flowRateSlider.setValue(flowRate);
+        flowRateSlider.setValue(currentFlow);
 
         // Initialize indicators to preset settings
         updateTempDisplay();
@@ -142,6 +154,17 @@ public class Shower extends ActivityWithHeader {
             }
         });
 
+        editPresetButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                stopShower();
+
+                Intent intent = new Intent(Shower.this, CreatePreset.class);
+                intent.putExtra("preset", preset);
+                Shower.this.startActivity(intent);
+            }
+        });
+
         // Setting timer code
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @SuppressLint("DefaultLocale")
@@ -187,8 +210,13 @@ public class Shower extends ActivityWithHeader {
 
     private void stopShower()
     {
+        if(isOn)
+        {
+            saveStatistics();
+        }
+        
         isOn = false;
-        saveStatistics();
+        
         // Should save shower session to database
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));
         startShowerButton.setText(getResources().getText(R.string.start_shower));
@@ -222,15 +250,52 @@ public class Shower extends ActivityWithHeader {
             @Override
             protected Void doInBackground(Void... voids) {
 
+                if(session.showerData.isEmpty())
+                {
+                    return null;
+                }
+
                 // Adding to database
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                AppDatabase appDb = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
                 Statistics statistics = new Statistics(session);
-                db.statisticsDao().insertAll(statistics);
+
+                appDb.statisticsDao().insertAll(statistics);
+
+                DocumentReference docRef = db.collection("statistics").document(Integer.toString(account.getUserId()));
+
+                HashMap<String, Object> statsMap = new HashMap<String, Object>();
+                statsMap.put(Long.toString(session.getDateTime()), statistics);
+                docRef.update(statsMap);
                 return null;
             }
         }
 
         SaveStatisticsTask task = new SaveStatisticsTask();
         task.execute();
+    }
+
+    private void getUserAccountFromDatabase()
+    {
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
+        String username = preferences.getString(getString(R.string.keys_account_username), "");
+
+        DocumentReference docRef = db.collection("users").document(username);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                account = documentSnapshot.toObject(UserAccount.class);
+
+                if(account == null)
+                {
+                    throw new IllegalStateException("Could not find user account");
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 }
