@@ -264,8 +264,6 @@ public class MainActivity extends ActivityWithHeader {
     {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         String username = preferences.getString(getString(R.string.keys_account_username), "");
-        
-        Log.i("JirafUsername", username);
 
         DocumentReference docRef = db.collection("users").document(username);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

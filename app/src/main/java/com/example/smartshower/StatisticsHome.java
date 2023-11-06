@@ -1,6 +1,7 @@
 package com.example.smartshower;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -8,7 +9,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -23,11 +26,17 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -40,11 +49,21 @@ public class StatisticsHome extends ActivityWithHeader {
     private ViewPager2 gaugePager;
     private FragmentStateAdapter gaugePagerAdapter;
 
+    private UserAccount account;
+    private FirebaseFirestore db;
+    Context context;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics_home);
         super.setupUIElements();
+
+        context = getApplicationContext();
+
+        db = FirebaseFirestore.getInstance();
+        getUserAccountFromDatabase();
 
         // Set the header text in the parent class
         this.setHeader("Statistics");
@@ -56,10 +75,36 @@ public class StatisticsHome extends ActivityWithHeader {
 
         gaugePagerAdapter = new StatisticsHome.ScreenSlidePagerAdapter(this);
         gaugePager.setAdapter(gaugePagerAdapter);
+        
+        allStatistics = new ArrayList<>();
 
         // Use following line to generate a year's worth of example shower data in the database
-        populateStatisticsWithExampleData();
-        loadStatistics();
+        // populateStatisticsWithExampleData();
+    }
+
+    private void getUserAccountFromDatabase() {
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
+        String username = preferences.getString(getString(R.string.keys_account_username), "");
+
+        DocumentReference docRef = db.collection("users").document(username);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                account = documentSnapshot.toObject(UserAccount.class);
+
+                if (account == null) {
+                    throw new IllegalStateException("Could not find user account");
+                }
+
+                loadStatistics();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     private void createAverageTemperatureChart()
@@ -81,7 +126,7 @@ public class StatisticsHome extends ActivityWithHeader {
         ArrayList<Entry> entries = new ArrayList<>();
 
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
-        int[] dataset = calculateAverageTemperaturePerMonth();
+        DataPoint<Integer>[] dataset = calculateAverageTemperaturePerMonth();
 
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -89,16 +134,25 @@ public class StatisticsHome extends ActivityWithHeader {
 
         int currentMonth = calendar.get(Calendar.MONTH);
         String[] currentMonthLabels = new String[12];
+        ArrayList<DataPoint<Integer>> currentMonthSortedData = new ArrayList<>();
+
+        int minTemperature = 16;
+
         for(int i = 0; i < 12; i++)
         {
             currentMonthLabels[i] = monthLabels[(i + currentMonth + 1) % 12];
+            currentMonthSortedData.add(dataset[(i + currentMonth + 1) % 12]);
+            if(dataset[i].isValid && dataset[i].value < minTemperature)
+                minTemperature = dataset[i].value;
         }
 
-        // Get monthly shower data
-
-        int i = 0;
-        for (int data: dataset) {
-            entries.add(new Entry(i, data));
+        int i = 1;
+        for (DataPoint<Integer> data: currentMonthSortedData) {
+            int currentX = i;
+            if(data.isValid)
+            {
+                entries.add(new Entry(currentX, data.value));
+            }
             i++;
         }
 
@@ -106,123 +160,41 @@ public class StatisticsHome extends ActivityWithHeader {
         Description description = new Description();
         description.setText("");
         chart.setDescription(description);
-        chart.disableScroll();
         chart.getLegend().setTextSize(16);
 
         // Dataset and related properties
-        LineDataSet dataSet = new LineDataSet(entries, "Average temperature");
+        LineDataSet dataSet = new LineDataSet(entries, "Average temperature (°C)");
         dataSet.setCircleRadius(6);
         dataSet.setValueTextSize(0);
 
         // Left axis
         XAxis xAxis = chart.getXAxis();
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(13f);
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextSize(12);
         xAxis.setDrawGridLines(false);
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return currentMonthLabels[(int) value];
+                if(value == 0 || value > 12)
+                {
+                    return "";
+                }
+                return currentMonthLabels[(int) value - 1];
             }
         });
 
         // Right axis
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setEnabled(false);
-        rightAxis.setDrawGridLines(false);
+        rightAxis.setDrawGridLines(true);
         YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setAxisMinimum(minTemperature);
         leftAxis.setTextSize(12);
-        leftAxis.setDrawGridLines(false);
-
-        // Do the thing with the chart
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate(); // refresh
-    }
-
-    private void createAverageDurationChart()
-    {
-        // Generate label
-        TextView label = new TextView(getApplicationContext());
-        label.setText(R.string.statistics_labels_monthly_duration);
-        label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
-        label.setTypeface(null, Typeface.BOLD);
-
-        // Set label top margin
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        float top = 24.0f;
-        float dpRatio = getApplicationContext().getResources().getDisplayMetrics().density;
-        int pixelsForDp = (int)(top * dpRatio);
-
-        params.setMargins(0, pixelsForDp,0,0);
-        label.setLayoutParams(params);
-
-        statisticsLayout.addView(label);
-
-        // Inflate chart and insert data
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
-
-        statisticsLayout.addView(chart);
-
-        ArrayList<Entry> entries = new ArrayList<>();
-
-        String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
-
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        int currentMonth = calendar.get(Calendar.MONTH);
-        String[] currentMonthLabels = new String[12];
-        for(int i = 0; i < 12; i++)
-        {
-            currentMonthLabels[i] = monthLabels[(i + currentMonth + 1) % 12];
-        }
-
-        int[] dataset = calculateAverageDurationPerMonth();
-
-        // Get monthly shower data
-
-        int i = 0;
-        for (int data: dataset) {
-            entries.add(new Entry(i, data));
-            i++;
-        }
-
-        // Main chart properties
-        Description description = new Description();
-        description.setText("");
-        chart.setDescription(description);
-        chart.disableScroll();
-        chart.getLegend().setTextSize(16);
-
-        // Dataset and related properties
-        LineDataSet dataSet = new LineDataSet(entries, "Average duration");
-        dataSet.setCircleRadius(6);
-        dataSet.setValueTextSize(0);
-
-        // Left axis
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextSize(12);
-        xAxis.setDrawGridLines(false);
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return currentMonthLabels[(int) value];
-            }
-        });
-
-        // Right axis
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setEnabled(false);
-        rightAxis.setDrawGridLines(false);
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setTextSize(12);
-        leftAxis.setDrawGridLines(false);
+        leftAxis.setDrawGridLines(true);
 
         // Do the thing with the chart
         LineData lineData = new LineData(dataSet);
@@ -277,18 +249,20 @@ public class StatisticsHome extends ActivityWithHeader {
         }
     }
 
-    public int[] calculateAverageTemperaturePerMonth()
+    public DataPoint<Integer>[] calculateAverageTemperaturePerMonth()
     {
         List<Integer>[] monthDividedStatistics = new List[12];
         for(int i = 0; i < 12; i++)
         {
             monthDividedStatistics[i] = new ArrayList<Integer>();
         }
+
         for (Statistics statistic: allStatistics) {
             int month = statistic.getMonth();
             monthDividedStatistics[month].add(statistic.averageTemperature);
         }
-        int[] monthAverages = new int[12];
+
+        DataPoint<Integer>[] monthAverages = new DataPoint[12];
         for(int i = 0; i < 12; i++)
         {
             monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
@@ -296,32 +270,17 @@ public class StatisticsHome extends ActivityWithHeader {
         return monthAverages;
     }
 
-    public int[] calculateAverageDurationPerMonth()
+    public DataPoint<Integer> calculateAverage(List<Integer> values)
     {
-        List<Integer>[] monthDividedStatistics = new List[12];
-        for(int i = 0; i < 12; i++)
+        if(values.isEmpty())
         {
-            monthDividedStatistics[i] = new ArrayList<Integer>();
+            return new DataPoint();
         }
-        for (Statistics statistic: allStatistics) {
-            int month = statistic.getMonth();
-            monthDividedStatistics[month].add(statistic.duration);
-        }
-        int[] monthAverages = new int[12];
-        for(int i = 0; i < 12; i++)
-        {
-            monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
-        }
-        return monthAverages;
-    }
-
-    public int calculateAverage(List<Integer> values)
-    {
         int sum = 0;
         for (Integer value: values) {
             sum += value;
         }
-        return sum / values.size();
+        return new DataPoint<Integer>(sum / values.size());
     }
 
     public int calculateAverageDuration()
@@ -348,7 +307,7 @@ public class StatisticsHome extends ActivityWithHeader {
     public void showStatistics()
     {
         createAverageTemperatureChart();
-        createAverageDurationChart();
+        // createAverageDurationChart();
     }
 
     // Database tasks
@@ -357,22 +316,51 @@ public class StatisticsHome extends ActivityWithHeader {
             @Override
             protected Void doInBackground(Void... voids) {
 
-                // Adding to database
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                allStatistics = db.statisticsDao().getAll();
-
+                // AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
+                // allStatistics = db.statisticsDao().getAll();
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void results)
             {
-                showStatistics();
+                // ShowStatistics
             }
         }
 
-        LoadStatisticsTask task = new LoadStatisticsTask();
-        task.execute();
+        DocumentReference docRef = db.collection("statistics").document(Integer.toString(account.getUserId()));
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                HashMap<String, Object> data = (HashMap<String, Object>) documentSnapshot.getData();
+
+                if(data.containsKey("accountCreationDate"))
+                    data.remove("accountCreationDate");
+
+                for (Object value : data.values()) {
+                    HashMap<String, Object> statisticsObject = (HashMap<String, Object>) value;
+
+                    int presetId = (int)(long) statisticsObject.get("presetId");
+                    int duration = (int)(long) statisticsObject.get("duration");
+                    int averageTemperature = (int)(long) statisticsObject.get("averageTemperature");
+                    float waterUsage = (float)(double) statisticsObject.get("waterUsage");
+                    long dateTime = (long) statisticsObject.get("dateTime");
+
+                    Statistics statistic = new Statistics(presetId, duration, averageTemperature, 0, waterUsage, dateTime);
+                    allStatistics.add(statistic);
+                }
+                
+                showStatistics();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+        
+        // LoadStatisticsTask task = new LoadStatisticsTask();
+        // task.execute();
     }
     // Class with methods to populate database with example shower data
     private void populateStatisticsWithExampleData() {
@@ -384,6 +372,17 @@ public class StatisticsHome extends ActivityWithHeader {
                 random = new Random();
 
                 exampleStatistics = generateExampleStatistics();
+
+                DocumentReference docRef = db.collection("statistics").document(Integer.toString(account.getUserId()));
+
+                HashMap<String, Object> statsMap = new HashMap<String, Object>();
+                
+                for(Statistics statistic: exampleStatistics)
+                {
+                    statsMap.put(Long.toString(statistic.dateTime), statistic);
+                }
+                
+                docRef.update(statsMap);
 
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
@@ -485,5 +484,27 @@ public class StatisticsHome extends ActivityWithHeader {
 
         populateStatisticsTask task = new populateStatisticsTask();
         task.execute();
+    }
+
+    private class DataPoint<T>
+    {
+        boolean isValid;
+        T value;
+
+        private DataPoint(T data)
+        {
+            this.isValid = true;
+            value = data;
+        }
+
+        private DataPoint()
+        {
+            this.isValid = false;
+        }
+
+        private void invalidate()
+        {
+            this.isValid = false;
+        }
     }
 }
