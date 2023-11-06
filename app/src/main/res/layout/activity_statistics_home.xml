@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="12dp">
 
     <!-- MAIN PART -->
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/header"/>
-
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/statistics_home_ll">
 
-            <LinearLayout
+            <include layout="@layout/header"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/heading3"
+                android:text="Today"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_stats_gauges"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/statistics_home_ll">
+                android:layout_marginBottom="30dp" />
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/vp_stats_gauges"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="30dp" />
+        </LinearLayout>
 
-            </LinearLayout>
+    </ScrollView>
 
-        </ScrollView>
+    <LinearLayout
+        android:id="@+id/bottom_menu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_home_viewStatistics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/gray"
+            android:padding="10dp"
+            android:text="@string/view_history"
+            android:textColor="@color/black"
+            android:textColorHighlight="#F44336"
+            android:textColorHint="#000000"
+            android:textColorLink="#000000"
+            android:textSize="20sp"
+            app:cornerRadius="10dp"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 </RelativeLayout>

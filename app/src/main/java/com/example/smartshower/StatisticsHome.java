@@ -43,8 +43,6 @@ import java.util.Random;
 
 public class StatisticsHome extends ActivityWithHeader {
 
-    private List<Statistics> allStatistics;
-
     private LinearLayout statisticsLayout;
 
     private ViewPager2 gaugePager;
@@ -54,6 +52,8 @@ public class StatisticsHome extends ActivityWithHeader {
     private FirebaseFirestore db;
     Context context;
 
+    StatisticsCompiler statisticsCompiler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +61,12 @@ public class StatisticsHome extends ActivityWithHeader {
         setContentView(R.layout.activity_statistics_home);
         super.setupUIElements();
 
+        removeBottomMargin();
+
         context = getApplicationContext();
 
         db = FirebaseFirestore.getInstance();
-        getUserAccountFromDatabase();
+        getDataFromDatabase();
 
         // Set the header text in the parent class
         this.setHeader("Statistics");
@@ -74,16 +76,11 @@ public class StatisticsHome extends ActivityWithHeader {
         // View pager setup
         gaugePager = findViewById(R.id.vp_stats_gauges);
 
-        gaugePagerAdapter = new StatisticsHome.ScreenSlidePagerAdapter(this);
-        gaugePager.setAdapter(gaugePagerAdapter);
-        
-        allStatistics = new ArrayList<>();
-
         // Use following line to generate a year's worth of example shower data in the database
         // populateStatisticsWithExampleData();
     }
 
-    private void getUserAccountFromDatabase() {
+    private void getDataFromDatabase() {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         String username = preferences.getString(getString(R.string.keys_account_username), "");
 
@@ -127,7 +124,7 @@ public class StatisticsHome extends ActivityWithHeader {
         ArrayList<Entry> entries = new ArrayList<>();
 
         String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
-        DataPoint<Integer>[] dataset = calculateAverageTemperaturePerMonth();
+        DataPoint<Integer>[] dataset = statisticsCompiler.calculateAverageTemperaturePerMonth();
 
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -221,23 +218,34 @@ public class StatisticsHome extends ActivityWithHeader {
             switch (position) {
                 case 0:
                     title = "Water usage";
-                    currentValue = 45;
+                    currentValue = statisticsCompiler.todayWaterUsage;
                     unit = "L";
-                    message = "You have used 40 litres of water today. This is 30% less than your average usage.";
+                    maxValue = 100;
+                    message = String.format("You have used %.1f litres of water today. This is %d %% less than your average usage.", currentValue, 30);
                     break;
                 case 1:
                     title = "Total shower time";
-                    currentValue = 14;
+                    currentValue = statisticsCompiler.todayTotalDuration / 60;
                     maxValue = 60;
                     unit = " mins";
                     color = Color.GREEN;
+                    message = String.format("You have spent %.0f minutes in the shower today. This is %d%% less than your average usage.", currentValue, 30);
                     break;
                 case 2:
-                    title = "Cost of operation";
-                    currentValue = 2.12f;
-                    maxValue = 5;
-                    unit = "$";
-                    color = Color.YELLOW;
+                    title = "Average shower duration";
+                    currentValue = statisticsCompiler.todayAverageDuration / 60;
+                    maxValue = 60;
+                    unit = " mins";
+                    color = Color.GREEN;
+                    message = String.format("Your average shower duration today was %.0f minutes. This is %d%% less than your average usage.", currentValue, 30);
+                    break;
+                case 3:
+                    title = "Average water temperature";
+                    currentValue = statisticsCompiler.todayAverageTemperature;
+                    maxValue = 60;
+                    unit = "°C";
+                    color = context.getColor(R.color.light_red);
+                    message = String.format("Your average shower water temperature was %.0f°C today. This is %d%% less than your average usage.", currentValue, 30);
                     break;
             }
             return new GaugeFragment(title, currentValue, maxValue, unit, color, message);
@@ -245,87 +253,17 @@ public class StatisticsHome extends ActivityWithHeader {
 
         @Override
         public int getItemCount() {
-            return 3;
+            return 4;
         }
-    }
-
-    public DataPoint<Integer>[] calculateAverageTemperaturePerMonth()
-    {
-        List<Integer>[] monthDividedStatistics = new List[12];
-        for(int i = 0; i < 12; i++)
-        {
-            monthDividedStatistics[i] = new ArrayList<Integer>();
-        }
-
-        for (Statistics statistic: allStatistics) {
-            int month = statistic.getMonth();
-            monthDividedStatistics[month].add(statistic.averageTemperature);
-        }
-
-        DataPoint<Integer>[] monthAverages = new DataPoint[12];
-        for(int i = 0; i < 12; i++)
-        {
-            monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
-        }
-        return monthAverages;
-    }
-
-    public DataPoint<Integer> calculateAverage(List<Integer> values)
-    {
-        if(values.isEmpty())
-        {
-            return new DataPoint();
-        }
-        int sum = 0;
-        for (Integer value: values) {
-            sum += value;
-        }
-        return new DataPoint<Integer>(sum / values.size());
-    }
-
-    public int calculateAverageDuration()
-    {
-        int sum = 0;
-        for(Statistics statistic: allStatistics)
-        {
-            sum += statistic.duration;
-        }
-        return sum / allStatistics.size();
-    }
-
-    public int calculateAverageWaterUsage()
-    {
-        return calculateAverageDuration() * 7 / 60;
-    }
-
-    public int calculateAverageWaterUsagePerDay()
-    {
-        int sum = 0;
-        for(Statistics statistic: allStatistics)
-        {
-            sum += statistic.duration;
-        }
-        return sum / 365; // TODO: calculate the number of days from the first day
-    }
-
-    public int calculateAverageTemperature()
-    {
-        int sum = 0;
-        for(Statistics statistic: allStatistics)
-        {
-            sum += statistic.averageTemperature;
-        }
-        return sum / allStatistics.size();
-    }
-
-    public int numberShowers()
-    {
-        return allStatistics.size();
     }
 
     // This method calls the creation of all graphs in the home activity
     public void showStatistics()
     {
+        // Showing gauges
+        gaugePagerAdapter = new StatisticsHome.ScreenSlidePagerAdapter(this);
+        gaugePager.setAdapter(gaugePagerAdapter);
+
         createAverageTemperatureChart();
         // createAverageDurationChart();
     }
@@ -353,6 +291,7 @@ public class StatisticsHome extends ActivityWithHeader {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 HashMap<String, Object> data = (HashMap<String, Object>) documentSnapshot.getData();
+                List<Statistics> allStatistics = new ArrayList<Statistics>();
 
                 if(data.containsKey("accountCreationDate"))
                     data.remove("accountCreationDate");
@@ -369,7 +308,8 @@ public class StatisticsHome extends ActivityWithHeader {
                     Statistics statistic = new Statistics(presetId, duration, averageTemperature, 0, waterUsage, dateTime);
                     allStatistics.add(statistic);
                 }
-                
+
+                statisticsCompiler = new StatisticsCompiler(allStatistics);
                 showStatistics();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -557,27 +497,5 @@ public class StatisticsHome extends ActivityWithHeader {
 
         populateStatisticsTask task = new populateStatisticsTask();
         task.execute();
-    }
-
-    private class DataPoint<T>
-    {
-        boolean isValid;
-        T value;
-
-        private DataPoint(T data)
-        {
-            this.isValid = true;
-            value = data;
-        }
-
-        private DataPoint()
-        {
-            this.isValid = false;
-        }
-
-        private void invalidate()
-        {
-            this.isValid = false;
-        }
     }
 }

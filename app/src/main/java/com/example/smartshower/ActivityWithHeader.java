@@ -133,9 +133,9 @@ public class ActivityWithHeader extends AppCompatActivity {
     public void removeBottomMargin()
     {
         LinearLayout mainLayout = findViewById(R.id.home_header);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
         // Convert desired value in dp to pixels
@@ -153,9 +153,9 @@ public class ActivityWithHeader extends AppCompatActivity {
     public void setSmallBottomMargin()
     {
         LinearLayout mainLayout = findViewById(R.id.home_header);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
         // Convert desired value in dp to pixels
