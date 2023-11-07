@@ -1,6 +1,7 @@
 package com.example.smartshower;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -8,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +56,6 @@ public class StatisticsHome extends ActivityWithHeader {
     Context context;
 
     StatisticsCompiler statisticsCompiler;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -310,6 +312,7 @@ public class StatisticsHome extends ActivityWithHeader {
                 }
 
                 statisticsCompiler = new StatisticsCompiler(allStatistics);
+                setupHistoryButton();
                 showStatistics();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -321,6 +324,20 @@ public class StatisticsHome extends ActivityWithHeader {
         
         // LoadStatisticsTask task = new LoadStatisticsTask();
         // task.execute();
+    }
+
+    private void setupHistoryButton()
+    {
+        Button historyButton = findViewById(R.id.btn_goto_history);
+
+        ArrayList<Statistics> history = statisticsCompiler.getLatestShowerStatistics(10);
+
+        historyButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StatisticsHome.this, ShowerHistory.class);
+            intent.putExtra("history", history);
+            StatisticsHome.this.startActivity(intent);
+        });
+
     }
     // Class with methods to populate database with example shower data
     private void populateStatisticsWithExampleData() {

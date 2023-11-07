@@ -30,8 +30,9 @@ import java.util.Date;
 public class ActivityWithHeader extends AppCompatActivity {
     ImageView accountButton;
     TextView header;
-
     String displayName;
+
+    StatisticsCompiler statisticsCompiler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
