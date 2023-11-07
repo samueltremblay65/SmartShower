@@ -62,6 +62,11 @@ public class StatisticsCompiler {
         todayWaterUsage = 0;
         todayAverageDuration = 0;
 
+        if(todayStatistics.isEmpty())
+        {
+            return;
+        }
+
         for(Statistics statistic: todayStatistics)
         {
             todayAverageTemperature += statistic.averageTemperature;

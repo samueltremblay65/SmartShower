@@ -38,7 +38,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull HistoryAdapter.ViewHolder holder, int position) {
         Statistics statistic = history.get(position);
+
+        String dateString;
         holder.dateTextView.setText(statistic.parseDate().toString());
+        
+        String descriptionString;
+
+        descriptionString = String.format("%.1f litres of water used | %d°C average temperature", statistic.waterUsage, statistic.averageTemperature);
+        holder.descriptionTextView.setText(descriptionString);
+
+        String durationString = String.format("%d'%02d\"", statistic.duration / 60, statistic.duration % 60);
+        holder.durationTextView.setText(durationString);
+        
     }
 
     // Returns the total count of items in the list
