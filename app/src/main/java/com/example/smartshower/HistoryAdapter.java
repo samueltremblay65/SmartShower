@@ -49,7 +49,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
         String durationString = String.format("%d'%02d\"", statistic.duration / 60, statistic.duration % 60);
         holder.durationTextView.setText(durationString);
-        
     }
 
     // Returns the total count of items in the list

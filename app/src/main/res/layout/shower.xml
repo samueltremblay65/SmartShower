@@ -9,9 +9,9 @@
     <LinearLayout
         android:id="@+id/shower_layoutMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/shower_bottom_buttons"
         android:orientation="vertical">
-
         <include layout="@layout/header"/>
 
         <TextView
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:text="water flow: 80%"
             android:textAlignment="center"
             android:textSize="20sp" />
@@ -83,9 +83,18 @@
             app:labelBehavior="gone"
             android:layout_marginRight="20dp"/>
 
+        <com.github.mikephil.charting.charts.LineChart
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/shower_livechart"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginVertical="30dp">
+
+        </com.github.mikephil.charting.charts.LineChart>
+
     </LinearLayout>
 
-    <LinearLayout
+    <LinearLayout android:id="@+id/shower_bottom_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -122,6 +131,4 @@
             tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
-
-
 </RelativeLayout>
