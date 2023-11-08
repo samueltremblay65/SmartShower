@@ -92,6 +92,7 @@ public class MainActivity extends ActivityWithHeader {
 
         showStatsButton.setOnClickListener(v -> {
             Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
+
             MainActivity.this.startActivity(myIntent);
         });
     }

@@ -5,10 +5,11 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-public class Statistics {
+public class Statistics implements Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "uid")
     public int uid;

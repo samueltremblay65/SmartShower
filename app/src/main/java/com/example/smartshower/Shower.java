@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,6 +20,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,6 +37,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -61,6 +74,8 @@ public class Shower extends ActivityWithHeader {
 
     private UserAccount account;
 
+    private LineChart chart;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +87,8 @@ public class Shower extends ActivityWithHeader {
         db = FirebaseFirestore.getInstance();
 
         getUserAccountFromDatabase();
+        
+        createLiveChart();
 
         // Initializing settings variables
         presetId = preset.uid;
@@ -186,11 +203,75 @@ public class Shower extends ActivityWithHeader {
                     // Update statistics
                     session.update(currentTemp, currentFlow);
 
+                    LineData data = chart.getData();
+                    ILineDataSet set = data.getDataSetByIndex(0);
+                    data.addEntry(new Entry(set.getEntryCount(), currentTemp), 0);
+                    data.notifyDataChanged();
+                    chart.getXAxis().setAxisMinimum(Math.max(0, set.getEntryCount() - 25));
+                    if(set.getEntryCount() < 25)
+                    {
+                        chart.getXAxis().setAxisMaximum(30);
+                    }
+                    else
+                    {
+                        chart.getXAxis().setAxisMaximum(set.getEntryCount() + 5);
+                    }
+
+                    // let the chart know it's data has changed
+                    chart.notifyDataSetChanged();
+                    chart.moveViewToX(data.getEntryCount());
+
                     // Update timer text
                     timerDisplay.setText(formatTime(timerSeconds));
                 }
             }
         }, 0, 1000);
+    }
+    public void createLiveChart()
+    {
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+        
+        chart = findViewById(R.id.shower_livechart);
+
+        // Main chart properties
+        chart.getLegend().setTextSize(16);
+
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        LineDataSet dataSet = new LineDataSet(entries, "Average temperature (°C)");
+        dataSet.setCircleRadius(4);
+        dataSet.setValueTextSize(0);
+
+        // Left axis
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(15f);
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTextSize(12);
+
+        // Right axis
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawGridLines(true);
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setTextSize(12);
+        leftAxis.setAxisMinimum(currentTemp - 5);
+        leftAxis.setAxisMaximum(40);
+        leftAxis.setDrawGridLines(true);
+
+        chart.getXAxis().setAxisMinimum(0);
+        chart.getXAxis().setAxisMaximum(30);
+
+        // Do the thing with the chart
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate(); // refresh
     }
 
     @SuppressLint("DefaultLocale")
@@ -289,7 +370,6 @@ public class Shower extends ActivityWithHeader {
                 {
                     throw new IllegalStateException("Could not find user account");
                 }
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

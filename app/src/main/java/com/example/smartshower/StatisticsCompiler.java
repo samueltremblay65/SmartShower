@@ -3,7 +3,8 @@ package com.example.smartshower;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
+import static java.lang.Math.max;
 import java.util.List;
 
 public class StatisticsCompiler {
@@ -29,6 +30,8 @@ public class StatisticsCompiler {
     {
         this.allStatistics = allStatistics;
 
+        allStatistics.sort(new StatisticDateComparator());
+
         todayStatistics = new ArrayList<Statistics>();
 
         for(Statistics statistic: allStatistics)
@@ -42,12 +45,27 @@ public class StatisticsCompiler {
         calculateTodayStatistics();
     }
 
+    public ArrayList<Statistics> getLatestShowerStatistics(int n)
+    {
+        ArrayList<Statistics> latestShowerData = new ArrayList<Statistics>();
+        for(int i = Math.max(0, allStatistics.size() - n - 1); i < allStatistics.size(); i++)
+        {
+            latestShowerData.add(allStatistics.get(i));
+        }
+        return latestShowerData;
+    }
+
     public void calculateTodayStatistics()
     {
         todayAverageTemperature = 0;
         todayCost = 0;
         todayWaterUsage = 0;
         todayAverageDuration = 0;
+
+        if(todayStatistics.isEmpty())
+        {
+            return;
+        }
 
         for(Statistics statistic: todayStatistics)
         {
@@ -148,5 +166,12 @@ public class StatisticsCompiler {
             waterUsage += statistic.waterUsage;
         }
         return waterUsage;
+    }
+
+    private class StatisticDateComparator implements Comparator<Statistics> {
+        @Override
+        public int compare(Statistics o1, Statistics o2) {
+            return Long.compare(o1.dateTime, o2.dateTime);
+        }
     }
 }
