@@ -75,6 +75,7 @@ public class UserAccount {
             {
                 presets.remove(i);
                 presets.add(i, updatedPreset);
+                return;
             }
         }
     }
