@@ -198,6 +198,7 @@ public class CreatePreset extends ActivityWithHeader {
                     existingPreset.tempLimit = temperatureLimit;
 
                     account.updatePreset(existingPreset);
+
                     db.collection("users").document(account.getUsername()).update("presets", account.getPresets())
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -213,8 +214,8 @@ public class CreatePreset extends ActivityWithHeader {
                 }
                 else
                 {
-                    UserPreset newPreset = new UserPreset(presetName, temperature, temperatureLimit,
-                            flowrate, timerSeconds, selectedTheme, presetOrder, 0);
+                    Random rnd = new Random();
+                    UserPreset newPreset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, selectedTheme, presetOrder, 0);
                     addPresetToDatabase(newPreset);
                 }
             }

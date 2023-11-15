@@ -67,9 +67,15 @@ public class UserAccount {
         return presets;
     }
 
-    public void updatePreset(UserPreset preset)
+    public void updatePreset(UserPreset updatedPreset)
     {
-        presets.removeIf(preset1 -> ( preset1.uid == preset.uid ));
-        presets.add(preset);
+        for(int i = 0; i < presets.size(); i++)
+        {
+            if(presets.get(i).uid == updatedPreset.uid)
+            {
+                presets.remove(i);
+                presets.add(i, updatedPreset);
+            }
+        }
     }
 }

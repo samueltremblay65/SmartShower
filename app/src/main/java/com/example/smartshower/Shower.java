@@ -204,22 +204,27 @@ public class Shower extends ActivityWithHeader {
                     session.update(currentTemp, currentFlow);
 
                     LineData data = chart.getData();
-                    ILineDataSet set = data.getDataSetByIndex(0);
-                    data.addEntry(new Entry(set.getEntryCount(), currentTemp), 0);
+                    Log.i("JirafiGraphs", "Size = " + data.getDataSets().size());
+                    ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(1);
+                    ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(0 );
+
+                    targetSet.addEntry(new Entry(targetSet.getEntryCount(), currentTemp));
+                    currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemp - 2));
                     data.notifyDataChanged();
-                    chart.getXAxis().setAxisMinimum(Math.max(0, set.getEntryCount() - 25));
-                    if(set.getEntryCount() < 25)
+
+                    chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
+                    if(targetSet.getEntryCount() < 25)
                     {
                         chart.getXAxis().setAxisMaximum(30);
                     }
                     else
                     {
-                        chart.getXAxis().setAxisMaximum(set.getEntryCount() + 5);
+                        chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
                     }
 
                     // let the chart know it's data has changed
                     chart.notifyDataSetChanged();
-                    chart.moveViewToX(data.getEntryCount());
+                    chart.moveViewToX(targetSet.getEntryCount());
 
                     // Update timer text
                     timerDisplay.setText(formatTime(timerSeconds));
@@ -229,8 +234,10 @@ public class Shower extends ActivityWithHeader {
     }
     public void createLiveChart()
     {
-        ArrayList<Entry> entries = new ArrayList<Entry>();
-        
+        ArrayList<Entry> targetEntries = new ArrayList<Entry>();
+
+        ArrayList<Entry> currentEntries = new ArrayList<Entry>();
+
         chart = findViewById(R.id.shower_livechart);
 
         // Main chart properties
@@ -242,9 +249,22 @@ public class Shower extends ActivityWithHeader {
         chart.getLegend().setTextSize(16);
 
         // Dataset and related properties
-        LineDataSet dataSet = new LineDataSet(entries, "Average temperature (°C)");
-        dataSet.setCircleRadius(4);
-        dataSet.setValueTextSize(0);
+        LineData chartData = new LineData();
+
+        LineDataSet targetDataset = new LineDataSet(targetEntries, "Target temperature (°C)");
+        targetDataset.setCircleRadius(4);
+        targetDataset.setValueTextSize(0);
+        targetDataset.setColor(getResources().getColor(R.color.shower_blue300));
+        targetDataset.setCircleColor(getResources().getColor(R.color.shower_blue300));
+
+        LineDataSet currentDataset = new LineDataSet(currentEntries, "Current temperature (°C)");
+        currentDataset.setCircleRadius(4);
+        currentDataset.setValueTextSize(0);
+        currentDataset.setColor(getResources().getColor(R.color.light_red));
+        currentDataset.setCircleColor(getResources().getColor(R.color.light_red));
+
+        chartData.addDataSet(targetDataset);
+        chartData.addDataSet(currentDataset);
 
         // Left axis
         XAxis xAxis = chart.getXAxis();
@@ -268,9 +288,7 @@ public class Shower extends ActivityWithHeader {
         chart.getXAxis().setAxisMinimum(0);
         chart.getXAxis().setAxisMaximum(30);
 
-        // Do the thing with the chart
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
+        chart.setData(chartData);
         chart.invalidate(); // refresh
     }
 
