@@ -1,16 +1,19 @@
 package com.example.smartshower;
 
+import android.util.Log;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Random;
 
 @Entity
 public class UserPreset implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "uid")
     public int uid;
 
@@ -60,6 +63,8 @@ public class UserPreset implements Serializable {
     @Ignore
     public UserPreset(String name, int temp, int tempLimit, int flowRate, int secondsLimit, String theme, int orderIndex, int userId)
     {
+        Random rnd = new Random();
+        this.uid = rnd.nextInt();
         this.name = name;
         this.flowRate = flowRate;
         this.temp = temp;
