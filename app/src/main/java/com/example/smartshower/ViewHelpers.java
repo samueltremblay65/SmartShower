@@ -64,4 +64,28 @@ public class ViewHelpers {
             translucentBox.setBackground(context.getResources().getDrawable(R.drawable.semi_opaque_box));
         }
     }
+
+    public static String formatSeconds(Context context, int seconds){
+        if(seconds == context.getResources().getInteger(R.integer.null_timelimit_db_value))
+        {
+            return "unlimited duration";
+        }
+
+        if(seconds == 60)
+        {
+            return "1 minute";
+        }
+        
+        if(seconds / 60 == 1)
+        {
+            return String.format("1 minute and %02d seconds", seconds % 60);
+        }
+
+        if(seconds % 60 == 0)
+        {
+            return String.format("%d minutes", seconds / 60);
+        }
+        return String.format("%d minutes and %02d seconds", seconds / 60, seconds % 60);
+    }
 }
+
