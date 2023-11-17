@@ -16,11 +16,14 @@
 
         <TextView
             android:id="@+id/shower_clock"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
+            android:layout_gravity="center"
             android:textColor="@color/black_300"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:drawablePadding="0dp"
+            android:drawableTint="@color/black_300"
+            app:drawableLeftCompat="@drawable/shower_timer_icon" />
 
         <RelativeLayout
             android:layout_width="match_parent"

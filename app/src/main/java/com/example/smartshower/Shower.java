@@ -244,32 +244,38 @@ public class Shower extends ActivityWithHeader {
                     // Update statistics
                     session.update(currentTemperature, currentFlow);
 
-                    LineData data = chart.getData();
-                    ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
-                    ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
+                    runOnUiThread(new Runnable() {
 
-                    targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
-                    currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
-                    data.notifyDataChanged();
+                        @Override
+                        public void run() {
+                            LineData data = chart.getData();
+                            ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
+                            ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
 
-                    chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
-                    chart.getAxisLeft().setAxisMaximum(Math.max(40, session.getMaximalTemperature() + 5));
+                            targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
+                            currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
+                            data.notifyDataChanged();
 
-                    if(targetSet.getEntryCount() < 25)
-                    {
-                        chart.getXAxis().setAxisMaximum(30);
-                    }
-                    else
-                    {
-                        chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
-                    }
+                            chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
+                            chart.getAxisLeft().setAxisMaximum(Math.max(40, session.getMaximalTemperature() + 5));
 
-                    // let the chart know it's data has changed
-                    chart.notifyDataSetChanged();
-                    chart.moveViewToX(targetSet.getEntryCount());
+                            if(targetSet.getEntryCount() < 25)
+                            {
+                                chart.getXAxis().setAxisMaximum(30);
+                            }
+                            else
+                            {
+                                chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
+                            }
 
-                    // Update timer text
-                    timerDisplay.setText(formatTime(timerSeconds));
+                            // let the chart know it's data has changed
+                            chart.notifyDataSetChanged();
+                            chart.moveViewToX(targetSet.getEntryCount());
+
+                            // Update timer text
+                            timerDisplay.setText(formatTime(timerSeconds));
+                        }
+                    });
                 }
             }
         }, 0, 1000);
@@ -303,8 +309,8 @@ public class Shower extends ActivityWithHeader {
         LineDataSet currentDataset = new LineDataSet(currentEntries, "Current temperature (°C)");
         currentDataset.setCircleRadius(4);
         currentDataset.setValueTextSize(0);
-        currentDataset.setColor(getResources().getColor(R.color.light_red));
-        currentDataset.setCircleColor(getResources().getColor(R.color.light_red));
+        currentDataset.setColor(getResources().getColor(R.color.yellow));
+        currentDataset.setCircleColor(getResources().getColor(R.color.yellow));
 
         chartData.addDataSet(targetDataset);
         chartData.addDataSet(currentDataset);
