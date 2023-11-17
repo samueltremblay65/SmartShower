@@ -1,25 +1,22 @@
 package com.example.smartshower;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -27,7 +24,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,20 +33,27 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Shower extends ActivityWithHeader {
 
     public ShowerSession session;
+    
+    RequestQueue requestQueue;
 
     private int presetId;
     private int timerSeconds;
-    private int currentTemp;
+    private int currentTemperature;
+    private int targetTemperature;
     private int currentFlow;
+    private int targetFlow;
     private int maxTemp;
 
     private boolean isOn;
@@ -93,9 +96,17 @@ public class Shower extends ActivityWithHeader {
         // Initializing settings variables
         presetId = preset.uid;
         timerSeconds = preset.secondsLimit;
+        targetTemperature = preset.temp;
+        targetFlow = preset.flowRate;
         currentFlow = preset.flowRate;
-        currentTemp = preset.temp;
+        currentTemperature = preset.temp;
         maxTemp = preset.tempLimit;
+
+        // Initialize volley queue
+        requestQueue = Volley.newRequestQueue(this);
+
+        setShowerTemperature();
+        setShowerFlow();
 
         // Initializing layout elements
         timerDisplay = findViewById(R.id.shower_clock);
@@ -132,8 +143,10 @@ public class Shower extends ActivityWithHeader {
         decreaseTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentTemp > 5)
-                    currentTemp--;
+                if(targetTemperature > 5)
+                    targetTemperature--;
+
+                setShowerTemperature();
                 updateTempDisplay();
             }
         });
@@ -141,8 +154,9 @@ public class Shower extends ActivityWithHeader {
         increaseTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentTemp < maxTemp)
-                    currentTemp++;
+                if(targetTemperature < maxTemp)
+                    targetTemperature++;
+                setShowerTemperature();
                 updateTempDisplay();
             }
         });
@@ -152,6 +166,7 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 currentFlow = Math.round(value);
+                setShowerFlow();
                 updateFlowRateDisplay();
             }
         });
@@ -162,11 +177,28 @@ public class Shower extends ActivityWithHeader {
             public void onClick(View v) {
                 if(isOn)
                 {
-                    stopShower();
+                    String url = "https://smartshowermock.onrender.com/off";
+
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            response -> {
+                                Log.i("HttpJiraf", response);
+                                stopShower();
+                            }, error -> Log.i("HttpJiraf", "Random error"));
+
+                    requestQueue.add(stringRequest);
                 }
                 else
                 {
-                    startShower();
+                    String url = "https://smartshowermock.onrender.com/on";
+
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            response -> {
+                                Log.i("HttpJiraf", response);
+                                startShower();
+
+                            }, error -> Log.i("HttpJiraf", error.getMessage()));
+
+                    requestQueue.add(stringRequest);
                 }
             }
         });
@@ -188,6 +220,15 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void run() {
                 // Runs every 1000 ms
+                String url = "https://smartshowermock.onrender.com/get";
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                        url, null,
+                        response -> {
+                            handleGetStatusRequest(response);
+                        }, error -> { Log.i("JirafError", "Error"); });
+
+                requestQueue.add(jsonObjectRequest);
+
                 if(isOn)
                 {
                     if(timerSeconds != -1)
@@ -201,33 +242,40 @@ public class Shower extends ActivityWithHeader {
                     }
 
                     // Update statistics
-                    session.update(currentTemp, currentFlow);
+                    session.update(currentTemperature, currentFlow);
 
-                    LineData data = chart.getData();
-                    Log.i("JirafiGraphs", "Size = " + data.getDataSets().size());
-                    ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(1);
-                    ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(0 );
+                    runOnUiThread(new Runnable() {
 
-                    targetSet.addEntry(new Entry(targetSet.getEntryCount(), currentTemp));
-                    currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemp - 2));
-                    data.notifyDataChanged();
+                        @Override
+                        public void run() {
+                            LineData data = chart.getData();
+                            ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
+                            ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
 
-                    chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
-                    if(targetSet.getEntryCount() < 25)
-                    {
-                        chart.getXAxis().setAxisMaximum(30);
-                    }
-                    else
-                    {
-                        chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
-                    }
+                            targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
+                            currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
+                            data.notifyDataChanged();
 
-                    // let the chart know it's data has changed
-                    chart.notifyDataSetChanged();
-                    chart.moveViewToX(targetSet.getEntryCount());
+                            chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
+                            chart.getAxisLeft().setAxisMaximum(Math.max(40, session.getMaximalTemperature() + 5));
 
-                    // Update timer text
-                    timerDisplay.setText(formatTime(timerSeconds));
+                            if(targetSet.getEntryCount() < 25)
+                            {
+                                chart.getXAxis().setAxisMaximum(30);
+                            }
+                            else
+                            {
+                                chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
+                            }
+
+                            // let the chart know it's data has changed
+                            chart.notifyDataSetChanged();
+                            chart.moveViewToX(targetSet.getEntryCount());
+
+                            // Update timer text
+                            timerDisplay.setText(formatTime(timerSeconds));
+                        }
+                    });
                 }
             }
         }, 0, 1000);
@@ -242,6 +290,7 @@ public class Shower extends ActivityWithHeader {
 
         // Main chart properties
         chart.getLegend().setTextSize(16);
+        chart.getLegend().setWordWrapEnabled(true);
 
         Description description = new Description();
         description.setText("");
@@ -260,8 +309,8 @@ public class Shower extends ActivityWithHeader {
         LineDataSet currentDataset = new LineDataSet(currentEntries, "Current temperature (°C)");
         currentDataset.setCircleRadius(4);
         currentDataset.setValueTextSize(0);
-        currentDataset.setColor(getResources().getColor(R.color.light_red));
-        currentDataset.setCircleColor(getResources().getColor(R.color.light_red));
+        currentDataset.setColor(getResources().getColor(R.color.yellow));
+        currentDataset.setCircleColor(getResources().getColor(R.color.yellow));
 
         chartData.addDataSet(targetDataset);
         chartData.addDataSet(currentDataset);
@@ -281,7 +330,7 @@ public class Shower extends ActivityWithHeader {
         rightAxis.setDrawGridLines(true);
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setTextSize(12);
-        leftAxis.setAxisMinimum(currentTemp - 5);
+        leftAxis.setAxisMinimum(5);
         leftAxis.setAxisMaximum(40);
         leftAxis.setDrawGridLines(true);
 
@@ -290,6 +339,28 @@ public class Shower extends ActivityWithHeader {
 
         chart.setData(chartData);
         chart.invalidate(); // refresh
+    }
+
+    public void setShowerTemperature()
+    {
+        String url = String.format("https://smartshowermock.onrender.com/set?temp=%d", targetTemperature);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.i("ShowerTemperature", String.format("Shower temperature set to %d", targetTemperature));
+                }, error -> Log.i("HttpJiraf", "Error sending shower input signal"));
+
+        requestQueue.add(stringRequest);
+    }
+
+    public void setShowerFlow()
+    {
+        String url = String.format("https://smartshowermock.onrender.com/set?flow=%d", targetFlow);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.i("ShowerTemperature", String.format("Shower temperature set to %d", targetFlow));
+                }, error -> Log.i("HttpJiraf", "Error sending shower input signal"));
+
+        requestQueue.add(stringRequest);
     }
 
     @SuppressLint("DefaultLocale")
@@ -324,7 +395,7 @@ public class Shower extends ActivityWithHeader {
     @SuppressLint("DefaultLocale")
     private void updateTempDisplay()
     {
-        tempDisplay.setText(String.format("%d°C", currentTemp));
+        tempDisplay.setText(String.format("%d°C", targetTemperature));
     }
 
     private void updateTimerDisplay()
@@ -340,6 +411,31 @@ public class Shower extends ActivityWithHeader {
     @SuppressLint("DefaultLocale")
     private void updateFlowRateDisplay() { flowRateDisplay.setText(String.format("water flow: %d%%", currentFlow));}
 
+    private void handleGetStatusRequest(JSONObject response)
+    {
+        try{
+            // Log.i("JsonJiraf", response.toString());
+
+            currentTemperature = response.getInt("currentTemperature");
+            targetTemperature = response.getInt("targetTemperature");
+
+            String responseStatus = response.getString("status");
+
+            if(!isOn && responseStatus.equals("on"))
+            {
+                startShower();
+            }
+
+            if(isOn && responseStatus.equals("off"))
+            {
+                stopShower();
+            }
+
+        } catch(JSONException e)
+        {
+            Log.i("JSON Parsing", e.getMessage());
+        }
+    }
 
     // Database tasks
     private void saveStatistics() {
