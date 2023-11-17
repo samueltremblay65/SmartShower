@@ -14,8 +14,7 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
@@ -34,8 +33,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,8 +50,10 @@ public class Shower extends ActivityWithHeader {
 
     private int presetId;
     private int timerSeconds;
-    private int currentTemp;
+    private int currentTemperature;
+    private int targetTemperature;
     private int currentFlow;
+    private int targetFlow;
     private int maxTemp;
 
     private boolean isOn;
@@ -91,9 +96,17 @@ public class Shower extends ActivityWithHeader {
         // Initializing settings variables
         presetId = preset.uid;
         timerSeconds = preset.secondsLimit;
+        targetTemperature = preset.temp;
+        targetFlow = preset.flowRate;
         currentFlow = preset.flowRate;
-        currentTemp = preset.temp;
+        currentTemperature = preset.temp;
         maxTemp = preset.tempLimit;
+
+        // Initialize volley queue
+        requestQueue = Volley.newRequestQueue(this);
+
+        setShowerTemperature();
+        setShowerFlow();
 
         // Initializing layout elements
         timerDisplay = findViewById(R.id.shower_clock);
@@ -126,15 +139,14 @@ public class Shower extends ActivityWithHeader {
         // Setting system state
         isOn = false;
 
-        // Initialize volley queue
-        requestQueue = Volley.newRequestQueue(this);
-
         // Add listeners
         decreaseTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentTemp > 5)
-                    currentTemp--;
+                if(targetTemperature > 5)
+                    targetTemperature--;
+
+                setShowerTemperature();
                 updateTempDisplay();
             }
         });
@@ -142,8 +154,9 @@ public class Shower extends ActivityWithHeader {
         increaseTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentTemp < maxTemp)
-                    currentTemp++;
+                if(targetTemperature < maxTemp)
+                    targetTemperature++;
+                setShowerTemperature();
                 updateTempDisplay();
             }
         });
@@ -153,6 +166,7 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 currentFlow = Math.round(value);
+                setShowerFlow();
                 updateFlowRateDisplay();
             }
         });
@@ -163,11 +177,28 @@ public class Shower extends ActivityWithHeader {
             public void onClick(View v) {
                 if(isOn)
                 {
-                    stopShower();
+                    String url = "https://smartshowermock.onrender.com/off";
+
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            response -> {
+                                Log.i("HttpJiraf", response);
+                                stopShower();
+                            }, error -> Log.i("HttpJiraf", "Random error"));
+
+                    requestQueue.add(stringRequest);
                 }
                 else
                 {
-                    startShower();
+                    String url = "https://smartshowermock.onrender.com/on";
+
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            response -> {
+                                Log.i("HttpJiraf", response);
+                                startShower();
+
+                            }, error -> Log.i("HttpJiraf", error.getMessage()));
+
+                    requestQueue.add(stringRequest);
                 }
             }
         });
@@ -189,6 +220,15 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void run() {
                 // Runs every 1000 ms
+                String url = "https://smartshowermock.onrender.com/get";
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                        url, null,
+                        response -> {
+                            handleGetStatusRequest(response);
+                        }, error -> { Log.i("JirafError", "Error"); });
+
+                requestQueue.add(jsonObjectRequest);
+
                 if(isOn)
                 {
                     if(timerSeconds != -1)
@@ -202,17 +242,19 @@ public class Shower extends ActivityWithHeader {
                     }
 
                     // Update statistics
-                    session.update(currentTemp, currentFlow);
+                    session.update(currentTemperature, currentFlow);
 
                     LineData data = chart.getData();
-                    ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(1);
-                    ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(0 );
+                    ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
+                    ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
 
-                    targetSet.addEntry(new Entry(targetSet.getEntryCount(), currentTemp));
-                    currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemp - 2));
+                    targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
+                    currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
                     data.notifyDataChanged();
 
                     chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
+                    chart.getAxisLeft().setAxisMaximum(Math.max(40, session.getMaximalTemperature() + 5));
+
                     if(targetSet.getEntryCount() < 25)
                     {
                         chart.getXAxis().setAxisMaximum(30);
@@ -242,6 +284,7 @@ public class Shower extends ActivityWithHeader {
 
         // Main chart properties
         chart.getLegend().setTextSize(16);
+        chart.getLegend().setWordWrapEnabled(true);
 
         Description description = new Description();
         description.setText("");
@@ -281,7 +324,7 @@ public class Shower extends ActivityWithHeader {
         rightAxis.setDrawGridLines(true);
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setTextSize(12);
-        leftAxis.setAxisMinimum(currentTemp - 5);
+        leftAxis.setAxisMinimum(5);
         leftAxis.setAxisMaximum(40);
         leftAxis.setDrawGridLines(true);
 
@@ -290,6 +333,28 @@ public class Shower extends ActivityWithHeader {
 
         chart.setData(chartData);
         chart.invalidate(); // refresh
+    }
+
+    public void setShowerTemperature()
+    {
+        String url = String.format("https://smartshowermock.onrender.com/set?temp=%d", targetTemperature);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.i("ShowerTemperature", String.format("Shower temperature set to %d", targetTemperature));
+                }, error -> Log.i("HttpJiraf", "Error sending shower input signal"));
+
+        requestQueue.add(stringRequest);
+    }
+
+    public void setShowerFlow()
+    {
+        String url = String.format("https://smartshowermock.onrender.com/set?flow=%d", targetFlow);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.i("ShowerTemperature", String.format("Shower temperature set to %d", targetFlow));
+                }, error -> Log.i("HttpJiraf", "Error sending shower input signal"));
+
+        requestQueue.add(stringRequest);
     }
 
     @SuppressLint("DefaultLocale")
@@ -305,14 +370,6 @@ public class Shower extends ActivityWithHeader {
 
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.red));
         startShowerButton.setText(getResources().getText(R.string.stop_shower));
-        String url = "https://smartshowermock.onrender.com/on";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    Log.i("HttpJiraf", response);
-                }, error -> Log.i("HttpJiraf", error.getMessage()));
-
-        requestQueue.add(stringRequest);
     }
 
     private void stopShower()
@@ -327,21 +384,12 @@ public class Shower extends ActivityWithHeader {
         // Should save shower session to database
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));
         startShowerButton.setText(getResources().getText(R.string.start_shower));
-
-        String url = "https://smartshowermock.onrender.com/off";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    Log.i("HttpJiraf", response);
-                }, error -> Log.i("HttpJiraf", error.getMessage()));
-
-        requestQueue.add(stringRequest);
     }
 
     @SuppressLint("DefaultLocale")
     private void updateTempDisplay()
     {
-        tempDisplay.setText(String.format("%d°C", currentTemp));
+        tempDisplay.setText(String.format("%d°C", targetTemperature));
     }
 
     private void updateTimerDisplay()
@@ -357,6 +405,31 @@ public class Shower extends ActivityWithHeader {
     @SuppressLint("DefaultLocale")
     private void updateFlowRateDisplay() { flowRateDisplay.setText(String.format("water flow: %d%%", currentFlow));}
 
+    private void handleGetStatusRequest(JSONObject response)
+    {
+        try{
+            // Log.i("JsonJiraf", response.toString());
+
+            currentTemperature = response.getInt("currentTemperature");
+            targetTemperature = response.getInt("targetTemperature");
+
+            String responseStatus = response.getString("status");
+
+            if(!isOn && responseStatus.equals("on"))
+            {
+                startShower();
+            }
+
+            if(isOn && responseStatus.equals("off"))
+            {
+                stopShower();
+            }
+
+        } catch(JSONException e)
+        {
+            Log.i("JSON Parsing", e.getMessage());
+        }
+    }
 
     // Database tasks
     private void saveStatistics() {

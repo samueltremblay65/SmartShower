@@ -9,6 +9,8 @@ public class ShowerSession {
     Date currentTime;
     int presetId;
 
+    Integer maxTemperature;
+
     public ShowerSession(int presetId)
     {
         showerData = new ArrayList<>();
@@ -19,6 +21,14 @@ public class ShowerSession {
     public void update(int temperature, int flowrate)
     {
         showerData.add(new ShowerInstant(temperature, flowrate));
+        if(maxTemperature == null)
+        {
+            maxTemperature = temperature;
+        }
+        else if(temperature > maxTemperature)
+        {
+            maxTemperature = temperature;
+        }
     }
 
     public int getWaterUsage()
@@ -43,6 +53,11 @@ public class ShowerSession {
             total += instant.temperature;
         }
         return total / showerData.size();
+    }
+
+    public int getMaximalTemperature()
+    {
+        return maxTemperature;
     }
 
     public int getAverageFlowrate() {
