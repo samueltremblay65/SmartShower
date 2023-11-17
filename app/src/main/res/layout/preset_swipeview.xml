@@ -27,7 +27,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:id="@+id/swipe_edit_button"/>
 
@@ -43,7 +43,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:id="@+id/swipe_delete_button"/>
 

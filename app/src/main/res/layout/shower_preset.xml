@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
+    android:layout_height="150dp"
     app:cardElevation="0dp"
     app:cardCornerRadius="12dp"
     app:cardMaxElevation="0dp">
@@ -11,7 +11,7 @@
     <ImageView
         android:src="@drawable/bg1"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:id="@+id/presetThemeBackground"/>
 
@@ -44,19 +44,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="24°C"
-                android:id="@+id/tv_preset_temp" />
+                android:id="@+id/tv_preset_temp"
+                android:drawableLeft="@drawable/scaled_temp_icon"
+                android:drawablePadding="5dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="100% water flow"
-                android:id="@+id/tv_preset_maxTemp" />
+                android:text="No temperature limit"
+                android:id="@+id/tv_preset_maxTemp"
+                android:drawableLeft="@drawable/scaled_maxtemp_icon"
+                android:drawablePadding="5dp"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100% flow"
+                android:id="@+id/tv_preset_flowrate"
+                android:drawableLeft="@drawable/scaled_flow_icon"
+                android:drawablePadding="5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/defaulttext_preset_timelimit"
-                android:id="@+id/tv_preset_flowrate" />
+                android:text="0 minutes"
+                android:id="@+id/tv_preset_timer"
+                android:drawableLeft="@drawable/scaled_timer_icon"
+                android:drawablePadding="5dp" />
+
+
         </LinearLayout>
 
     </LinearLayout>

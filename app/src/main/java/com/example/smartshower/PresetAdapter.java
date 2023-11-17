@@ -84,7 +84,10 @@ public class PresetAdapter extends
         maxTempView.setText(String.format("%d°C limit", userPreset.tempLimit));
 
         TextView flowRateView = holder.flowRateTextView;
-        flowRateView.setText(String.format("%d flow rate", userPreset.flowRate));
+        flowRateView.setText(String.format("%d%% flow rate", userPreset.flowRate));
+
+        TextView timerView = holder.timerTextView;
+        timerView.setText(ViewHelpers.formatSeconds(context, userPreset.secondsLimit));
 
         ImageView backgroundView = holder.backgroundView;
         ViewHelpers.setBackgroundTheme(backgroundView, userPreset);
@@ -129,6 +132,8 @@ public class PresetAdapter extends
         public TextView maxTempTextView;
         public TextView flowRateTextView;
 
+        public TextView timerTextView;
+
         public LinearLayout presetContainer;
 
         public LinearLayout translucentBox;
@@ -151,6 +156,7 @@ public class PresetAdapter extends
             nameTextView = itemView.findViewById(R.id.tv_preset_name);
             tempTextView = itemView.findViewById(R.id.tv_preset_temp);
             maxTempTextView = itemView.findViewById(R.id.tv_preset_maxTemp);
+            timerTextView = itemView.findViewById(R.id.tv_preset_timer);
             flowRateTextView = itemView.findViewById(R.id.tv_preset_flowrate);
             presetContainer = itemView.findViewById(R.id.presetContainer);
             backgroundView = itemView.findViewById(R.id.presetThemeBackground);
