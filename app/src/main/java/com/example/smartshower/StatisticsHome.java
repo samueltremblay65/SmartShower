@@ -96,6 +96,8 @@ public class StatisticsHome extends ActivityWithHeader {
                     throw new IllegalStateException("Could not find user account");
                 }
 
+                //populateStatisticsWithExampleData();
+
                 loadStatistics();
 
             }
@@ -414,12 +416,12 @@ public class StatisticsHome extends ActivityWithHeader {
                     while(random.nextInt(100) < probabilityShower)
                     {
                         int temperature = generateTemperature(month);
-                        int flow = 100;
+                        int flow = generateAverageFlowrate(month);
                         int duration = generateShowerDuration(month);
                         int energy = generateEnergyUsed(duration, temperature, flow);
                         int waterUsage = generateWaterUsage(duration, flow);
 
-                        Statistics showerStatistics = new Statistics(generatePresetId(), duration, temperature, energy, waterUsage, date.getTime());
+                        Statistics showerStatistics = new Statistics(generatePresetId(), duration, temperature, flow, waterUsage, date.getTime());
                         exampleStatistics.add(showerStatistics);
                         probabilityShower = probabilityShower / 2;
                     }
@@ -460,6 +462,11 @@ public class StatisticsHome extends ActivityWithHeader {
             {
                 int[] monthAverages = new int[]{460, 420, 300, 297, 240, 412, 678, 614, 235, 259, 590, 780};
                 return monthAverages[month] += randBetween(-100, 100);
+            }
+
+            private int generateAverageFlowrate(int month)
+            {
+                return randBetween(25, 100);
             }
 
             private int generateEnergyUsed(int duration, int temperature, int flowrate)

@@ -31,6 +31,9 @@ public class Statistics implements Serializable {
 
     @ColumnInfo(name = "date_time")
     public long dateTime;
+    
+    @ColumnInfo(name="average_flowrate")
+    public int averageFlow;
 
     public int getMonth()
     {
@@ -56,16 +59,18 @@ public class Statistics implements Serializable {
         this.waterUsage = session.getWaterUsage();
         this.energy = session.getEnergy();
         this.averageTemperature = session.getAverageTemperature();
+        this.averageFlow = session.getAverageFlowrate();
         this.dateTime = session.getDateTime();
     }
 
     @Ignore
-    public Statistics(int presetId, int duration, int averageTemperature, int energy, float waterUsage, long dateTime)
+    public Statistics(int presetId, int duration, int averageTemperature, int averageFlow, float waterUsage, long dateTime)
     {
         this.presetId = presetId;
         this.duration = duration;
         this.averageTemperature = averageTemperature;
-        this.energy = energy;
+        this.energy = 0;
+        this.averageFlow = averageFlow;
         this.waterUsage = waterUsage;
         this.dateTime = dateTime;
     }

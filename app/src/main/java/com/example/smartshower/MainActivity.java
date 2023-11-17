@@ -88,8 +88,6 @@ public class MainActivity extends ActivityWithHeader {
         showStatsButton = findViewById(R.id.btn_home_viewStatistics);
         addPresetButton = findViewById(R.id.btn_home_add_preset);
 
-        loadRecommendedPresets();
-
         showStatsButton.setOnClickListener(v -> {
             Intent myIntent = new Intent(MainActivity.this, StatisticsHome.class);
 
@@ -180,6 +178,7 @@ public class MainActivity extends ActivityWithHeader {
             this.presets = presets;
         }
 
+
         @Override
         public Fragment createFragment(int position) {
             View.OnClickListener listener = new View.OnClickListener() {
@@ -195,33 +194,6 @@ public class MainActivity extends ActivityWithHeader {
         public int getItemCount() {
             return presets.size();
         }
-    }
-
-    // Database tasks
-
-    private void loadRecommendedPresets() {
-        @SuppressLint("StaticFieldLeak")
-        class LoadRecommendedPresetsTask extends AsyncTask<Void, Void, Void> {
-
-            List<UserPreset> presets;
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                // Adding to database
-                AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();
-                presets = db.userPresetDao().getAll();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                updateRecommended(presets);
-            }
-        }
-
-        LoadRecommendedPresetsTask task = new LoadRecommendedPresetsTask();
-        task.execute();
     }
 
     private void deletePresetFromDatabase(UserPreset preset)
@@ -278,12 +250,45 @@ public class MainActivity extends ActivityWithHeader {
                 }
 
                 loadPresets();
+                loadStatistics();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
 
             }
+        });
+    }
+
+    private void loadStatistics()
+    {
+        DocumentReference docRef = db.collection("statistics").document(Integer.toString(account.getUserId()));
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            HashMap<String, Object> data = (HashMap<String, Object>) documentSnapshot.getData();
+            List<Statistics> allStatistics = new ArrayList<>();
+
+            if(data.containsKey("accountCreationDate"))
+                data.remove("accountCreationDate");
+
+            for (Object value : data.values()) {
+                HashMap<String, Object> statisticsObject = (HashMap<String, Object>) value;
+
+                int presetId = (int)(long) statisticsObject.get("presetId");
+                int duration = (int)(long) statisticsObject.get("duration");
+                int averageTemperature = (int)(long) statisticsObject.get("averageTemperature");
+                float waterUsage = (float)(double) statisticsObject.get("waterUsage");
+                long dateTime = (long) statisticsObject.get("dateTime");
+
+                Statistics statistic = new Statistics(presetId, duration, averageTemperature, 0, waterUsage, dateTime);
+                allStatistics.add(statistic);
+            }
+
+            StatisticsCompiler statisticsCompiler = new StatisticsCompiler(allStatistics);
+            SmartRecommendationCreator recommendationCreator = new SmartRecommendationCreator(getApplicationContext(), statisticsCompiler);
+            updateRecommended(recommendationCreator.getRecommendations());
+
+        }).addOnFailureListener(e -> {
+
         });
     }
 

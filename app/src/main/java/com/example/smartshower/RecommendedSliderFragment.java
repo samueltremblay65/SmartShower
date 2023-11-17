@@ -17,7 +17,6 @@ public class RecommendedSliderFragment extends Fragment {
         this.preset = preset;
         this.listener = listener;
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.shower_preset, container, false);
@@ -27,6 +26,7 @@ public class RecommendedSliderFragment extends Fragment {
         TextView temperature = view.findViewById(R.id.tv_preset_temp);
         TextView temperatureLimit = view.findViewById(R.id.tv_preset_maxTemp);
         TextView flowRate = view.findViewById(R.id.tv_preset_flowrate);
+        TextView timer = view.findViewById(R.id.tv_preset_timer);
         LinearLayout presetContainer = view.findViewById(R.id.presetContainer);
         ImageView backgroundView = view.findViewById(R.id.presetThemeBackground);
         ViewHelpers.setBackgroundTheme(backgroundView, preset);
@@ -35,6 +35,7 @@ public class RecommendedSliderFragment extends Fragment {
         temperature.setText(String.format("%d°C", preset.temp));
         temperatureLimit.setText(String.format("%d°C limit", preset.tempLimit));
         flowRate.setText(String.format("%d flow rate", preset.flowRate));
+        timer.setText(ViewHelpers.formatSeconds(getContext(), preset.secondsLimit));
 
         // Adding on click listener
         presetContainer.setOnClickListener(listener);
