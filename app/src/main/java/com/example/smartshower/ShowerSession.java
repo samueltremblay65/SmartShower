@@ -8,7 +8,6 @@ public class ShowerSession {
     ArrayList<ShowerInstant> showerData;
     Date currentTime;
     int presetId;
-
     Integer maxTemperature;
 
     public ShowerSession(int presetId)

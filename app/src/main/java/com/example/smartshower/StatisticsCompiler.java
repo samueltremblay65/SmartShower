@@ -21,6 +21,7 @@ public class StatisticsCompiler {
 
     // Average values
     int averageWaterUsage;
+    int averageFlowRate;
     int totalNumberShowers;
     int averageTemperature;
     float averageCost;
@@ -43,6 +44,8 @@ public class StatisticsCompiler {
         }
 
         calculateTodayStatistics();
+
+        calculateAllTimeStatistics();
     }
 
     public ArrayList<Statistics> getLatestShowerStatistics(int n)
@@ -77,6 +80,13 @@ public class StatisticsCompiler {
         todayTotalDuration = todayAverageDuration;
         todayAverageTemperature = todayAverageTemperature / todayStatistics.size();
         todayAverageDuration = todayAverageDuration / todayStatistics.size();
+    }
+
+    public void calculateAllTimeStatistics()
+    {
+        averageTemperature = calculateAverageTemperature();
+        averageFlowRate = calculateAverageFlowrate();
+        averageShowerDuration = calculateAverageDuration();
     }
 
     public float calculateCost(int temperature, float waterUsage)
@@ -128,6 +138,15 @@ public class StatisticsCompiler {
         return sum / allStatistics.size();
     }
 
+    public int calculateAverageFlowrate()
+    {
+        int sum = 0;
+        for(Statistics statistic: allStatistics)
+        {
+            sum += statistic.averageFlow;
+        }
+        return sum / allStatistics.size();
+    }
     public int calculateAverageWaterUsage()
     {
         return calculateAverageDuration() * 7 / 60;
