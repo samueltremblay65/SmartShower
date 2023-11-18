@@ -157,9 +157,6 @@ public class ThemePickerAdapter extends
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(themeSources.get(getAdapterPosition()));
 
-            cardView.setStrokeWidth(8);
-            cardView.setStrokeColor(context.getResources().getColor(R.color.shower_blue300));
-
             // Remove border from last selected element
             if(lastSelected != null)
             {
@@ -167,6 +164,9 @@ public class ThemePickerAdapter extends
             }
 
             lastSelected = cardView;
+
+            cardView.setStrokeWidth(8);
+            cardView.setStrokeColor(context.getResources().getColor(R.color.shower_blue300));
         }
     }
 
