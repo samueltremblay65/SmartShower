@@ -96,15 +96,17 @@ public class MainActivity extends ActivityWithHeader {
     }
 
     // Starts the shower activity passing in the preset information
-    // TODO: Should we get the other info from the preset ID?
+
     public void startPresetShower(UserPreset preset) {
         Intent intent = new Intent(MainActivity.this, Shower.class);
-        intent.putExtra("presetId", preset.uid); //Optional parameters
-        intent.putExtra("temperature", preset.temp); //Optional parameters
-        intent.putExtra("tempLimit", preset.tempLimit); //Optional parameters
-        intent.putExtra("flowRate", preset.flowRate); //Optional parameters
-        intent.putExtra("timeLimit", preset.secondsLimit);
         intent.putExtra("preset", preset);
+        MainActivity.this.startActivity(intent);
+    }
+
+    public void startEditablePresetShower(UserPreset preset) {
+        Intent intent = new Intent(MainActivity.this, Shower.class);
+        intent.putExtra("preset", preset);
+        intent.putExtra("isEditable", true);
         MainActivity.this.startActivity(intent);
     }
 
@@ -125,7 +127,7 @@ public class MainActivity extends ActivityWithHeader {
         // Sort the list by orderIndex to display presets in order set by user
         presets.sort((p1, p2) -> p1.orderIndex - p2.orderIndex);
 
-        presetAdapter = new PresetAdapter(getApplicationContext(), presets, this::startPresetShower, this::editPreset, this::deletePreset);
+        presetAdapter = new PresetAdapter(getApplicationContext(), presets, this::startEditablePresetShower, this::editPreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);
         presetListView.setLayoutManager(new LinearLayoutManager(this));
 

@@ -57,6 +57,8 @@ public class Shower extends ActivityWithHeader {
     private int maxTemp;
 
     private boolean isOn;
+    private int cooldown = 0;
+    private int maxTargetTemp;
 
     // DOM element declaration
     private TextView timerDisplay;
@@ -79,6 +81,8 @@ public class Shower extends ActivityWithHeader {
 
     private LineChart chart;
 
+    private boolean isEditable = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +90,8 @@ public class Shower extends ActivityWithHeader {
         super.setupUIElements();
 
         preset = (UserPreset) getIntent().getSerializableExtra("preset");
+
+        isEditable = getIntent().getBooleanExtra("isEditable", false);
 
         db = FirebaseFirestore.getInstance();
 
@@ -97,16 +103,14 @@ public class Shower extends ActivityWithHeader {
         presetId = preset.uid;
         timerSeconds = preset.secondsLimit;
         targetTemperature = preset.temp;
+        maxTargetTemp = preset.temp;
         targetFlow = preset.flowRate;
         currentFlow = preset.flowRate;
-        currentTemperature = preset.temp;
+        currentTemperature = 20;
         maxTemp = preset.tempLimit;
 
         // Initialize volley queue
         requestQueue = Volley.newRequestQueue(this);
-
-        setShowerTemperature();
-        setShowerFlow();
 
         // Initializing layout elements
         timerDisplay = findViewById(R.id.shower_clock);
@@ -139,12 +143,19 @@ public class Shower extends ActivityWithHeader {
         // Setting system state
         isOn = false;
 
+        if(!isEditable)
+        {
+            editPresetButton.setVisibility(View.INVISIBLE);
+        }
+
         // Add listeners
         decreaseTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(targetTemperature > 5)
                     targetTemperature--;
+
+                cooldown = 3;
 
                 setShowerTemperature();
                 updateTempDisplay();
@@ -156,6 +167,9 @@ public class Shower extends ActivityWithHeader {
             public void onClick(View v) {
                 if(targetTemperature < maxTemp)
                     targetTemperature++;
+                
+                cooldown = 3;
+                
                 setShowerTemperature();
                 updateTempDisplay();
             }
@@ -166,6 +180,9 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 currentFlow = Math.round(value);
+
+                cooldown = 3;
+
                 setShowerFlow();
                 updateFlowRateDisplay();
             }
@@ -219,6 +236,7 @@ public class Shower extends ActivityWithHeader {
                     requestQueue.add(stringRequest);
                 }
             }
+
         });
 
         editPresetButton.setOnClickListener(new View.OnClickListener(){
@@ -231,6 +249,8 @@ public class Shower extends ActivityWithHeader {
                 Shower.this.startActivity(intent);
             }
         });
+
+        setShowerTemperature();
 
         // Setting timer code
         new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -247,6 +267,9 @@ public class Shower extends ActivityWithHeader {
 
                 requestQueue.add(jsonObjectRequest);
 
+                if(cooldown > 0)
+                    cooldown--;
+
                 if(isOn)
                 {
                     if(timerSeconds != -1)
@@ -262,37 +285,38 @@ public class Shower extends ActivityWithHeader {
                     // Update statistics
                     session.update(currentTemperature, currentFlow);
 
-                    runOnUiThread(new Runnable() {
+                    runOnUiThread(() -> {
+                        LineData data = chart.getData();
+                        ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
+                        ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
 
-                        @Override
-                        public void run() {
-                            LineData data = chart.getData();
-                            ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
-                            ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
+                        targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
+                        currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
+                        data.notifyDataChanged();
 
-                            targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
-                            currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
-                            data.notifyDataChanged();
-
-                            chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
-                            chart.getAxisLeft().setAxisMaximum(Math.max(40, session.getMaximalTemperature() + 5));
-
-                            if(targetSet.getEntryCount() < 25)
-                            {
-                                chart.getXAxis().setAxisMaximum(30);
-                            }
-                            else
-                            {
-                                chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
-                            }
-
-                            // let the chart know it's data has changed
-                            chart.notifyDataSetChanged();
-                            chart.moveViewToX(targetSet.getEntryCount());
-
-                            // Update timer text
-                            timerDisplay.setText(formatTime(timerSeconds));
+                        if(targetTemperature > maxTargetTemp)
+                        {
+                            maxTargetTemp = targetTemperature;
                         }
+
+                        chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
+                        chart.getAxisLeft().setAxisMaximum(Math.max(40, Math.max(session.getMaximalTemperature(), maxTargetTemp )+ 5));
+
+                        if(targetSet.getEntryCount() < 25)
+                        {
+                            chart.getXAxis().setAxisMaximum(30);
+                        }
+                        else
+                        {
+                            chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
+                        }
+
+                        // let the chart know it's data has changed
+                        chart.notifyDataSetChanged();
+                        chart.moveViewToX(targetSet.getEntryCount());
+
+                        // Update timer text
+                        timerDisplay.setText(formatTime(timerSeconds));
                     });
                 }
             }
@@ -432,15 +456,20 @@ public class Shower extends ActivityWithHeader {
     private void handleGetStatusRequest(JSONObject response)
     {
         try{
-            // Log.i("JsonJiraf", response.toString());
-
-            currentTemperature = response.getInt("currentTemperature");
-            targetTemperature = response.getInt("targetTemperature");
-
-            updateTempDisplay();
-            updateFlowRateDisplay();
-
             String responseStatus = response.getString("status");
+
+            if(isOn)
+            {
+                currentTemperature = response.getInt("currentTemperature");
+
+                updateTempDisplay();
+                updateFlowRateDisplay();
+            }
+
+            if(isOn && cooldown == 0)
+            {
+                targetTemperature = response.getInt("targetTemperature");
+            }
 
             if(!isOn && responseStatus.equals("on"))
             {

@@ -68,8 +68,6 @@ public class CreatePreset extends ActivityWithHeader {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     FormValidationHelper validator;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +101,6 @@ public class CreatePreset extends ActivityWithHeader {
         TextInputLayout timerInputLayout = findViewById(R.id.ti_create_preset_time_limit);
         TextInputLayout temperatureLimitInputLayout = findViewById(R.id.ti_create_preset_temperature_limit);
 
-
         // Edit preset code path
         if(existingPreset != null)
         {
@@ -114,6 +111,7 @@ public class CreatePreset extends ActivityWithHeader {
             temperatureInput.setText(Integer.toString(existingPreset.temp));
             flowrateInput.setText(Integer.toString(existingPreset.flowRate));
             presetOrder = existingPreset.orderIndex;
+            selectedTheme = existingPreset.theme;
 
             if(existingPreset.tempLimit != getResources().getInteger(R.integer.max_temperature_c))
             {
@@ -128,6 +126,8 @@ public class CreatePreset extends ActivityWithHeader {
                 timerInput.setText(Integer.toString(existingPreset.secondsLimit));
                 timerInputLayout.setVisibility(View.VISIBLE);
             }
+
+            createPreset.setText(R.string.save_changes);
         }
         else
         {
@@ -203,7 +203,6 @@ public class CreatePreset extends ActivityWithHeader {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Toast.makeText(CreatePreset.this, "Successfully created new preset", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(CreatePreset.this, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     CreatePreset.this.startActivity(intent);
@@ -217,6 +216,7 @@ public class CreatePreset extends ActivityWithHeader {
                     Random rnd = new Random();
                     UserPreset newPreset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, selectedTheme, presetOrder, 0);
                     addPresetToDatabase(newPreset);
+                    Toast.makeText(this, "Creating...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -298,8 +298,16 @@ public class CreatePreset extends ActivityWithHeader {
         themeSources.add("bg7");
         themeSources.add("bg8");
         themeSources.add("bg9");
+        themeSources.add("night");
 
-        ThemePickerAdapter adapter = new ThemePickerAdapter(this, themeSources);
+        String selectedTheme = null;
+
+        if(editMode)
+        {
+            selectedTheme = existingPreset.theme;
+        }
+
+        ThemePickerAdapter adapter = new ThemePickerAdapter(this, themeSources, selectedTheme);
 
         adapter.setClickListener(this::selectTheme);
         themePicker.setAdapter(adapter);
@@ -337,7 +345,6 @@ public class CreatePreset extends ActivityWithHeader {
         db.collection("users").document(account.getUsername()).set(account).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Toast.makeText(CreatePreset.this, "Successfully created new preset", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(CreatePreset.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 CreatePreset.this.startActivity(intent);

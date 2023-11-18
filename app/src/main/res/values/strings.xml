@@ -4,7 +4,7 @@
     <string name="recommended">Recommended</string>
     <string name="user_presets">My presets</string>
     <string name="hi_sam">Good morning Sam</string>
-    <string name="view_stats">View usage statistics</string>
+    <string name="view_stats">view usage statistics</string>
     <string name="increase_temp">Increase temperature</string>
     <string name="decrease_temp">Decrease temperature</string>
     <string name="water_flow">water flow</string>
@@ -58,5 +58,6 @@
     <string name="keys_account_id">accountId</string>
     <string name="keys_account_username">accountUsername</string>
     <string name="keys_account_password">accountPassword</string>
-    <string name="view_history">View shower history</string>
+    <string name="view_history">view shower history</string>
+    <string name="save_changes">Save changes</string>
 </resources>
