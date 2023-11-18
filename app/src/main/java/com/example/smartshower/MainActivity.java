@@ -75,7 +75,7 @@ public class MainActivity extends ActivityWithHeader {
         setContentView(R.layout.activity_main);
 
         super.setupUIElements();
-
+        
         // Setting preset recycler view adapter and layout manager
         presetListView = (RecyclerView) findViewById(R.id.rv_home_presets);
 
@@ -164,30 +164,31 @@ public class MainActivity extends ActivityWithHeader {
     }
 
     // Populates the recommended bar
-    public void updateRecommended(List<UserPreset> presets) {
-        pagerAdapter = new MainActivity.ScreenSlidePagerAdapter(this, presets);
+    public void updateRecommended(List<UserPreset> presets, List<String> informationStrings) {
+        pagerAdapter = new MainActivity.ScreenSlidePagerAdapter(this, presets, informationStrings);
         viewPager.setAdapter(pagerAdapter);
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
-        SmartRecommendationCreator recommendationCreator;
-
         List<UserPreset> presets;
-        public ScreenSlidePagerAdapter(FragmentActivity fa, List<UserPreset> presets) {
+        List<String> infoStrings;
+
+        public ScreenSlidePagerAdapter(FragmentActivity fa, List<UserPreset> presets, List<String> infoStrings) {
             super(fa);
             this.presets = presets;
+            this.infoStrings = infoStrings;
         }
-
 
         @Override
         public Fragment createFragment(int position) {
+
             View.OnClickListener listener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startPresetShower(presets.get(position));
                 }
             };
-            return new RecommendedSliderFragment(presets.get(position), listener);
+            return new RecommendedSliderFragment(presets.get(position), infoStrings.get(position), listener);
         }
 
         @Override
@@ -285,7 +286,7 @@ public class MainActivity extends ActivityWithHeader {
 
             StatisticsCompiler statisticsCompiler = new StatisticsCompiler(allStatistics);
             SmartRecommendationCreator recommendationCreator = new SmartRecommendationCreator(getApplicationContext(), statisticsCompiler);
-            updateRecommended(recommendationCreator.getRecommendations());
+            updateRecommended(recommendationCreator.getRecommendations(), recommendationCreator.getInformationStrings());
 
         }).addOnFailureListener(e -> {
 

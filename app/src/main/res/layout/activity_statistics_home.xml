@@ -52,8 +52,8 @@
             android:textColorHighlight="#F44336"
             android:textColorHint="#000000"
             android:textColorLink="#000000"
-            android:textSize="20sp"
-            app:cornerRadius="10dp"
+            android:textSize="16sp"
+            app:cornerRadius="16dp"
             tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
