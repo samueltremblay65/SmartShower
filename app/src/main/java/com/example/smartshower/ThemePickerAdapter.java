@@ -23,13 +23,18 @@ public class ThemePickerAdapter extends
 
     private Context context;
 
+    private int selectedThemeIndex;
+
     private MaterialCardView lastSelected;
 
     // data is passed into the constructor
-    ThemePickerAdapter(Context context, List<String> themeSources) {
+    ThemePickerAdapter(Context context, List<String> themeSources, String selectedTheme) {
         this.mInflater = LayoutInflater.from(context);
         this.themeSources = themeSources;
         this.context = context;
+
+        if(selectedTheme != null)
+            selectedThemeIndex = getPositionForTheme(selectedTheme);
     }
 
     // inflates the row layout from xml when needed
@@ -43,6 +48,12 @@ public class ThemePickerAdapter extends
     // binds the data to the view and textview in each row
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if(position == selectedThemeIndex)
+        {
+            holder.cardView.setStrokeWidth(8);
+            holder.cardView.setStrokeColor(context.getResources().getColor(R.color.shower_blue300));
+            lastSelected = holder.cardView;
+        }
 
         switch(themeSources.get(position))
         {
@@ -72,6 +83,9 @@ public class ThemePickerAdapter extends
                 break;
             case "bg9":
                 holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.bg9));
+                break;
+            case "night":
+                holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.night));
                 break;
         }
 
@@ -108,6 +122,9 @@ public class ThemePickerAdapter extends
                 break;
             case "bg9":
                 position = 8;
+                break;
+            case "night":
+                position = 9;
                 break;
         }
 
