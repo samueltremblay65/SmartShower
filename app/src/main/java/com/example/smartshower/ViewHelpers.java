@@ -41,6 +41,18 @@ public class ViewHelpers {
             case "bg9":
                 drawableResource = R.drawable.bg9;
                 break;
+            case "earthDay":
+                drawableResource = R.drawable.earthday;
+                break;
+            case "earthDay2":
+                drawableResource = R.drawable.earthday2;
+                break;
+            case "decreasing":
+                drawableResource = R.drawable.decreasing;
+                break;
+            case "night":
+                drawableResource = R.drawable.night;
+                break;
             default:
                 drawableResource = R.drawable.bg1;
                 break;
@@ -58,6 +70,10 @@ public class ViewHelpers {
         darkThemes.add("bg6");
         darkThemes.add("bg7");
         darkThemes.add("bg8");
+        darkThemes.add("earthDay");
+        darkThemes.add("earthDay2");
+        darkThemes.add("decreasing");
+        darkThemes.add("night");
 
         if(darkThemes.contains(theme))
         {

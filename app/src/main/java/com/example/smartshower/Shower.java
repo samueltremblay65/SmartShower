@@ -175,6 +175,24 @@ public class Shower extends ActivityWithHeader {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
+
+                String url2 = "http://192.168.137.143:80/on";
+
+                StringRequest stringRequest2 = new StringRequest(Request.Method.GET, url2,
+                        response -> {
+                            Log.i("ConnectionJiraf", "Got a response");
+                            Log.i("HttpJiraf", response);
+                            stopShower();
+                        }, error -> {
+                            Log.i("HttpJiraf", "Random error");
+                            if(error.getMessage() != null)
+                            {
+                                Log.i("HttpJiraf", error.getMessage());
+                            }
+                        });
+                
+                requestQueue.add(stringRequest2);
+
                 if(isOn)
                 {
                     String url = "https://smartshowermock.onrender.com/off";
@@ -418,6 +436,9 @@ public class Shower extends ActivityWithHeader {
 
             currentTemperature = response.getInt("currentTemperature");
             targetTemperature = response.getInt("targetTemperature");
+
+            updateTempDisplay();
+            updateFlowRateDisplay();
 
             String responseStatus = response.getString("status");
 
