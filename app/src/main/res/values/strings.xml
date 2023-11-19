@@ -24,14 +24,14 @@
     <string name="addpreset_createnewpreset">Create a new preset</string>
     <string name="addpreset_name">Preset name</string>
     <string name="addpreset_settings">Shower settings</string>
-    <string name="addpreset_temperature">Temperature</string>
-    <string name="addpreset_flowrate">Flowrate</string>
+    <string name="addpreset_temperature">Temperature (C°)</string>
+    <string name="addpreset_flowrate">Water flow (%)</string>
     <string name="addpreset_theme">Select theme</string>
     <string name="addpreset_bool_timer">Enable shower timer</string>
     <string name="addpreset_bool_templimit">Enable safe temperature limit</string>
     <string name="discard_changes">discard changes</string>
     <string name="create_preset">Create preset</string>
-    <string name="addpreset_templimit">Safe temperature limit</string>
+    <string name="addpreset_templimit">Safe temperature limit (C°)</string>
     <string name="addpreset_timer">Duration limit</string>
     <string name="statistics_header">Statistics</string>
     <string name="settings_header">Settings</string>

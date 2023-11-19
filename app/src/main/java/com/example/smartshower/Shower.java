@@ -49,6 +49,8 @@ public class Shower extends ActivityWithHeader {
     public ShowerSession session;
     
     RequestQueue requestQueue;
+    
+    Timer timer;
 
     private int presetId;
     private int timerSeconds;
@@ -59,6 +61,9 @@ public class Shower extends ActivityWithHeader {
     private int maxTemp;
 
     private boolean isOn;
+
+    private boolean inputSequenced;
+    private int sequenceInstant = 0;
     private int cooldown = 0;
     private int maxTargetTemp;
 
@@ -67,8 +72,6 @@ public class Shower extends ActivityWithHeader {
     private TextView tempDisplay;
     private FloatingActionButton decreaseTemp;
     private FloatingActionButton increaseTemp;
-
-    private TextView flowRateDisplay;
 
     private Slider flowRateSlider;
 
@@ -86,12 +89,25 @@ public class Shower extends ActivityWithHeader {
     private boolean isEditable = false;
 
     @Override
+    protected void onPause() {
+        timer.cancel();
+        super.onPause();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shower);
         super.setupUIElements();
 
         preset = (UserPreset) getIntent().getSerializableExtra("preset");
+
+        inputSequenced = false;
+
+        if(preset.inputSequenceName != null && !preset.inputSequenceName.isEmpty() && !preset.inputSequenceName.equals("none"))
+        {
+            inputSequenced = true;
+        }
 
         isEditable = getIntent().getBooleanExtra("isEditable", false);
 
@@ -256,7 +272,8 @@ public class Shower extends ActivityWithHeader {
         setShowerTemperature();
 
         // Setting timer code
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @SuppressLint("DefaultLocale")
             @Override
             public void run() {
@@ -283,6 +300,15 @@ public class Shower extends ActivityWithHeader {
                             stopShower();
                             this.cancel();
                         }
+                    }
+
+                    Log.i("SequenceJiraf", "Boolean isSequenced: " + inputSequenced);
+                    
+                    // Input sequencing
+                    if(inputSequenced)
+                    {
+                        targetTemperature = ShowerSequencer.getTemperatureInstant(preset.inputSequenceName, sequenceInstant++);
+                        setShowerTemperature();
                     }
 
                     // Update statistics
@@ -323,7 +349,7 @@ public class Shower extends ActivityWithHeader {
                     });
                 }
             }
-        }, 0, 1000);
+        }, 1000, 1000);
     }
     public void createLiveChart()
     {
@@ -431,6 +457,7 @@ public class Shower extends ActivityWithHeader {
         }
         
         isOn = false;
+        sequenceInstant = 0;
         
         // Should save shower session to database
         startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));

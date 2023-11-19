@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -213,8 +214,13 @@ public class CreatePreset extends ActivityWithHeader {
                 }
                 else
                 {
-                    Random rnd = new Random();
                     UserPreset newPreset = new UserPreset(presetName, temperature, temperatureLimit, flowrate, timerSeconds, selectedTheme, presetOrder, 0);
+
+                    if(newPreset.name.equals("Temperature control test"))
+                    {
+                        newPreset.setInputSequenceName("control");
+                    }
+
                     addPresetToDatabase(newPreset);
                     Toast.makeText(this, "Creating...", Toast.LENGTH_SHORT).show();
                 }
@@ -340,6 +346,7 @@ public class CreatePreset extends ActivityWithHeader {
     }
 
     private void addPresetToDatabase(UserPreset preset) {
+
         account.addPreset(preset);
 
         db.collection("users").document(account.getUsername()).set(account).addOnSuccessListener(new OnSuccessListener<Void>() {
