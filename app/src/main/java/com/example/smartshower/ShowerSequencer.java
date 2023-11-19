@@ -23,17 +23,17 @@ public class ShowerSequencer {
     {
         if(instant <= 30)
         {
-            return (int) Math.round(30 + 10 * Math.sin((double) instant * 2 * Math.PI / 20));
+            return (int) Math.round(35 + 10 * Math.sin((double) instant * 2 * Math.PI / 20));
         }
         if(instant < 40)
         {
-            return 38;
+            return 25;
         }
         if(instant < 50)
         {
-            return 25;
+            return 50;
         }
-        return 50;
+        return 25;
     }
 
     private static int getDecreasingSequence(int instant)

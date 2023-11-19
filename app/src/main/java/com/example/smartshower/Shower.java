@@ -220,7 +220,7 @@ public class Shower extends ActivityWithHeader {
                             Log.i("HttpJiraf", response);
                             stopShower();
                         }, error -> {
-                            Log.i("HttpJiraf", "Random error");
+                            Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again");
                             if(error.getMessage() != null)
                             {
                                 Log.i("HttpJiraf", error.getMessage());
@@ -237,7 +237,7 @@ public class Shower extends ActivityWithHeader {
                             response -> {
                                 Log.i("HttpJiraf", response);
                                 stopShower();
-                            }, error -> Log.i("HttpJiraf", "Random error"));
+                            }, error -> Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again"));
 
                     requestQueue.add(stringRequest);
                 }
@@ -250,7 +250,7 @@ public class Shower extends ActivityWithHeader {
                                 Log.i("HttpJiraf", response);
                                 startShower();
 
-                            }, error -> Log.i("HttpJiraf", error.getMessage()));
+                            }, error -> Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again"));
 
                     requestQueue.add(stringRequest);
                 }
@@ -342,10 +342,21 @@ public class Shower extends ActivityWithHeader {
 
                         // let the chart know it's data has changed
                         chart.notifyDataSetChanged();
-                        chart.moveViewToX(targetSet.getEntryCount());
+                        chart.invalidate();
 
                         // Update timer text
                         timerDisplay.setText(formatTime(timerSeconds));
+
+                        if(session.showHealthWarning(currentTemperature))
+                        {
+                            TextView healthWarning = findViewById(R.id.warning_textbox);
+                            healthWarning.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            TextView healthWarning = findViewById(R.id.warning_textbox);
+                            healthWarning.setVisibility(View.GONE);
+                        }
                     });
                 }
             }
