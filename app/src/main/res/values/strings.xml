@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SmartShower</string>
-    <string name="add_preset">Add preset</string>
+    <string name="add_preset">add preset</string>
     <string name="recommended">Recommended</string>
     <string name="user_presets">My presets</string>
     <string name="hi_sam">Good morning Sam</string>
@@ -19,7 +19,7 @@
     <string name="account_dropdown_contact">Contact us</string>
     <string name="account_dropdown_settings">Settings</string>
     <string name="my_account_button">My account button</string>
-    <string name="manage_presets">manage presets</string>
+    <string name="manage_presets">Manage presets</string>
     <string name="plus_sign">+</string>
     <string name="addpreset_createnewpreset">Create a new preset</string>
     <string name="addpreset_name">Preset name</string>
@@ -28,8 +28,8 @@
     <string name="addpreset_flowrate">Flowrate</string>
     <string name="addpreset_theme">Select theme</string>
     <string name="addpreset_bool_timer">Enable shower timer</string>
-    <string name="addpreset_bool_templimit">Enable  safe temperature limit</string>
-    <string name="discard_changes">Discard changes</string>
+    <string name="addpreset_bool_templimit">Enable safe temperature limit</string>
+    <string name="discard_changes">discard changes</string>
     <string name="create_preset">Create preset</string>
     <string name="addpreset_templimit">Safe temperature limit</string>
     <string name="addpreset_timer">Duration limit</string>
@@ -45,19 +45,19 @@
     <string name="defaulttext_preset_timelimit">Unlimited duration</string>
     <string name="statistics_labels_monthly_temp">Monthly average shower temperatures</string>
     <string name="statistics_labels_monthly_duration">Monthly average shower duration</string>
-    <string name="welcome_login">Sign in</string>
+    <string name="welcome_login">sign in</string>
     <string name="welcome_back">Welcome back!</string>
-    <string name="welcome_signup">Create an account</string>
+    <string name="welcome_signup">create an account</string>
     <string name="signup_username">Username</string>
     <string name="signup_email">Email address</string>
     <string name="signup_password">Create a new password</string>
     <string name="login_password">Password</string>
     <string name="email">Email</string>
-    <string name="signup">Sign up</string>
+    <string name="signup">sign up</string>
     <string name="accounts_file">com.example.sharedpreferences.Accounts</string>
     <string name="keys_account_id">accountId</string>
     <string name="keys_account_username">accountUsername</string>
     <string name="keys_account_password">accountPassword</string>
     <string name="view_history">view shower history</string>
-    <string name="save_changes">Save changes</string>
+    <string name="save_changes">save changes</string>
 </resources>
