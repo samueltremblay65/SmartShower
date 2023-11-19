@@ -10,6 +10,8 @@ public class ShowerSession {
     int presetId;
     Integer maxTemperature;
 
+    int timeAbove40 = 0;
+
     public ShowerSession(int presetId)
     {
         showerData = new ArrayList<>();
@@ -28,6 +30,20 @@ public class ShowerSession {
         {
             maxTemperature = temperature;
         }
+
+        if(temperature > 40)
+        {
+            timeAbove40++;
+        }
+    }
+
+    public boolean showHealthWarning(int temperature)
+    {
+        if(temperature > 50)
+        {
+            return true;
+        }
+        return temperature > 40 && timeAbove40 > 30;
     }
 
     public int getWaterUsage()

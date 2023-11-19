@@ -41,9 +41,16 @@ public class UserPreset implements Serializable {
     @ColumnInfo(name = "userId")
     public int userId;
 
+    public String inputSequenceName;
+
     // Default constructor : creates object with default values
     public UserPreset(){
         orderIndex = -1;
+    }
+
+    public void setInputSequenceName(String name)
+    {
+        this.inputSequenceName = name;
     }
 
     // Main constructor to specify custom preset
@@ -58,6 +65,7 @@ public class UserPreset implements Serializable {
         this.secondsLimit = secondsLimit;
         this.orderIndex = orderIndex;
         this.userId = userId;
+        this.setInputSequenceName("");
     }
 
     @Ignore
@@ -73,6 +81,7 @@ public class UserPreset implements Serializable {
         this.secondsLimit = secondsLimit;
         this.orderIndex = orderIndex;
         this.userId = userId;
+        this.setInputSequenceName("");
     }
 
     public void updateOrder(int newOrder){

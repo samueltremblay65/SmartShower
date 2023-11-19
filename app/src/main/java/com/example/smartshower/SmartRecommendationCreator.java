@@ -54,6 +54,7 @@ public class SmartRecommendationCreator {
         String earthMonthInfo = "Celebrate Earth Month with a cooler and shorter shower to help save energy and water";
 
         UserPreset decreasingTemperatureShower = new UserPreset("Decreasing temperature shower", 38, 40, 80, 600, "decreasing", -1, 0);
+        decreasingTemperatureShower.setInputSequenceName("decreasing");
         String decreasingShowerInfo = "Take a cold shower without the initial shock. Temperature starts at 37°C and gradually decreases with time";
         
         recommendations.add(earthMonth);
