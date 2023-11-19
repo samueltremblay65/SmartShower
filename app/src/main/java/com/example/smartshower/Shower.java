@@ -28,6 +28,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -118,7 +120,6 @@ public class Shower extends ActivityWithHeader {
         increaseTemp = findViewById(R.id.shower_increaseTemp);
         decreaseTemp = findViewById(R.id.shower_decreaseTemp);
         flowRateSlider = findViewById(R.id.slider_showerFlow);
-        flowRateDisplay = findViewById(R.id.tv_showerFlow);
         editPresetButton = findViewById(R.id.btn_shower_editPresets);
         startShowerButton = findViewById(R.id.btn_shower_start);
 
@@ -187,6 +188,8 @@ public class Shower extends ActivityWithHeader {
                 updateFlowRateDisplay();
             }
         });
+
+        flowRateSlider.setLabelFormatter(value -> String.format(Locale.CANADA, "%.0f%%", value));
 
         startShowerButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceAsColor")
@@ -451,7 +454,9 @@ public class Shower extends ActivityWithHeader {
     }
 
     @SuppressLint("DefaultLocale")
-    private void updateFlowRateDisplay() { flowRateDisplay.setText(String.format("water flow: %d%%", currentFlow));}
+    private void updateFlowRateDisplay() {
+        // flowRateDisplay.setText(String.format("water flow: %d%%", currentFlow));
+    }
 
     private void handleGetStatusRequest(JSONObject response)
     {

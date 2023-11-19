@@ -8,9 +8,9 @@
     <string name="increase_temp">Increase temperature</string>
     <string name="decrease_temp">Decrease temperature</string>
     <string name="water_flow">water flow</string>
-    <string name="start_shower">Start shower</string>
+    <string name="start_shower">start shower</string>
     <string name="stop_shower">Stop shower</string>
-    <string name="edit_preset">Edit preset</string>
+    <string name="edit_preset">edit preset</string>
     <string name="stats_average_duration">Average shower duration</string>
     <string name="stats_average_temperature">Average shower temperature</string>
     <string name="stats_number_showers_monthly">Number of showers this month</string>
