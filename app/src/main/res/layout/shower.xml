@@ -65,29 +65,41 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_showerFlow"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="5dp"
-            android:text="water flow: 80%"
-            android:textAlignment="center"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
 
-        <com.google.android.material.slider.Slider
-            android:id="@+id/slider_showerFlow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/decrease_temp"
-            app:thumbColor="@color/shower_blue300"
-            app:trackColor="@color/black_300"
-            android:layout_marginLeft="20dp"
-            app:labelBehavior="gone"
-            android:layout_marginRight="20dp"/>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:translationY="10dp"
+                android:src="@drawable/lowflow"/>
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider_showerFlow"
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:thumbColor="@color/shower_blue300"
+                app:trackColor="@color/shower_blue300"
+                android:theme="@style/AppTheme"
+                style="@style/App.Slider"
+                android:layout_marginTop="15dp" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="10dp"
+                android:translationY="10dp"
+                android:src="@drawable/highflow"/>
+
+        </LinearLayout>
 
         <com.github.mikephil.charting.charts.LineChart
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/shower_livechart"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
