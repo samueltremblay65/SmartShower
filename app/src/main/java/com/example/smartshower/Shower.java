@@ -301,8 +301,6 @@ public class Shower extends ActivityWithHeader {
                             this.cancel();
                         }
                     }
-
-                    Log.i("SequenceJiraf", "Boolean isSequenced: " + inputSequenced);
                     
                     // Input sequencing
                     if(inputSequenced)
@@ -342,7 +340,7 @@ public class Shower extends ActivityWithHeader {
 
                         // let the chart know it's data has changed
                         chart.notifyDataSetChanged();
-                        chart.invalidate();
+                        chart.moveViewToX(targetSet.getEntryCount());
 
                         // Update timer text
                         timerDisplay.setText(formatTime(timerSeconds));

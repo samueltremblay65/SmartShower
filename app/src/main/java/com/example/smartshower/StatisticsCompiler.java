@@ -3,13 +3,18 @@ package com.example.smartshower;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import static java.lang.Math.max;
+
+import java.util.Date;
 import java.util.List;
 
 public class StatisticsCompiler {
     List<Statistics> allStatistics;
     ArrayList<Statistics> todayStatistics;
+
+    ArrayList<Statistics> weekStatistics;
 
     // Calculated values
     float todayWaterUsage;
@@ -33,19 +38,35 @@ public class StatisticsCompiler {
 
         allStatistics.sort(new StatisticDateComparator());
 
-        todayStatistics = new ArrayList<Statistics>();
+        todayStatistics = new ArrayList();
+        weekStatistics = new ArrayList();
 
         for(Statistics statistic: allStatistics)
         {
-            if(DateUtils.isToday(statistic.parseDate()))
+            Date date = statistic.parseDate();
+            if(DateUtils.isToday(date))
             {
                 todayStatistics.add(statistic);
+            }
+
+            if(isWithinLastWeek(date))
+            {
+                weekStatistics.add(statistic);
             }
         }
 
         calculateTodayStatistics();
 
         calculateAllTimeStatistics();
+    }
+    
+    public static boolean isWithinLastWeek(Date date)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -7);
+        Date lastWeek = cal.getTime();
+
+        return date.after(lastWeek);
     }
 
     public ArrayList<Statistics> getLatestShowerStatistics(int n)
@@ -94,6 +115,31 @@ public class StatisticsCompiler {
         return waterUsage / 1000 + temperature * waterUsage / 10000;
     }
 
+    public DataPoint<Integer>[] calculateDailyWaterUsageWeek()
+    {
+        List<Integer>[] weekDayDividedStatistics = new List[7];
+        for(int i = 0; i < 7; i++)
+        {
+            weekDayDividedStatistics[i] = new ArrayList<Integer>();
+        }
+
+        for (Statistics statistic: weekStatistics) {
+            Date date = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+            Log.i("StatisticsJiraf", "Day of week: " + weekday);
+            weekDayDividedStatistics[weekday].add(statistic.averageTemperature);
+        }
+
+        DataPoint<Integer>[] dayAverages = new DataPoint[7];
+        for(int i = 0; i < 7; i++)
+        {
+            dayAverages[i] = calculateSum(weekDayDividedStatistics[i]);
+        }
+        return dayAverages;
+    }
+    
     public DataPoint<Integer>[] calculateAverageTemperaturePerMonth()
     {
         List<Integer>[] monthDividedStatistics = new List[12];
@@ -126,6 +172,19 @@ public class StatisticsCompiler {
             sum += value;
         }
         return new DataPoint<Integer>(sum / values.size());
+    }
+
+    public DataPoint<Integer> calculateSum(List<Integer> values)
+    {
+        if(values.isEmpty())
+        {
+            return new DataPoint();
+        }
+        int sum = 0;
+        for (Integer value: values) {
+            sum += value;
+        }
+        return new DataPoint<Integer>(sum);
     }
 
     public int calculateAverageDuration()

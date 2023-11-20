@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,13 +23,18 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -97,9 +103,7 @@ public class StatisticsHome extends ActivityWithHeader {
                 }
 
                 //populateStatisticsWithExampleData();
-
                 loadStatistics();
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -113,7 +117,8 @@ public class StatisticsHome extends ActivityWithHeader {
     {
         // Generate header
         TextView label = new TextView(getApplicationContext());
-        label.setText(R.string.statistics_labels_monthly_temp);
+        //
+        label.setText(getApplicationContext().getResources().getString(R.string.statistics_labels_monthly_temp));
         label.setTextSize(20.0f);
         label.setTextColor(Color.BLACK);
         label.setTypeface(null, Typeface.BOLD);
@@ -204,6 +209,97 @@ public class StatisticsHome extends ActivityWithHeader {
         chart.invalidate(); // refresh
     }
 
+    private void createWeekDayUsageChart()
+    {
+        // Generate header
+        TextView label = new TextView(getApplicationContext());
+
+        label.setText("Water usage in the last 7 days");
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+
+        entries.add(new BarEntry(1f, 111f));
+        entries.add(new BarEntry(2f, 56f));
+        entries.add(new BarEntry(3f, 41f));
+        entries.add(new BarEntry(4f, 48f));
+        entries.add(new BarEntry(5f, 71f));
+        entries.add(new BarEntry(6f, 123f));
+        entries.add(new BarEntry(7f, 68f));
+
+        String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyWaterUsageWeek();
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
+        String[] currentDayLabels = new String[7];
+        ArrayList<DataPoint<Integer>> currentWeekSortedData = new ArrayList<>();
+
+        /*int minUsage = 0;
+
+        for(int i = 0; i < 7; i++)
+        {
+            currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
+            currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
+            if(dataset[i].isValid && dataset[i].value < minUsage)
+                minUsage = dataset[i].value;
+        }
+
+        int i = 1;
+        for (DataPoint<Integer> data: currentWeekSortedData) {
+            int currentX = i;
+            if(data.isValid)
+            {
+                entries.add(new BarEntry(currentX, data.value));
+            }
+            i++;
+        }*/
+
+        // Main chart properties
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        BarDataSet set = new BarDataSet(entries, "Water usage (L)");
+        set.setColor(getApplicationContext().getResources().getColor(R.color.shower_blue300));
+        BarData data = new BarData(set);
+        data.setBarWidth(0.2f); // set custom bar width
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        chart.setData(data);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate();
+
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                if(value == 0 || value > 7)
+                {
+                    return "";
+                }
+                return weekdayLabels[(int) value - 1];
+            }
+        });
+
+        chart.invalidate(); // refresh
+    }
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
         public ScreenSlidePagerAdapter(FragmentActivity fa) {
@@ -224,32 +320,32 @@ public class StatisticsHome extends ActivityWithHeader {
                     title = "Water usage";
                     currentValue = statisticsCompiler.todayWaterUsage;
                     unit = "L";
-                    maxValue = 100;
-                    message = String.format("You have used %.1f litres of water today. This is %d %% less than your average usage.", currentValue, 30);
+                    maxValue = Math.max(100, currentValue + 20);
+                    message = String.format("You have used %.1f litres of water today. This is %d %% less than your average usage.", currentValue, 57);
                     break;
                 case 1:
                     title = "Total shower time";
                     currentValue = statisticsCompiler.todayTotalDuration / 60;
-                    maxValue = 60;
+                    maxValue = Math.max(60, currentValue + 20);
                     unit = " mins";
                     color = Color.GREEN;
-                    message = String.format("You have spent %.0f minutes in the shower today. This is %d%% less than your average usage.", currentValue, 30);
+                    message = String.format("You have spent %.0f minutes in the shower today. This is %d%% less than your average usage.", currentValue, 52);
                     break;
                 case 2:
                     title = "Average shower duration";
                     currentValue = statisticsCompiler.todayAverageDuration / 60;
-                    maxValue = 60;
+                    maxValue = Math.max(60, currentValue + 5);
                     unit = " mins";
                     color = Color.GREEN;
-                    message = String.format("Your average shower duration today was %.0f minutes. This is %d%% less than your average usage.", currentValue, 30);
+                    message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes more than your average usage.", currentValue, 3);
                     break;
                 case 3:
                     title = "Average water temperature";
                     currentValue = statisticsCompiler.todayAverageTemperature;
-                    maxValue = 60;
+                    maxValue = Math.max(60, currentValue);
                     unit = "°C";
                     color = context.getColor(R.color.light_red);
-                    message = String.format("Your average shower water temperature was %.0f°C today. This is %d%% less than your average usage.", currentValue, 30);
+                    message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees more than your average usage.", currentValue, 3);
                     break;
             }
             return new GaugeFragment(title, currentValue, maxValue, unit, color, message);
@@ -268,8 +364,9 @@ public class StatisticsHome extends ActivityWithHeader {
         gaugePagerAdapter = new StatisticsHome.ScreenSlidePagerAdapter(this);
         gaugePager.setAdapter(gaugePagerAdapter);
 
+        createWeekDayUsageChart();
         createAverageTemperatureChart();
-        // createAverageDurationChart();
+
     }
 
     // Database tasks
