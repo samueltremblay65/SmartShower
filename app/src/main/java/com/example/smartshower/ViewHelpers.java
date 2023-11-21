@@ -69,7 +69,7 @@ public class ViewHelpers {
         darkThemes.add("bg2");
         darkThemes.add("bg6");
         darkThemes.add("bg7");
-        darkThemes.add("bg8");
+        darkThemes.add("bg9");
         darkThemes.add("earthDay");
         darkThemes.add("earthDay2");
         darkThemes.add("decreasing");

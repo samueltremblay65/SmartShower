@@ -5,7 +5,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import static java.lang.Math.max;
 
 import java.util.Date;
 import java.util.List;
@@ -124,12 +123,11 @@ public class StatisticsCompiler {
         }
 
         for (Statistics statistic: weekStatistics) {
-            Date date = new Date();
+            Date date = statistic.parseDate();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             int weekday = calendar.get(Calendar.DAY_OF_WEEK);
-            Log.i("StatisticsJiraf", "Day of week: " + weekday);
-            weekDayDividedStatistics[weekday].add(statistic.averageTemperature);
+            weekDayDividedStatistics[weekday-1].add(statistic.averageTemperature);
         }
 
         DataPoint<Integer>[] dayAverages = new DataPoint[7];
@@ -189,6 +187,11 @@ public class StatisticsCompiler {
 
     public int calculateAverageDuration()
     {
+        if(allStatistics.size() == 0)
+        {
+            return 0;
+        }
+
         int sum = 0;
         for(Statistics statistic: allStatistics)
         {
@@ -199,6 +202,8 @@ public class StatisticsCompiler {
 
     public int calculateAverageFlowrate()
     {
+        if(allStatistics.size() == 0)
+            return 0;
         int sum = 0;
         for(Statistics statistic: allStatistics)
         {
@@ -211,18 +216,13 @@ public class StatisticsCompiler {
         return calculateAverageDuration() * 7 / 60;
     }
 
-    public int calculateAverageWaterUsagePerDay()
-    {
-        int sum = 0;
-        for(Statistics statistic: allStatistics)
-        {
-            sum += statistic.duration;
-        }
-        return sum / 365; // TODO: calculate the number of days from the first day
-    }
-
     public int calculateAverageTemperature()
     {
+        if(allStatistics.size() == 0)
+        {
+            return 0;
+        }
+
         int sum = 0;
         for(Statistics statistic: allStatistics)
         {

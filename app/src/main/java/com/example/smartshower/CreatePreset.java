@@ -58,7 +58,7 @@ public class CreatePreset extends ActivityWithHeader {
 
     RecyclerView themePicker;
 
-    String selectedTheme;
+    String selectedTheme = null;
 
     int presetOrder;
 
@@ -84,7 +84,6 @@ public class CreatePreset extends ActivityWithHeader {
 
         // Initializing the form elements
         nameInput = findViewById(R.id.et_preset_name);
-        themeInput = findViewById(R.id.et_preset_theme);
         temperatureInput = findViewById(R.id.et_preset_temperature);
         flowrateInput = findViewById(R.id.et_preset_flow);
 
@@ -105,6 +104,7 @@ public class CreatePreset extends ActivityWithHeader {
         // Edit preset code path
         if(existingPreset != null)
         {
+            Log.i("EditJiraf", "EditMode: on");
             editMode = true;
 
             // Insert values into inputs
@@ -139,7 +139,6 @@ public class CreatePreset extends ActivityWithHeader {
                 throw new IllegalStateException("No valid presetOrder provided for preset creation");
             }
         }
-
 
         timerEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -246,13 +245,9 @@ public class CreatePreset extends ActivityWithHeader {
         ColorStateList editTextColorStateList = new ColorStateList(states, colors);
 
         TextInputLayout presetNameInput = findViewById(R.id.ti_create_preset_preset_name);
-        TextInputLayout presetThemeInput = findViewById(R.id.ti_create_preset_preset_theme);
 
         presetNameInput.setBoxStrokeColorStateList(editTextColorStateList);
         presetNameInput.setHintTextColor(editTextColorStateList);
-
-        presetThemeInput.setBoxStrokeColorStateList(editTextColorStateList);
-        presetThemeInput.setHintTextColor(editTextColorStateList);
 
         // Theme picker initialization
         themePicker = findViewById(R.id.theme_picker_recyclerview);
@@ -305,13 +300,6 @@ public class CreatePreset extends ActivityWithHeader {
         themeSources.add("bg8");
         themeSources.add("bg9");
         themeSources.add("night");
-
-        String selectedTheme = null;
-
-        if(editMode)
-        {
-            selectedTheme = existingPreset.theme;
-        }
 
         ThemePickerAdapter adapter = new ThemePickerAdapter(this, themeSources, selectedTheme);
 

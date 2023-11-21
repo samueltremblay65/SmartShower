@@ -1,5 +1,7 @@
 package com.example.smartshower;
 
+import static android.view.View.VISIBLE;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -21,6 +23,7 @@ import android.os.Bundle;
 
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -126,6 +129,12 @@ public class MainActivity extends ActivityWithHeader {
 
         // Sort the list by orderIndex to display presets in order set by user
         presets.sort((p1, p2) -> p1.orderIndex - p2.orderIndex);
+
+        if(presets.size() == 0)
+        {
+            TextView no_presets = findViewById(R.id.my_presets_empty);
+            no_presets.setVisibility(VISIBLE);
+        }
 
         presetAdapter = new PresetAdapter(getApplicationContext(), presets, this::startEditablePresetShower, this::editPreset, this::deletePreset);
         presetListView.setAdapter(presetAdapter);

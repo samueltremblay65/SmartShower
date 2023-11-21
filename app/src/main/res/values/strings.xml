@@ -60,4 +60,5 @@
     <string name="keys_account_password">accountPassword</string>
     <string name="view_history">view shower history</string>
     <string name="save_changes">save changes</string>
+    <string name="no_presets">You have no presets yet. Click the add preset button to create one.</string>
 </resources>

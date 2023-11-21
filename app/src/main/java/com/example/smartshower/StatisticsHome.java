@@ -229,14 +229,6 @@ public class StatisticsHome extends ActivityWithHeader {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
-        entries.add(new BarEntry(1f, 111f));
-        entries.add(new BarEntry(2f, 56f));
-        entries.add(new BarEntry(3f, 41f));
-        entries.add(new BarEntry(4f, 48f));
-        entries.add(new BarEntry(5f, 71f));
-        entries.add(new BarEntry(6f, 123f));
-        entries.add(new BarEntry(7f, 68f));
-
         String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
         DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyWaterUsageWeek();
 
@@ -248,14 +240,10 @@ public class StatisticsHome extends ActivityWithHeader {
         String[] currentDayLabels = new String[7];
         ArrayList<DataPoint<Integer>> currentWeekSortedData = new ArrayList<>();
 
-        /*int minUsage = 0;
-
         for(int i = 0; i < 7; i++)
         {
             currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
             currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
-            if(dataset[i].isValid && dataset[i].value < minUsage)
-                minUsage = dataset[i].value;
         }
 
         int i = 1;
@@ -266,7 +254,7 @@ public class StatisticsHome extends ActivityWithHeader {
                 entries.add(new BarEntry(currentX, data.value));
             }
             i++;
-        }*/
+        }
 
         // Main chart properties
         Description description = new Description();

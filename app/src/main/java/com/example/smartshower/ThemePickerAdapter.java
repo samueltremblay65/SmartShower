@@ -1,6 +1,7 @@
 package com.example.smartshower;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class ThemePickerAdapter extends
 
     private Context context;
 
-    private int selectedThemeIndex;
+    private int selectedThemeIndex = -1;
 
     private MaterialCardView lastSelected;
 
@@ -34,7 +35,10 @@ public class ThemePickerAdapter extends
         this.context = context;
 
         if(selectedTheme != null)
+        {
             selectedThemeIndex = getPositionForTheme(selectedTheme);
+        }
+
     }
 
     // inflates the row layout from xml when needed
@@ -50,9 +54,14 @@ public class ThemePickerAdapter extends
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if(position == selectedThemeIndex)
         {
+            Log.i("PositionJiraf", "Position = " + position);
             holder.cardView.setStrokeWidth(8);
             holder.cardView.setStrokeColor(context.getResources().getColor(R.color.shower_blue300));
             lastSelected = holder.cardView;
+        }
+        else
+        {
+            holder.cardView.setStrokeWidth(0);
         }
 
         switch(themeSources.get(position))
@@ -93,7 +102,7 @@ public class ThemePickerAdapter extends
     
     public int getPositionForTheme(String theme)
     {
-        int position = -1;
+        int position = -4;
         switch(theme)
         {
             case "bg1":
@@ -155,8 +164,9 @@ public class ThemePickerAdapter extends
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(themeSources.get(getAdapterPosition()));
+            if (mClickListener != null) mClickListener.onItemClick(themeSources.get(getLayoutPosition()));
 
+            Log.i("AdapterJiraf", "Adapter position: " + getLayoutPosition());
             // Remove border from last selected element
             if(lastSelected != null)
             {
@@ -164,6 +174,7 @@ public class ThemePickerAdapter extends
             }
 
             lastSelected = cardView;
+            selectedThemeIndex = getLayoutPosition();
 
             cardView.setStrokeWidth(8);
             cardView.setStrokeColor(context.getResources().getColor(R.color.shower_blue300));

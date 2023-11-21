@@ -76,10 +76,23 @@
         android:background="#FFFFFF"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_home_presets"
+        <LinearLayout android:id="@+id/my_presets"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <TextView android:id="@+id/my_presets_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_presets"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_home_presets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
