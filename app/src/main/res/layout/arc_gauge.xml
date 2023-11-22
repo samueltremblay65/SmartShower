@@ -19,6 +19,6 @@
         android:layout_width="260dp"
         android:textAlignment="center"
         android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content" />
+        android:layout_height="60dp"/>
 
 </LinearLayout>

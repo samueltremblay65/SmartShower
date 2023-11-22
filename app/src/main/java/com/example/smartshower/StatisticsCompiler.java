@@ -1,13 +1,14 @@
 package com.example.smartshower;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import static java.lang.Math.max;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class StatisticsCompiler {
@@ -18,18 +19,14 @@ public class StatisticsCompiler {
 
     // Calculated values
     float todayWaterUsage;
-    int todayNumberShowers;
     int todayAverageTemperature;
-    float todayCost;
     int todayAverageDuration;
     int todayTotalDuration;
 
     // Average values
     int averageWaterUsage;
     int averageFlowRate;
-    int totalNumberShowers;
     int averageTemperature;
-    float averageCost;
     int averageShowerDuration;
 
     StatisticsCompiler(List<Statistics> allStatistics)
@@ -82,7 +79,6 @@ public class StatisticsCompiler {
     public void calculateTodayStatistics()
     {
         todayAverageTemperature = 0;
-        todayCost = 0;
         todayWaterUsage = 0;
         todayAverageDuration = 0;
 
@@ -95,7 +91,6 @@ public class StatisticsCompiler {
         {
             todayAverageTemperature += statistic.averageTemperature;
             todayWaterUsage += statistic.waterUsage;
-            todayCost += calculateCost(statistic.averageTemperature, statistic.waterUsage);
             todayAverageDuration += statistic.duration;
         }
         todayTotalDuration = todayAverageDuration;
@@ -108,14 +103,34 @@ public class StatisticsCompiler {
         averageTemperature = calculateAverageTemperature();
         averageFlowRate = calculateAverageFlowrate();
         averageShowerDuration = calculateAverageDuration();
+        averageWaterUsage = calculateAverageDailyWaterUsage();
     }
 
-    public float calculateCost(int temperature, float waterUsage)
+    public DataPoint<Float>[] calculateDailyWaterUsageWeek()
     {
-        return waterUsage / 1000 + temperature * waterUsage / 10000;
+        List<Float>[] weekDayDividedStatistics = new List[7];
+        for(int i = 0; i < 7; i++)
+        {
+            weekDayDividedStatistics[i] = new ArrayList<Float>();
+        }
+
+        for (Statistics statistic: weekStatistics) {
+            Date date = statistic.parseDate();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+            weekDayDividedStatistics[weekday-1].add(statistic.waterUsage);
+        }
+
+        DataPoint<Float>[] dayUsages= new DataPoint[7];
+        for(int i = 0; i < 7; i++)
+        {
+            dayUsages[i] = calculateFloatSum(weekDayDividedStatistics[i]);
+        }
+        return dayUsages;
     }
 
-    public DataPoint<Integer>[] calculateDailyWaterUsageWeek()
+    public DataPoint<Integer>[] calculateDailyTemperatureWeek()
     {
         List<Integer>[] weekDayDividedStatistics = new List[7];
         for(int i = 0; i < 7; i++)
@@ -124,18 +139,41 @@ public class StatisticsCompiler {
         }
 
         for (Statistics statistic: weekStatistics) {
-            Date date = new Date();
+            Date date = statistic.parseDate();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             int weekday = calendar.get(Calendar.DAY_OF_WEEK);
-            Log.i("StatisticsJiraf", "Day of week: " + weekday);
-            weekDayDividedStatistics[weekday].add(statistic.averageTemperature);
+            weekDayDividedStatistics[weekday-1].add(statistic.averageTemperature);
         }
 
         DataPoint<Integer>[] dayAverages = new DataPoint[7];
         for(int i = 0; i < 7; i++)
         {
-            dayAverages[i] = calculateSum(weekDayDividedStatistics[i]);
+            dayAverages[i] = calculateAverage(weekDayDividedStatistics[i]);
+        }
+        return dayAverages;
+    }
+
+    public DataPoint<Integer>[] calculateDailyDurationWeek()
+    {
+        List<Integer>[] weekDayDividedStatistics = new List[7];
+        for(int i = 0; i < 7; i++)
+        {
+            weekDayDividedStatistics[i] = new ArrayList<Integer>();
+        }
+
+        for (Statistics statistic: weekStatistics) {
+            Date date = statistic.parseDate();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+            weekDayDividedStatistics[weekday-1].add(statistic.duration);
+        }
+
+        DataPoint<Integer>[] dayAverages = new DataPoint[7];
+        for(int i = 0; i < 7; i++)
+        {
+            dayAverages[i] = calculateAverage(weekDayDividedStatistics[i]);
         }
         return dayAverages;
     }
@@ -149,14 +187,84 @@ public class StatisticsCompiler {
         }
 
         for (Statistics statistic: allStatistics) {
-            int month = statistic.getMonth();
-            monthDividedStatistics[month].add(statistic.averageTemperature);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -365);
+            Date lastYear = cal.getTime();
+
+            if(statistic.parseDate().after(lastYear))
+            {
+                int month = statistic.getMonth();
+                monthDividedStatistics[month].add(statistic.averageTemperature);
+            }
         }
 
         DataPoint<Integer>[] monthAverages = new DataPoint[12];
         for(int i = 0; i < 12; i++)
         {
             monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
+        }
+        return monthAverages;
+    }
+
+    public DataPoint<Float>[] calculateAverageDailyUsageYear()
+    {
+        List<Float>[] monthDividedStatistics = new List[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthDividedStatistics[i] = new ArrayList<Float>();
+        }
+
+        for (Statistics statistic: allStatistics) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -365);
+            Date lastYear = cal.getTime();
+
+            if(statistic.parseDate().after(lastYear))
+            {
+                int month = statistic.getMonth();
+                monthDividedStatistics[month].add(statistic.waterUsage);
+            }
+        }
+
+        DataPoint<Float>[] monthAverages = new DataPoint[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthAverages[i] = calculateFloatSum(monthDividedStatistics[i]);
+        }
+
+        for(DataPoint<Float> point: monthAverages)
+        {
+            point.value = point.value / 30;
+        }
+
+        return monthAverages;
+    }
+
+    public DataPoint<Integer>[] calculateAverageDurationPerMonth()
+    {
+        List<Integer>[] monthDividedStatistics = new List[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthDividedStatistics[i] = new ArrayList<Integer>();
+        }
+
+        for (Statistics statistic: allStatistics) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -365);
+            Date lastYear = cal.getTime();
+
+            if(statistic.parseDate().after(lastYear))
+            {
+                int month = statistic.getMonth();
+                monthDividedStatistics[month].add(statistic.duration);
+            }
+        }
+
+        DataPoint<Integer>[] monthAverages = new DataPoint[12];
+        for(int i = 0; i < 12; i++)
+        {
+            monthAverages[i] = calculateAverage(monthDividedStatistics[i]);
+            Log.i("StatisticsJiraf", monthAverages[i].toString());
         }
         return monthAverages;
     }
@@ -187,8 +295,26 @@ public class StatisticsCompiler {
         return new DataPoint<Integer>(sum);
     }
 
+    public DataPoint<Float> calculateFloatSum(List<Float> values)
+    {
+        if(values.isEmpty())
+        {
+            return new DataPoint();
+        }
+        float sum = 0;
+        for (Float value: values) {
+            sum += value;
+        }
+        return new DataPoint<Float>(sum);
+    }
+
     public int calculateAverageDuration()
     {
+        if(allStatistics.size() == 0)
+        {
+            return 0;
+        }
+
         int sum = 0;
         for(Statistics statistic: allStatistics)
         {
@@ -199,6 +325,8 @@ public class StatisticsCompiler {
 
     public int calculateAverageFlowrate()
     {
+        if(allStatistics.size() == 0)
+            return 0;
         int sum = 0;
         for(Statistics statistic: allStatistics)
         {
@@ -206,23 +334,40 @@ public class StatisticsCompiler {
         }
         return sum / allStatistics.size();
     }
-    public int calculateAverageWaterUsage()
+    public int calculateAverageDailyWaterUsage()
     {
-        return calculateAverageDuration() * 7 / 60;
-    }
+        if(allStatistics.size() == 0)
+            return 0;
 
-    public int calculateAverageWaterUsagePerDay()
-    {
-        int sum = 0;
+        float sum = 0;
+        int numDays = 0;
+        HashMap<String, Integer> dayCounterMap = new HashMap<>();
+
         for(Statistics statistic: allStatistics)
         {
-            sum += statistic.duration;
+            Date date = statistic.parseDate();
+            int month = date.getMonth();
+            int day = date.getDay();
+            int year = date.getYear();
+            @SuppressLint("DefaultLocale") String dayHashString = String.format("%d/%d/%d", month, day, year);
+
+            if(!dayCounterMap.containsKey(dayHashString))
+            {
+                numDays++;
+                dayCounterMap.put(dayHashString, 1);
+            }
+            sum += statistic.waterUsage;
         }
-        return sum / 365; // TODO: calculate the number of days from the first day
+        return Math.round(sum / numDays);
     }
 
     public int calculateAverageTemperature()
     {
+        if(allStatistics.size() == 0)
+        {
+            return 0;
+        }
+
         int sum = 0;
         for(Statistics statistic: allStatistics)
         {

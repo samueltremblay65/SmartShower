@@ -43,8 +43,6 @@
     <string name="greeting_good_afternoon">Good afternoon %s</string>
     <string name="greeting_good_evening">Good evening %s</string>
     <string name="defaulttext_preset_timelimit">Unlimited duration</string>
-    <string name="statistics_labels_monthly_temp">Monthly average shower temperatures</string>
-    <string name="statistics_labels_monthly_duration">Monthly average shower duration</string>
     <string name="welcome_login">sign in</string>
     <string name="welcome_back">Welcome back!</string>
     <string name="welcome_signup">create an account</string>
@@ -60,4 +58,5 @@
     <string name="keys_account_password">accountPassword</string>
     <string name="view_history">view shower history</string>
     <string name="save_changes">save changes</string>
+    <string name="no_presets">You have no presets yet. Click the add preset button to create one.</string>
 </resources>
