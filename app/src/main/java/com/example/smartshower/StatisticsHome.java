@@ -102,7 +102,7 @@ public class StatisticsHome extends ActivityWithHeader {
                     throw new IllegalStateException("Could not find user account");
                 }
 
-                //populateStatisticsWithExampleData();
+                // populateStatisticsWithExampleData();
                 loadStatistics();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -113,12 +113,106 @@ public class StatisticsHome extends ActivityWithHeader {
         });
     }
 
-    private void createAverageTemperatureChart()
+    private void createAverageDailyUsageChartYear()
     {
         // Generate header
         TextView label = new TextView(getApplicationContext());
         //
-        label.setText(getApplicationContext().getResources().getString(R.string.statistics_labels_monthly_temp));
+        label.setText("Average daily water usage");
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
+        DataPoint<Float>[] dataset = statisticsCompiler.calculateAverageDailyUsageYear();
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentMonth = calendar.get(Calendar.MONTH);
+        String[] currentMonthLabels = new String[12];
+        ArrayList<DataPoint<Float>> currentMonthSortedData = new ArrayList<>();
+
+        int minTemperature = 16;
+
+        for(int i = 0; i < 12; i++)
+        {
+            currentMonthLabels[i] = monthLabels[(i + currentMonth + 1) % 12];
+            currentMonthSortedData.add(dataset[(i + currentMonth + 1) % 12]);
+        }
+
+        int i = 1;
+        for (DataPoint<Float> data: currentMonthSortedData) {
+            int currentX = i;
+            if(data.isValid)
+            {
+                entries.add(new Entry(currentX, data.value));
+            }
+            i++;
+        }
+
+        // Main chart properties
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        LineDataSet dataSet = new LineDataSet(entries, "Daily water usage (L)");
+        dataSet.setCircleRadius(6);
+        dataSet.setValueTextSize(0);
+
+        // Left axis
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(13f);
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTextSize(12);
+        xAxis.setDrawGridLines(false);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                if(value == 0 || value > 12)
+                {
+                    return "";
+                }
+                return currentMonthLabels[(int) value - 1];
+            }
+        });
+
+        // Right axis
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawGridLines(true);
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setAxisMinimum(minTemperature);
+        leftAxis.setTextSize(12);
+        leftAxis.setDrawGridLines(true);
+
+        // Do the thing with the chart
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate(); // refresh
+    }
+
+    private void createAverageTemperatureChartYear()
+    {
+        // Generate header
+        TextView label = new TextView(getApplicationContext());
+        //
+        label.setText("Average shower temperature");
         label.setTextSize(20.0f);
         label.setTextColor(Color.BLACK);
         label.setTypeface(null, Typeface.BOLD);
@@ -209,7 +303,99 @@ public class StatisticsHome extends ActivityWithHeader {
         chart.invalidate(); // refresh
     }
 
-    private void createWeekDayUsageChart()
+    private void createAverageDurationChartYear()
+    {
+        // Generate header
+        TextView label = new TextView(getApplicationContext());
+        //
+        label.setText("Average shower duration");
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        String[] monthLabels = new String[]{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"};
+        DataPoint<Integer>[] dataset = statisticsCompiler.calculateAverageDurationPerMonth();
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentMonth = calendar.get(Calendar.MONTH);
+        String[] currentMonthLabels = new String[12];
+        ArrayList<DataPoint<Integer>> currentMonthSortedData = new ArrayList<>();
+
+
+        for(int i = 0; i < 12; i++)
+        {
+            currentMonthLabels[i] = monthLabels[(i + currentMonth + 1) % 12];
+            currentMonthSortedData.add(dataset[(i + currentMonth + 1) % 12]);
+        }
+
+        int i = 1;
+        for (DataPoint<Integer> data: currentMonthSortedData) {
+            int currentX = i;
+            if(data.isValid)
+            {
+                entries.add(new Entry(currentX, data.value / 60));
+            }
+            i++;
+        }
+
+        // Main chart properties
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        LineDataSet dataSet = new LineDataSet(entries, "Average shower duration (minutes)");
+        dataSet.setCircleRadius(6);
+        dataSet.setValueTextSize(0);
+
+        // Left axis
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(13f);
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTextSize(12);
+        xAxis.setDrawGridLines(false);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+            if(value == 0 || value > 12)
+            {
+                return "";
+            }
+            return currentMonthLabels[(int) value - 1];
+            }
+        });
+
+        // Right axis
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawGridLines(true);
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setTextSize(12);
+        leftAxis.setDrawGridLines(true);
+
+        // Do the thing with the chart
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate(); // refresh
+    }
+
+    private void createWeekUsageChart()
     {
         // Generate header
         TextView label = new TextView(getApplicationContext());
@@ -230,7 +416,87 @@ public class StatisticsHome extends ActivityWithHeader {
         ArrayList<BarEntry> entries = new ArrayList<>();
 
         String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
-        DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyWaterUsageWeek();
+        DataPoint<Float>[] dataset = statisticsCompiler.calculateDailyWaterUsageWeek();
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
+        String[] currentDayLabels = new String[7];
+        ArrayList<DataPoint<Float>> currentWeekSortedData = new ArrayList<>();
+
+        for(int i = 0; i < 7; i++)
+        {
+            currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
+            currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
+        }
+
+        int i = 1;
+        for (DataPoint<Float> data: currentWeekSortedData) {
+            int currentX = i;
+            if(data.isValid)
+            {
+                entries.add(new BarEntry(currentX, data.value));
+            }
+            i++;
+        }
+
+        // Main chart properties
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        BarDataSet set = new BarDataSet(entries, "Water usage (L)");
+        set.setColor(getApplicationContext().getResources().getColor(R.color.shower_blue300));
+        BarData data = new BarData(set);
+        data.setBarWidth(0.2f); // set custom bar width
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        chart.setData(data);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate();
+
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                if(value == 0 || value > 7)
+                {
+                    return "";
+                }
+                return weekdayLabels[(int) value - 1];
+            }
+        });
+
+        chart.invalidate(); // refresh
+    }
+
+    private void createWeekTemperatureChart()
+    {
+        // Generate header
+        TextView label = new TextView(getApplicationContext());
+
+        label.setText("Average temperature in the last 7 days");
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+
+        String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyTemperatureWeek();
 
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -288,6 +554,87 @@ public class StatisticsHome extends ActivityWithHeader {
 
         chart.invalidate(); // refresh
     }
+
+    private void createWeekDurationChart()
+    {
+        // Generate header
+        TextView label = new TextView(getApplicationContext());
+
+        label.setText("Average shower duration in the last 7 days");
+        label.setTextSize(20.0f);
+        label.setTextColor(Color.BLACK);
+        label.setTypeface(null, Typeface.BOLD);
+
+        statisticsLayout.addView(label);
+
+        // Inflate chart and insert data
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, statisticsLayout, false);
+
+        statisticsLayout.addView(chart);
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+
+        String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyDurationWeek();
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
+        String[] currentDayLabels = new String[7];
+        ArrayList<DataPoint<Integer>> currentWeekSortedData = new ArrayList<>();
+
+        for(int i = 0; i < 7; i++)
+        {
+            currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
+            currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
+        }
+
+        int i = 1;
+        for (DataPoint<Integer> data: currentWeekSortedData) {
+            int currentX = i;
+            if(data.isValid)
+            {
+                entries.add(new BarEntry(currentX, data.value / 60));
+            }
+            i++;
+        }
+
+        // Main chart properties
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.getLegend().setTextSize(16);
+
+        // Dataset and related properties
+        BarDataSet set = new BarDataSet(entries, "Water usage (L)");
+        set.setColor(getApplicationContext().getResources().getColor(R.color.shower_blue300));
+        BarData data = new BarData(set);
+        data.setBarWidth(0.2f); // set custom bar width
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        chart.setData(data);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate();
+
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                if(value == 0 || value > 7)
+                {
+                    return "";
+                }
+                return weekdayLabels[(int) value - 1];
+            }
+        });
+
+        chart.invalidate(); // refresh
+    }
+
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
         public ScreenSlidePagerAdapter(FragmentActivity fa) {
@@ -301,6 +648,7 @@ public class StatisticsHome extends ActivityWithHeader {
             float maxValue = 100;
             String unit = "";
             String message = "";
+            int averageValue;
             int color = ContextCompat.getColor(getApplicationContext(), R.color.shower_blue300);
 
             switch (position) {
@@ -309,31 +657,57 @@ public class StatisticsHome extends ActivityWithHeader {
                     currentValue = statisticsCompiler.todayWaterUsage;
                     unit = "L";
                     maxValue = Math.max(100, currentValue + 20);
-                    message = String.format("You have used %.1f litres of water today. This is %d %% less than your average usage.", currentValue, 57);
+
+                    averageValue = statisticsCompiler.averageWaterUsage;
+
+                    if(currentValue > averageValue)
+                    {
+                        int percentage = (int)((float) (currentValue / averageValue - 1 ) * 100);
+                        message = String.format("You have used %.0f litres of water today. This is %d%% more than your average usage.", currentValue, percentage);
+                    }
+                    else
+                    {
+                        int percentage = (int) (100 * (1 - ((float) currentValue / averageValue)));
+                        message = String.format("You have used %.0f litres of water today. This is %d%% less than your average usage.", currentValue, percentage);
+                    }
                     break;
                 case 1:
-                    title = "Total shower time";
-                    currentValue = statisticsCompiler.todayTotalDuration / 60;
-                    maxValue = Math.max(60, currentValue + 20);
-                    unit = " mins";
-                    color = Color.GREEN;
-                    message = String.format("You have spent %.0f minutes in the shower today. This is %d%% less than your average usage.", currentValue, 52);
-                    break;
-                case 2:
                     title = "Average shower duration";
                     currentValue = statisticsCompiler.todayAverageDuration / 60;
                     maxValue = Math.max(60, currentValue + 5);
                     unit = " mins";
-                    color = Color.GREEN;
-                    message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes more than your average usage.", currentValue, 3);
+
+                    averageValue = statisticsCompiler.averageShowerDuration / 60;
+
+                    if(currentValue >= averageValue)
+                    {
+                        int difference = Math.round(currentValue - averageValue);
+                        message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes more than your average usage.", currentValue, difference);
+                    }
+                    else
+                    {
+                        int difference = Math.round(averageValue - currentValue);
+                        message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes less than your average usage.", currentValue, difference);
+                    }
                     break;
-                case 3:
+                case 2:
                     title = "Average water temperature";
                     currentValue = statisticsCompiler.todayAverageTemperature;
                     maxValue = Math.max(60, currentValue);
                     unit = "°C";
-                    color = context.getColor(R.color.light_red);
-                    message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees more than your average usage.", currentValue, 3);
+
+                    averageValue = statisticsCompiler.averageTemperature;
+
+                    if(currentValue > averageValue)
+                    {
+                        int difference = (int) (currentValue - averageValue);
+                        message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees more than your average usage.", currentValue, difference);
+                    }
+                    else
+                    {
+                        int difference = (int) (averageValue - currentValue);
+                        message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees less than your average usage.", currentValue, difference);
+                    }
                     break;
             }
             return new GaugeFragment(title, currentValue, maxValue, unit, color, message);
@@ -341,7 +715,7 @@ public class StatisticsHome extends ActivityWithHeader {
 
         @Override
         public int getItemCount() {
-            return 4;
+            return 3;
         }
     }
 
@@ -352,9 +726,13 @@ public class StatisticsHome extends ActivityWithHeader {
         gaugePagerAdapter = new StatisticsHome.ScreenSlidePagerAdapter(this);
         gaugePager.setAdapter(gaugePagerAdapter);
 
-        createWeekDayUsageChart();
-        createAverageTemperatureChart();
 
+        createWeekUsageChart();
+        createWeekTemperatureChart();
+        createWeekDurationChart();
+        createAverageTemperatureChartYear();
+        createAverageDurationChartYear();
+        createAverageDailyUsageChartYear();
     }
 
     // Database tasks
