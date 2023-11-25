@@ -1,10 +1,13 @@
 package com.example.smartshower;
 
+import static android.view.View.VISIBLE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +56,8 @@ import java.util.Random;
 public class StatisticsHome extends ActivityWithHeader {
 
     private LinearLayout statisticsLayout;
+    private LinearLayout weekLayout;
+    private LinearLayout yearLayout;
 
     private ViewPager2 gaugePager;
     private FragmentStateAdapter gaugePagerAdapter;
@@ -80,6 +85,8 @@ public class StatisticsHome extends ActivityWithHeader {
         this.setHeader("Statistics");
 
         statisticsLayout = findViewById(R.id.statistics_home_ll);
+        weekLayout = findViewById(R.id.statistics_home_week);
+        yearLayout = findViewById(R.id.statistics_home_year);
 
         // View pager setup
         gaugePager = findViewById(R.id.vp_stats_gauges);
@@ -103,6 +110,13 @@ public class StatisticsHome extends ActivityWithHeader {
                 }
 
                 // populateStatisticsWithExampleData();
+
+                TextView last7Days = findViewById(R.id.tv_last_week);
+                TextView lastYear = findViewById(R.id.tv_last_year);
+                
+                last7Days.setVisibility(VISIBLE);
+                lastYear.setVisibility(VISIBLE);
+
                 loadStatistics();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -120,15 +134,15 @@ public class StatisticsHome extends ActivityWithHeader {
         //
         label.setText("Average daily water usage");
         label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
+        label.setTextColor(getApplicationContext().getResources().getColor(R.color.black_300));
         label.setTypeface(null, Typeface.BOLD);
-        statisticsLayout.addView(label);
+        yearLayout.addView(label);
 
         // Inflate chart and insert data
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, yearLayout, false);
 
-        statisticsLayout.addView(chart);
+        yearLayout.addView(chart);
 
         ArrayList<Entry> entries = new ArrayList<>();
 
@@ -214,15 +228,15 @@ public class StatisticsHome extends ActivityWithHeader {
         //
         label.setText("Average shower temperature");
         label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
+        label.setTextColor(getApplicationContext().getResources().getColor(R.color.black_300));
         label.setTypeface(null, Typeface.BOLD);
-        statisticsLayout.addView(label);
+        yearLayout.addView(label);
 
         // Inflate chart and insert data
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, yearLayout, false);
 
-        statisticsLayout.addView(chart);
+        yearLayout.addView(chart);
 
         ArrayList<Entry> entries = new ArrayList<>();
 
@@ -310,15 +324,15 @@ public class StatisticsHome extends ActivityWithHeader {
         //
         label.setText("Average shower duration");
         label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
+        label.setTextColor(getApplicationContext().getResources().getColor(R.color.black_300));
         label.setTypeface(null, Typeface.BOLD);
-        statisticsLayout.addView(label);
+        yearLayout.addView(label);
 
         // Inflate chart and insert data
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, statisticsLayout, false);
+        LineChart chart = (LineChart) inflater.inflate(R.layout.line_chart, yearLayout, false);
 
-        statisticsLayout.addView(chart);
+        yearLayout.addView(chart);
 
         ArrayList<Entry> entries = new ArrayList<>();
 
@@ -400,18 +414,18 @@ public class StatisticsHome extends ActivityWithHeader {
         // Generate header
         TextView label = new TextView(getApplicationContext());
 
-        label.setText("Water usage in the last 7 days");
+        label.setText("Daily water usage");
         label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
+        label.setTextColor(getApplicationContext().getResources().getColor(R.color.black_300));
         label.setTypeface(null, Typeface.BOLD);
 
-        statisticsLayout.addView(label);
+        weekLayout.addView(label);
 
         // Inflate chart and insert data
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, statisticsLayout, false);
+        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, weekLayout, false);
 
-        statisticsLayout.addView(chart);
+        weekLayout.addView(chart);
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
@@ -480,18 +494,18 @@ public class StatisticsHome extends ActivityWithHeader {
         // Generate header
         TextView label = new TextView(getApplicationContext());
 
-        label.setText("Average temperature in the last 7 days");
+        label.setText("Average temperature");
         label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
+        label.setTextColor(getApplicationContext().getResources().getColor(R.color.black_300));
         label.setTypeface(null, Typeface.BOLD);
 
-        statisticsLayout.addView(label);
+        weekLayout.addView(label);
 
         // Inflate chart and insert data
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, statisticsLayout, false);
+        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, weekLayout, false);
 
-        statisticsLayout.addView(chart);
+        weekLayout.addView(chart);
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
@@ -560,18 +574,18 @@ public class StatisticsHome extends ActivityWithHeader {
         // Generate header
         TextView label = new TextView(getApplicationContext());
 
-        label.setText("Average shower duration in the last 7 days");
+        label.setText("Average shower duration");
         label.setTextSize(20.0f);
-        label.setTextColor(Color.BLACK);
+        label.setTextColor(getApplicationContext().getResources().getColor(R.color.black_300));
         label.setTypeface(null, Typeface.BOLD);
 
-        statisticsLayout.addView(label);
+        weekLayout.addView(label);
 
         // Inflate chart and insert data
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, statisticsLayout, false);
+        BarChart chart = (BarChart) inflater.inflate(R.layout.bar_chart, weekLayout, false);
 
-        statisticsLayout.addView(chart);
+        weekLayout.addView(chart);
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
@@ -673,21 +687,32 @@ public class StatisticsHome extends ActivityWithHeader {
                     break;
                 case 1:
                     title = "Average shower duration";
-                    currentValue = statisticsCompiler.todayAverageDuration / 60;
-                    maxValue = Math.max(60, currentValue + 5);
-                    unit = " mins";
-
-                    averageValue = statisticsCompiler.averageShowerDuration / 60;
-
-                    if(currentValue >= averageValue)
+                    currentValue = statisticsCompiler.todayAverageDuration;
+                    
+                    if(currentValue < 60)
                     {
-                        int difference = Math.round(currentValue - averageValue);
-                        message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes more than your average usage.", currentValue, difference);
+                        unit = " sec";
+                        maxValue = Math.max(60, currentValue + 5);
+                        averageValue = statisticsCompiler.averageShowerDuration / 60;
+
+                        message = String.format("Your average shower duration today was %.0f second. This is %d minutes less than your average.", currentValue, averageValue);
                     }
-                    else
-                    {
-                        int difference = Math.round(averageValue - currentValue);
-                        message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes less than your average usage.", currentValue, difference);
+                    else {
+                        currentValue = currentValue / 60;
+                        maxValue = Math.max(60, currentValue + 5);
+                        unit = " mins";
+                        averageValue = statisticsCompiler.averageShowerDuration / 60;
+
+                        if(currentValue >= averageValue)
+                        {
+                            int difference = Math.round(currentValue - averageValue);
+                            message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes more than your average.", currentValue, difference);
+                        }
+                        else
+                        {
+                            int difference = Math.round(averageValue - currentValue);
+                            message = String.format("Your average shower duration today was %.0f minutes. This is %d minutes less than your average.", currentValue, difference);
+                        }
                     }
                     break;
                 case 2:
@@ -701,12 +726,12 @@ public class StatisticsHome extends ActivityWithHeader {
                     if(currentValue > averageValue)
                     {
                         int difference = (int) (currentValue - averageValue);
-                        message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees more than your average usage.", currentValue, difference);
+                        message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees more than your average temperature.", currentValue, difference);
                     }
                     else
                     {
                         int difference = (int) (averageValue - currentValue);
-                        message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees less than your average usage.", currentValue, difference);
+                        message = String.format("Your average shower water temperature was %.0f°C today. This is %d degrees less than your average temperature.", currentValue, difference);
                     }
                     break;
             }

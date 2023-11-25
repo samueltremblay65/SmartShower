@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -115,6 +116,8 @@ public class MainActivity extends ActivityWithHeader {
 
     public void deletePreset(UserPreset preset) {
         deletePresetFromDatabase(preset);
+        presets.remove(preset);
+        presetAdapter.notifyItemRemoved(preset.orderIndex);
     }
 
     public void editPreset(UserPreset preset) {
@@ -128,7 +131,7 @@ public class MainActivity extends ActivityWithHeader {
         presets = returnedPresets;
 
         // Sort the list by orderIndex to display presets in order set by user
-        presets.sort((p1, p2) -> p1.orderIndex - p2.orderIndex);
+        presets.sort(Comparator.comparingInt(p -> p.orderIndex));
 
         if(presets.size() == 0)
         {
@@ -218,7 +221,6 @@ public class MainActivity extends ActivityWithHeader {
                     @Override
                     public void onSuccess(Void unused) {
                         presets = account.getPresets();
-                        updatePresets(presets);
                         Toast.makeText(MainActivity.this, "Successfully deleted preset", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
