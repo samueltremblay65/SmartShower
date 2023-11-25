@@ -1,6 +1,7 @@
 package com.example.smartshower;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -56,6 +57,14 @@ public class UserAccount {
     public void removePreset(UserPreset preset)
     {
         presets.remove(preset);
+
+        presets.sort(Comparator.comparingInt(p -> p.orderIndex));
+        int i = 0;
+        for(UserPreset userPreset: presets)
+        {
+            userPreset.orderIndex = i++;
+        }
+
     }
 
     public List<UserPreset> getPresets()

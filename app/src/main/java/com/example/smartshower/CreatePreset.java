@@ -219,6 +219,10 @@ public class CreatePreset extends ActivityWithHeader {
                     {
                         newPreset.setInputSequenceName("control");
                     }
+                    if(newPreset.name.equals("Flow control test"))
+                    {
+                        newPreset.setInputSequenceName("flow");
+                    }
 
                     addPresetToDatabase(newPreset);
                     Toast.makeText(this, "Creating...", Toast.LENGTH_SHORT).show();

@@ -63,6 +63,9 @@ public class Shower extends ActivityWithHeader {
     private boolean isOn;
 
     private boolean inputSequenced;
+    private boolean flowSequenced = false;
+    private boolean isEditable = false;
+
     private int sequenceInstant = 0;
     private int cooldown = 0;
     private int maxTargetTemp;
@@ -86,7 +89,7 @@ public class Shower extends ActivityWithHeader {
 
     private LineChart chart;
 
-    private boolean isEditable = false;
+    private String showerAddress;
 
     @Override
     protected void onPause() {
@@ -100,6 +103,19 @@ public class Shower extends ActivityWithHeader {
         setContentView(R.layout.shower);
         super.setupUIElements();
 
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
+        showerAddress = preferences.getString("showerAddress", "");
+
+        if(showerAddress.isEmpty())
+        {
+            showerAddress = "https://smartshowermock.onrender.com";
+        }
+        else
+        {
+            showerAddress = String.format("http://%s", showerAddress);
+            Log.i("AddressJiraf", showerAddress);
+        }
+
         preset = (UserPreset) getIntent().getSerializableExtra("preset");
 
         inputSequenced = false;
@@ -107,6 +123,11 @@ public class Shower extends ActivityWithHeader {
         if(preset.inputSequenceName != null && !preset.inputSequenceName.isEmpty() && !preset.inputSequenceName.equals("none"))
         {
             inputSequenced = true;
+            if(preset.inputSequenceName.equals("flow"))
+            {
+                flowSequenced = true;
+                inputSequenced = false;
+            }
         }
 
         isEditable = getIntent().getBooleanExtra("isEditable", false);
@@ -212,7 +233,7 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void onClick(View v) {
 
-                String url2 = "http://192.168.137.143:80/on";
+                String url2 = String.format("%s/on", showerAddress);
 
                 StringRequest stringRequest2 = new StringRequest(Request.Method.GET, url2,
                         response -> {
@@ -231,15 +252,7 @@ public class Shower extends ActivityWithHeader {
 
                 if(isOn)
                 {
-                    String url = "https://smartshowermock.onrender.com/off";
-
-                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                            response -> {
-                                Log.i("HttpJiraf", response);
-                                stopShower();
-                            }, error -> Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again"));
-
-                    requestQueue.add(stringRequest);
+                    stopShower();
                 }
                 else
                 {
@@ -308,6 +321,11 @@ public class Shower extends ActivityWithHeader {
                         targetTemperature = ShowerSequencer.getTemperatureInstant(preset.inputSequenceName, sequenceInstant++);
                         setShowerTemperature();
                     }
+                    if(flowSequenced)
+                    {
+                        targetFlow = ShowerSequencer.getTemperatureInstant(preset.inputSequenceName, sequenceInstant++);
+                        setShowerFlow();
+                    }
 
                     // Update statistics
                     session.update(currentTemperature, currentFlow);
@@ -317,17 +335,26 @@ public class Shower extends ActivityWithHeader {
                         ILineDataSet targetSet = (LineDataSet)data.getDataSetByIndex(0);
                         ILineDataSet currentSet = (LineDataSet)data.getDataSetByIndex(1);
 
-                        targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
-                        currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
-                        data.notifyDataChanged();
-
-                        if(targetTemperature > maxTargetTemp)
+                        if(flowSequenced)
                         {
-                            maxTargetTemp = targetTemperature;
+                            targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetFlow));
+                            currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentFlow));
+                            data.notifyDataChanged();
+                        }
+                        else
+                        {
+                            targetSet.addEntry(new Entry(targetSet.getEntryCount(), targetTemperature));
+                            currentSet.addEntry(new Entry(currentSet.getEntryCount(), currentTemperature));
+                            data.notifyDataChanged();
+
+                            if(targetTemperature > maxTargetTemp)
+                            {
+                                maxTargetTemp = targetTemperature;
+                            }
+                            chart.getAxisLeft().setAxisMaximum(Math.max(40, Math.max(session.getMaximalTemperature(), maxTargetTemp )+ 5));
                         }
 
                         chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
-                        chart.getAxisLeft().setAxisMaximum(Math.max(40, Math.max(session.getMaximalTemperature(), maxTargetTemp )+ 5));
 
                         if(targetSet.getEntryCount() < 25)
                         {
@@ -381,12 +408,24 @@ public class Shower extends ActivityWithHeader {
         LineData chartData = new LineData();
 
         LineDataSet targetDataset = new LineDataSet(targetEntries, "Target temperature (°C)");
+        
+        if(flowSequenced)
+        {
+            targetDataset.setLabel("Target flow (%)");
+        }
+
         targetDataset.setCircleRadius(4);
         targetDataset.setValueTextSize(0);
         targetDataset.setColor(getResources().getColor(R.color.shower_blue300));
         targetDataset.setCircleColor(getResources().getColor(R.color.shower_blue300));
 
         LineDataSet currentDataset = new LineDataSet(currentEntries, "Current temperature (°C)");
+
+        if(flowSequenced)
+        {
+            currentDataset.setLabel("Current flow (%)");
+        }
+
         currentDataset.setCircleRadius(4);
         currentDataset.setValueTextSize(0);
         currentDataset.setColor(getResources().getColor(R.color.yellow));
@@ -413,6 +452,12 @@ public class Shower extends ActivityWithHeader {
         leftAxis.setAxisMinimum(5);
         leftAxis.setAxisMaximum(40);
         leftAxis.setDrawGridLines(true);
+
+        if(flowSequenced)
+        {
+            leftAxis.setAxisMinimum(0);
+            leftAxis.setAxisMaximum(100);
+        }
 
         chart.getXAxis().setAxisMinimum(0);
         chart.getXAxis().setAxisMaximum(30);
@@ -451,6 +496,7 @@ public class Shower extends ActivityWithHeader {
 
     private void startShower()
     {
+        cooldown = 3;
         isOn = true;
         session = new ShowerSession(presetId);
 
@@ -460,17 +506,25 @@ public class Shower extends ActivityWithHeader {
 
     private void stopShower()
     {
-        if(isOn)
-        {
-            saveStatistics();
-        }
-        
-        isOn = false;
-        sequenceInstant = 0;
-        
-        // Should save shower session to database
-        startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));
-        startShowerButton.setText(getResources().getText(R.string.start_shower));
+        String url = "https://smartshowermock.onrender.com/off";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.i("HttpJiraf", response);
+                    if(isOn)
+                    {
+                        saveStatistics();
+                    }
+
+                    isOn = false;
+                    sequenceInstant = 0;
+
+                    // Should save shower session to database
+                    startShowerButton.setBackgroundColor(getResources().getColor(R.color.shower_blue300));
+                    startShowerButton.setText(getResources().getText(R.string.start_shower));
+                }, error -> Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again"));
+
+        requestQueue.add(stringRequest);
     }
 
     @SuppressLint("DefaultLocale")
@@ -491,7 +545,7 @@ public class Shower extends ActivityWithHeader {
 
     @SuppressLint("DefaultLocale")
     private void updateFlowRateDisplay() {
-        // flowRateDisplay.setText(String.format("water flow: %d%%", currentFlow));
+        flowRateSlider.setValue(targetFlow);
     }
 
     private void handleGetStatusRequest(JSONObject response)
@@ -499,17 +553,18 @@ public class Shower extends ActivityWithHeader {
         try{
             String responseStatus = response.getString("status");
 
+            if(isOn && cooldown == 0) {
+                targetTemperature = response.getInt("targetTemperature");
+                targetFlow = response.getInt("targetFlow");
+            }
+
             if(isOn)
             {
                 currentTemperature = response.getInt("currentTemperature");
+                currentFlow = response.getInt("currentFlow");
 
                 updateTempDisplay();
                 updateFlowRateDisplay();
-            }
-
-            if(isOn && cooldown == 0)
-            {
-                targetTemperature = response.getInt("targetTemperature");
             }
 
             if(!isOn && responseStatus.equals("on"))

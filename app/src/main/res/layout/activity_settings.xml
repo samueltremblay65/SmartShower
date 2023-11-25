@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="12dp">
 
     <LinearLayout
@@ -10,6 +11,36 @@
         android:orientation="vertical">
 
         <include layout="@layout/header"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/settings_shower_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Shower address">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/settings_shower_address_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:id="@+id/btn_save_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/shower_blue300"
+            android:padding="10dp"
+            android:text="Save shower address"
+            android:textColor="@color/black"
+            android:textColorHighlight="#F44336"
+            android:textColorHint="#000000"
+            android:textColorLink="#000000"
+            android:textSize="14sp"
+            app:cornerRadius="10dp" />
 
     </LinearLayout>
 
