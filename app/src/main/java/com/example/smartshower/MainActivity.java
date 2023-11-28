@@ -292,8 +292,9 @@ public class MainActivity extends ActivityWithHeader {
                 int averageTemperature = (int)(long) statisticsObject.get("averageTemperature");
                 float waterUsage = (float)(double) statisticsObject.get("waterUsage");
                 long dateTime = (long) statisticsObject.get("dateTime");
+                int averageFlow = (int)(long) statisticsObject.get("averageFlow");
 
-                Statistics statistic = new Statistics(presetId, duration, averageTemperature, 0, waterUsage, dateTime);
+                Statistics statistic = new Statistics(presetId, duration, averageTemperature, averageFlow, waterUsage, dateTime);
                 allStatistics.add(statistic);
             }
 

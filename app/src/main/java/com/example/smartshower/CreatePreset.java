@@ -175,7 +175,7 @@ public class CreatePreset extends ActivityWithHeader {
                 int flowrate = validator.getIntegerFromEditText(flowrateInput, "flow rate");
 
                 int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
-                int temperatureLimit = getResources().getInteger(R.integer.max_temperature_c);
+                int temperatureLimit = getResources().getInteger(R.integer.default_max_temperature);
 
                 if(timerEnable.isChecked())
                 {
@@ -313,9 +313,19 @@ public class CreatePreset extends ActivityWithHeader {
 
     public boolean validatePresetForm()
     {
+        int maxAllowableTemperature = getResources().getInteger(R.integer.max_temperature_c);
+
+        if(temperatureLimitEnable.isChecked())
+        {
+            if(!validator.validateEditTextInput_Number(temperatureLimitInput, getResources().getInteger(R.integer.min_temperature_c),
+                    getResources().getInteger(R.integer.max_temperature_c), "safe temperature limit")) return false;
+            
+            maxAllowableTemperature = validator.getIntegerFromEditText(temperatureLimitInput, "safe temperature limit");
+        }
+        
         // Mandatory field checks
         if(!validator.validateEditTextInput_Text(nameInput,"preset name") ||
-                !validator.validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), getResources().getInteger(R.integer.max_temperature_c), "temperature") ||
+                !validator.validateEditTextInput_Number(temperatureInput, getResources().getInteger(R.integer.min_temperature_c), maxAllowableTemperature, "temperature") ||
                 !validator.validateEditTextInput_Number(flowrateInput, 0, 100, "flow rate")) return false;
 
         // Theme selection check
@@ -326,9 +336,7 @@ public class CreatePreset extends ActivityWithHeader {
         }
 
         // Optional field checks
-        if((timerEnable.isChecked() && !validator.validateEditTextInput_Number(timerInput, 0, 3600, "time limit")) ||
-                (temperatureLimitEnable.isChecked() && !validator.validateEditTextInput_Number(temperatureLimitInput, getResources().getInteger(R.integer.min_temperature_c),
-                        getResources().getInteger(R.integer.max_temperature_c), "safe temperature limit"))) return false;
+        if((timerEnable.isChecked() && !validator.validateEditTextInput_Number(timerInput, 0, 3600, "time limit"))) return false;
         return true;
     }
 

@@ -3,5 +3,6 @@
     <integer name="null_timelimit_db_value">-1</integer>
     <integer name="min_temperature_c">5</integer>
     <integer name="max_temperature_c">60</integer>
+    <integer name="default_max_temperature">45</integer>
     <integer name="max_temperature_f">110</integer>
 </resources>

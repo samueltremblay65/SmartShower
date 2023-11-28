@@ -17,6 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -125,8 +129,18 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString(getString(R.string.keys_account_password), account.getPassword());
         editor.apply();
 
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = String.format("https://smartshowermock.onrender.com/user?user=%d", account.getUserId());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.i("HttpJiraf", response);
+                }, error -> Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again"));
+
+        requestQueue.add(stringRequest);
+
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         LoginActivity.this.startActivity(myIntent);
+        finish();
     }
 
     private void loginFailure()

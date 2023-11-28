@@ -91,8 +91,6 @@ public class StatisticsHome extends ActivityWithHeader {
         // View pager setup
         gaugePager = findViewById(R.id.vp_stats_gauges);
 
-        // Use following line to generate a year's worth of example shower data in the database
-        // populateStatisticsWithExampleData();
     }
 
     private void getDataFromDatabase() {
@@ -429,7 +427,7 @@ public class StatisticsHome extends ActivityWithHeader {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
-        String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        String[] weekdayLabels = new String[]{"Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         DataPoint<Float>[] dataset = statisticsCompiler.calculateDailyWaterUsageWeek();
 
         Date date = new Date();
@@ -442,8 +440,8 @@ public class StatisticsHome extends ActivityWithHeader {
 
         for(int i = 0; i < 7; i++)
         {
-            currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
-            currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
+            currentDayLabels[i] = weekdayLabels[(i + currentDay) % 7];
+            currentWeekSortedData.add(dataset[(i + currentDay) % 7]);
         }
 
         int i = 1;
@@ -472,7 +470,6 @@ public class StatisticsHome extends ActivityWithHeader {
         xAxis.setGranularity(1f);
         xAxis.setGranularityEnabled(true);
         chart.setData(data);
-        chart.setFitBars(true); // make the x-axis fit exactly all bars
         chart.invalidate();
 
         xAxis.setValueFormatter(new ValueFormatter() {
@@ -482,7 +479,7 @@ public class StatisticsHome extends ActivityWithHeader {
                 {
                     return "";
                 }
-                return weekdayLabels[(int) value - 1];
+                return currentDayLabels[(int) value - 1];
             }
         });
 
@@ -509,7 +506,7 @@ public class StatisticsHome extends ActivityWithHeader {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
-        String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        String[] weekdayLabels = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyTemperatureWeek();
 
         Date date = new Date();
@@ -522,8 +519,8 @@ public class StatisticsHome extends ActivityWithHeader {
 
         for(int i = 0; i < 7; i++)
         {
-            currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
-            currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
+            currentDayLabels[i] = weekdayLabels[(i + currentDay) % 7];
+            currentWeekSortedData.add(dataset[(i + currentDay) % 7]);
         }
 
         int i = 1;
@@ -543,7 +540,7 @@ public class StatisticsHome extends ActivityWithHeader {
         chart.getLegend().setTextSize(16);
 
         // Dataset and related properties
-        BarDataSet set = new BarDataSet(entries, "Water usage (L)");
+        BarDataSet set = new BarDataSet(entries, "Average temperature (C°)");
         set.setColor(getApplicationContext().getResources().getColor(R.color.shower_blue300));
         BarData data = new BarData(set);
         data.setBarWidth(0.2f); // set custom bar width
@@ -552,7 +549,6 @@ public class StatisticsHome extends ActivityWithHeader {
         xAxis.setGranularity(1f);
         xAxis.setGranularityEnabled(true);
         chart.setData(data);
-        chart.setFitBars(true); // make the x-axis fit exactly all bars
         chart.invalidate();
 
         xAxis.setValueFormatter(new ValueFormatter() {
@@ -562,7 +558,7 @@ public class StatisticsHome extends ActivityWithHeader {
                 {
                     return "";
                 }
-                return weekdayLabels[(int) value - 1];
+                return currentDayLabels[(int) value - 1];
             }
         });
 
@@ -589,7 +585,7 @@ public class StatisticsHome extends ActivityWithHeader {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
 
-        String[] weekdayLabels = new String[]{"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        String[] weekdayLabels = new String[]{"Sunday", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         DataPoint<Integer>[] dataset = statisticsCompiler.calculateDailyDurationWeek();
 
         Date date = new Date();
@@ -602,8 +598,8 @@ public class StatisticsHome extends ActivityWithHeader {
 
         for(int i = 0; i < 7; i++)
         {
-            currentDayLabels[i] = weekdayLabels[(i + currentDay - 1) % 7];
-            currentWeekSortedData.add(dataset[(i + currentDay - 1) % 7]);
+            currentDayLabels[i] = weekdayLabels[(i + currentDay) % 7];
+            currentWeekSortedData.add(dataset[(i + currentDay) % 7]);
         }
 
         int i = 1;
@@ -611,7 +607,7 @@ public class StatisticsHome extends ActivityWithHeader {
             int currentX = i;
             if(data.isValid)
             {
-                entries.add(new BarEntry(currentX, data.value / 60));
+                entries.add(new BarEntry(currentX, Math.round(data.value / 60)));
             }
             i++;
         }
@@ -623,7 +619,7 @@ public class StatisticsHome extends ActivityWithHeader {
         chart.getLegend().setTextSize(16);
 
         // Dataset and related properties
-        BarDataSet set = new BarDataSet(entries, "Water usage (L)");
+        BarDataSet set = new BarDataSet(entries, "Average duration (minutes)");
         set.setColor(getApplicationContext().getResources().getColor(R.color.shower_blue300));
         BarData data = new BarData(set);
         data.setBarWidth(0.2f); // set custom bar width
@@ -632,17 +628,17 @@ public class StatisticsHome extends ActivityWithHeader {
         xAxis.setGranularity(1f);
         xAxis.setGranularityEnabled(true);
         chart.setData(data);
-        chart.setFitBars(true); // make the x-axis fit exactly all bars
         chart.invalidate();
 
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                if(value == 0 || value > 7)
+                if(value < 1 || value > 8)
                 {
                     return "";
                 }
-                return weekdayLabels[(int) value - 1];
+                return
+                        currentDayLabels[(int) value - 1];
             }
         });
 
@@ -849,7 +845,7 @@ public class StatisticsHome extends ActivityWithHeader {
                     statsMap.put(Long.toString(statistic.dateTime), statistic);
                 }
                 
-                docRef.update(statsMap);
+                docRef.set(statsMap);
 
                 // Adding to database
                 AppDatabase db = DatabaseClient.getInstance(getApplicationContext()).getAppDatabase();

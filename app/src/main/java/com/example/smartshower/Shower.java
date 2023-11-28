@@ -91,6 +91,8 @@ public class Shower extends ActivityWithHeader {
 
     private String showerAddress;
 
+    private boolean useMockService = true;
+
     @Override
     protected void onPause() {
         timer.cancel();
@@ -106,7 +108,7 @@ public class Shower extends ActivityWithHeader {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.accounts_file), MODE_PRIVATE);
         showerAddress = preferences.getString("showerAddress", "");
 
-        if(showerAddress.isEmpty())
+        if(showerAddress.isEmpty() || useMockService)
         {
             showerAddress = "https://smartshowermock.onrender.com";
         }
@@ -233,30 +235,13 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void onClick(View v) {
 
-                String url2 = String.format("%s/on", showerAddress);
-
-                StringRequest stringRequest2 = new StringRequest(Request.Method.GET, url2,
-                        response -> {
-                            Log.i("ConnectionJiraf", "Got a response");
-                            Log.i("HttpJiraf", response);
-                            stopShower();
-                        }, error -> {
-                            Log.i("HttpJiraf", "Unable to connect to the shower. Check your internet connection and try again");
-                            if(error.getMessage() != null)
-                            {
-                                Log.i("HttpJiraf", error.getMessage());
-                            }
-                        });
-                
-                requestQueue.add(stringRequest2);
-
                 if(isOn)
                 {
                     stopShower();
                 }
                 else
                 {
-                    String url = "https://smartshowermock.onrender.com/on";
+                    String url = String.format("%s/on", showerAddress);
 
                     StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                             response -> {
@@ -291,7 +276,7 @@ public class Shower extends ActivityWithHeader {
             @Override
             public void run() {
                 // Runs every 1000 ms
-                String url = "https://smartshowermock.onrender.com/get";
+                String url = String.format("%s/get", showerAddress);
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                         url, null,
                         response -> {
@@ -468,7 +453,7 @@ public class Shower extends ActivityWithHeader {
 
     public void setShowerTemperature()
     {
-        String url = String.format("https://smartshowermock.onrender.com/set?temp=%d", targetTemperature);
+        String url = String.format("%s/set?temp=%d", showerAddress, targetTemperature);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     Log.i("ShowerTemperature", String.format("Shower temperature set to %d", targetTemperature));
@@ -479,7 +464,7 @@ public class Shower extends ActivityWithHeader {
 
     public void setShowerFlow()
     {
-        String url = String.format("https://smartshowermock.onrender.com/set?flow=%d", targetFlow);
+        String url = String.format("%s/set?flow=%d", showerAddress, targetFlow);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     Log.i("ShowerTemperature", String.format("Shower temperature set to %d", targetFlow));
@@ -506,7 +491,7 @@ public class Shower extends ActivityWithHeader {
 
     private void stopShower()
     {
-        String url = "https://smartshowermock.onrender.com/off";
+        String url = String.format("%s/off", showerAddress);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {

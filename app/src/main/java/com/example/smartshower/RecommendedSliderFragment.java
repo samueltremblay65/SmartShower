@@ -41,7 +41,7 @@ public class RecommendedSliderFragment extends Fragment {
         name.setText(preset.name);
         temperature.setText(String.format("%d°C", preset.temp));
         temperatureLimit.setText(String.format("%d°C limit", preset.tempLimit));
-        flowRate.setText(String.format("%d flow rate", preset.flowRate));
+        flowRate.setText(String.format("%d%% flow rate", preset.flowRate));
         timer.setText(ViewHelpers.formatSeconds(getContext(), preset.secondsLimit));
 
         infoView.setText(info);

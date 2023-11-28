@@ -332,6 +332,7 @@ public class StatisticsCompiler {
         {
             sum += statistic.averageFlow;
         }
+        Log.i("StatisticsJiraf", "Flow rate: " + sum);
         return sum / allStatistics.size();
     }
     public int calculateAverageDailyWaterUsage()
@@ -389,6 +390,74 @@ public class StatisticsCompiler {
             waterUsage += statistic.waterUsage;
         }
         return waterUsage;
+    }
+
+    public int calculateWeeklyAverageFlow()
+    {
+        if(allStatistics.size() == 0)
+            return 0;
+        int sum = 0;
+        for(Statistics statistic: allStatistics)
+        {
+            sum += statistic.averageFlow;
+        }
+        return sum / allStatistics.size();
+    }
+
+    public ArrayList<Statistics> getStatisticsForTimeRange(int start, int end)
+    {
+        ArrayList<Statistics> statistics = new ArrayList<>();
+        for(Statistics statistic: allStatistics)
+        {
+            Date date = statistic.parseDate();
+            if(date.getHours() >= start && date.getHours() <= end)
+            {
+                statistics.add(statistic);
+            }
+        }
+        return statistics;
+    }
+
+    public ArrayList<Statistics> getStatisticsForMonth(int month)
+    {
+        ArrayList<Statistics> statistics = new ArrayList<>();
+        for(Statistics statistic: allStatistics)
+        {
+            if(statistic.getMonth() == month)
+            {
+                statistics.add(statistic);
+            }
+        }
+        return statistics;
+    }
+
+    public ArrayList<Statistics> getStatisticsForWeekday(int weekday)
+    {
+        ArrayList<Statistics> statistics = new ArrayList<>();
+        for(Statistics statistic: allStatistics)
+        {
+            Date date = statistic.parseDate();
+            if(date.getDay() == weekday)
+            {
+                statistics.add(statistic);
+            }
+        }
+        return statistics;
+    }
+    
+    public static int calculateAverageTemperatureFromList(List<Statistics> statistics)
+    {
+        if(statistics.isEmpty())
+        {
+            return 0;
+        }
+
+        int sum = 0;
+        for(Statistics statistic: statistics)
+        {
+            sum += statistic.averageTemperature;
+        }
+        return sum / statistics.size();
     }
 
     private class StatisticDateComparator implements Comparator<Statistics> {
