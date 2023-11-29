@@ -91,7 +91,12 @@ public class ViewHelpers {
         {
             return "1 minute";
         }
-        
+
+        if(seconds < 60)
+        {
+            return String.format("%d seconds", seconds);
+        }
+
         if(seconds / 60 == 1)
         {
             return String.format("1 minute and %02d seconds", seconds % 60);

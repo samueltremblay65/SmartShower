@@ -129,12 +129,6 @@ public class CreatePreset extends ActivityWithHeader {
                 temperatureLimitInputLayout.setVisibility(View.VISIBLE);
             }
 
-            if(existingPreset.secondsLimit != getResources().getInteger(R.integer.null_timelimit_db_value))
-            {
-                timerEnable.setChecked(true);
-                timerInput.setText(Integer.toString(existingPreset.secondsLimit));
-            }
-
             createPreset.setText(R.string.save_changes);
         }
         else
@@ -148,10 +142,10 @@ public class CreatePreset extends ActivityWithHeader {
         }
 
         minutePicker.setMinValue(0);
-        minutePicker.setMaxValue(9);
+        minutePicker.setMaxValue(10);
 
-        int[] minuteChoiceValues = {1,2,3,4,5,10,15,20,30,60};
-        String[] minuteChoices = {"1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "1 hour"};
+        int[] minuteChoiceValues = {0,1,2,3,4,5,10,15,20,30,60};
+        String[] minuteChoices = {"30 seconds","1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "1 hour"};
 
         minutePicker.setDisplayedValues(minuteChoices);
 
@@ -159,7 +153,15 @@ public class CreatePreset extends ActivityWithHeader {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 int value = minutePicker.getValue();
-                timerSeconds = minuteChoiceValues[value];
+
+
+                timerSeconds = minuteChoiceValues[value] * 60;
+
+                if(timerSeconds == 0)
+                {
+                    Log.i("Jirafi", "If block");
+                    timerSeconds = 30;
+                }
             }
         });
 
@@ -169,7 +171,7 @@ public class CreatePreset extends ActivityWithHeader {
                 {
                     timerLayout.setVisibility(View.VISIBLE);
                     int value = minutePicker.getValue();
-                    timerSeconds = minuteChoiceValues[value];
+                    timerSeconds = minuteChoiceValues[value] * 60;
                 }
                 else
                 {
@@ -355,8 +357,6 @@ public class CreatePreset extends ActivityWithHeader {
             return false;
         }
 
-        // Optional field checks
-        if((timerEnable.isChecked() && !validator.validateEditTextInput_Number(timerInput, 0, 3600, "time limit"))) return false;
         return true;
     }
 

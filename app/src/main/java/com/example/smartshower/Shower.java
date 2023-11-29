@@ -368,7 +368,7 @@ public class Shower extends ActivityWithHeader {
                         // Update timer text
                         timerDisplay.setText(formatTime(timerSeconds));
 
-                        if(session.showHealthWarning(currentTemperature))
+                        if(session.showHealthWarning(targetTemperature))
                         {
                             TextView healthWarning = findViewById(R.id.warning_textbox);
                             healthWarning.setVisibility(View.VISIBLE);
