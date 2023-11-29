@@ -305,7 +305,7 @@ public class StatisticsHome extends ActivityWithHeader {
         rightAxis.setEnabled(false);
         rightAxis.setDrawGridLines(true);
         YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setAxisMinimum(minTemperature);
+        leftAxis.setAxisMinimum(5);
         leftAxis.setTextSize(12);
         leftAxis.setDrawGridLines(true);
 

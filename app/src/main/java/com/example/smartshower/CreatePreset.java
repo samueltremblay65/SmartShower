@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -49,6 +50,8 @@ public class CreatePreset extends ActivityWithHeader {
     EditText temperatureLimitInput;
     EditText timerInput;
 
+    NumberPicker minutePicker;
+
     Switch timerEnable;
     Switch temperatureLimitEnable;
 
@@ -63,6 +66,9 @@ public class CreatePreset extends ActivityWithHeader {
     int presetOrder;
 
     boolean editMode = false;
+
+    int timerSeconds;
+    LinearLayout timerLayout;
 
     UserAccount account;
     
@@ -88,18 +94,20 @@ public class CreatePreset extends ActivityWithHeader {
         flowrateInput = findViewById(R.id.et_preset_flow);
 
         temperatureLimitInput = findViewById(R.id.et_preset_temperature_limit);
-        timerInput = findViewById(R.id.et_preset_time_limit);
+        timerLayout = findViewById(R.id.timerLayout);
 
         temperatureLimitEnable = findViewById(R.id.sw_cp_temp_limit);
         timerEnable = findViewById(R.id.cp_switch_timer);
+        minutePicker = findViewById(R.id.minute_picker);
 
         createPreset = findViewById(R.id.btn_create_preset);
         discardChanges = findViewById(R.id.btn_discard_preset);
 
         UserPreset existingPreset = (UserPreset) getIntent().getSerializableExtra("preset");
 
-        TextInputLayout timerInputLayout = findViewById(R.id.ti_create_preset_time_limit);
         TextInputLayout temperatureLimitInputLayout = findViewById(R.id.ti_create_preset_temperature_limit);
+
+        timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
 
         // Edit preset code path
         if(existingPreset != null)
@@ -125,7 +133,6 @@ public class CreatePreset extends ActivityWithHeader {
             {
                 timerEnable.setChecked(true);
                 timerInput.setText(Integer.toString(existingPreset.secondsLimit));
-                timerInputLayout.setVisibility(View.VISIBLE);
             }
 
             createPreset.setText(R.string.save_changes);
@@ -140,15 +147,34 @@ public class CreatePreset extends ActivityWithHeader {
             }
         }
 
+        minutePicker.setMinValue(0);
+        minutePicker.setMaxValue(9);
+
+        int[] minuteChoiceValues = {1,2,3,4,5,10,15,20,30,60};
+        String[] minuteChoices = {"1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "1 hour"};
+
+        minutePicker.setDisplayedValues(minuteChoices);
+
+        minutePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                int value = minutePicker.getValue();
+                timerSeconds = minuteChoiceValues[value];
+            }
+        });
+
         timerEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
                 {
-                    timerInputLayout.setVisibility(View.VISIBLE);
+                    timerLayout.setVisibility(View.VISIBLE);
+                    int value = minutePicker.getValue();
+                    timerSeconds = minuteChoiceValues[value];
                 }
                 else
                 {
-                    timerInputLayout.setVisibility(View.GONE);
+                    timerLayout.setVisibility(View.GONE);
+                    timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
                 }
             }
         });
@@ -173,14 +199,8 @@ public class CreatePreset extends ActivityWithHeader {
                 String presetName = nameInput.getText().toString().trim();
                 int temperature = validator.getIntegerFromEditText(temperatureInput, "temperature");
                 int flowrate = validator.getIntegerFromEditText(flowrateInput, "flow rate");
-
-                int timerSeconds = getResources().getInteger(R.integer.null_timelimit_db_value);
+                
                 int temperatureLimit = getResources().getInteger(R.integer.default_max_temperature);
-
-                if(timerEnable.isChecked())
-                {
-                    timerSeconds = validator.getIntegerFromEditText(timerInput, "time limit");
-                }
 
                 if(temperatureLimitEnable.isChecked())
                 {
