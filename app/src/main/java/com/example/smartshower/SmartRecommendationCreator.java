@@ -70,8 +70,21 @@ public class SmartRecommendationCreator {
         int seconds = statisticsCompiler.averageShowerDuration;
         int minutes = seconds / 60;
         int timer = minutes * 60;
+        
+        if(temperature == 0)
+        {
+            temperature = 37;
+        }
+        if(flow == 0)
+        {
+            flow = 100;
+        }
+        if(timer == 0)
+        {
+            timer = 600;
+        }
 
-        UserPreset preset = new UserPreset(0, name, temperature, 40, flow, timer, "bg1", -1, 0);
+        UserPreset preset = new UserPreset(0, name, temperature, 45, flow, timer, "bg1", -1, 0);
         return preset;
     }
 

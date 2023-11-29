@@ -60,7 +60,7 @@ public class StatisticsCompiler {
     public static boolean isWithinLastWeek(Date date)
     {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -7);
+        cal.add(Calendar.DATE, -6);
         Date lastWeek = cal.getTime();
 
         return date.after(lastWeek);

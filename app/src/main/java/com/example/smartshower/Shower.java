@@ -95,6 +95,7 @@ public class Shower extends ActivityWithHeader {
 
     @Override
     protected void onPause() {
+        Log.i("PauseJiraf", "Cancelling timer");
         timer.cancel();
         super.onPause();
     }
@@ -170,6 +171,18 @@ public class Shower extends ActivityWithHeader {
         // Initialize indicators to preset settings
         updateTempDisplay();
         updateFlowRateDisplay();
+        
+        setShowerTemperature();
+        setShowerFlow();
+
+        String url = String.format("%s/get", showerAddress);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                url, null,
+                response -> {
+                    handleGetStatusRequest(response);
+                }, error -> { Log.i("JirafError", "Error"); });
+
+        requestQueue.add(jsonObjectRequest);
 
         if(timerSeconds == -1)
         {
@@ -219,7 +232,7 @@ public class Shower extends ActivityWithHeader {
             @SuppressLint("RestrictedApi")
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                currentFlow = Math.round(value);
+                targetFlow = Math.round(value);
 
                 cooldown = 3;
 
@@ -491,6 +504,7 @@ public class Shower extends ActivityWithHeader {
 
     private void stopShower()
     {
+        cooldown = 3;
         String url = String.format("%s/off", showerAddress);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -552,12 +566,12 @@ public class Shower extends ActivityWithHeader {
                 updateFlowRateDisplay();
             }
 
-            if(!isOn && responseStatus.equals("on"))
+            if(!isOn && responseStatus.equals("on") && cooldown > 0)
             {
                 startShower();
             }
 
-            if(isOn && responseStatus.equals("off"))
+            if(isOn && responseStatus.equals("off") && cooldown > 0)
             {
                 stopShower();
             }

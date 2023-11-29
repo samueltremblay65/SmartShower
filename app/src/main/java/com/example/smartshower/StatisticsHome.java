@@ -107,7 +107,7 @@ public class StatisticsHome extends ActivityWithHeader {
                     throw new IllegalStateException("Could not find user account");
                 }
 
-                // populateStatisticsWithExampleData();
+                // StatisticsWithExampleData();
 
                 TextView last7Days = findViewById(R.id.tv_last_week);
                 TextView lastYear = findViewById(R.id.tv_last_year);
@@ -865,7 +865,7 @@ public class StatisticsHome extends ActivityWithHeader {
                 List<Statistics> exampleStatistics = new ArrayList<>();
 
                 // Parameters
-                final int PROBABILITY_SHOWER = 80;
+                final int PROBABILITY_SHOWER = 90;
 
                 int dayNumber = 56; // Day number of first day of data
                 int year = 2022;
