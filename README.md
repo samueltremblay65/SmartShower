@@ -7,8 +7,8 @@ The project is designing a smart shower that allows users to digitally control t
 This app enhances the feature set of the smart shower by allowing the user to create user presets, getting data based setting recommendations, use advanced shower features as well as obtaining statistics and insights on their shower usage. 
 
 # Setup
-Below are the steps to run the code:
+The steps below outline the procedure to open the source code in the Android Studio IDE. After the code is downloaded, simply click the build and run button in Android Studio to run the project on a connected android device or in an emulator.
 
 1. Install android studio
-2. Download the code from this repository to your local desktop
-TODO: Finish readme instructions
+2. Open your Android Studio then go to the File > New > Project from Version Control. A pop-up screen will arise. In the Version control field, select "Git" from the drop-down menu.
+4. Paste the link in the URL and choose your Directory. Click on the "Clone" button. The project will be downloaded and opened in Android Studio.
