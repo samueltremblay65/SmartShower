@@ -91,7 +91,7 @@ public class Shower extends ActivityWithHeader {
 
     private String showerAddress;
 
-    private boolean useMockService = true;
+    private boolean useMockService = false;
 
     @Override
     protected void onPause() {
@@ -255,6 +255,8 @@ public class Shower extends ActivityWithHeader {
                 else
                 {
                     String url = String.format("%s/on", showerAddress);
+                    
+                    Log.i("URLJiraf", url);
 
                     StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                             response -> {
@@ -352,25 +354,21 @@ public class Shower extends ActivityWithHeader {
                             chart.getAxisLeft().setAxisMaximum(Math.max(40, Math.max(session.getMaximalTemperature(), maxTargetTemp )+ 5));
                         }
 
-                        chart.getXAxis().setAxisMinimum(Math.max(0, targetSet.getEntryCount() - 25));
+                        // let the chart know it's data has changed
+                        chart.notifyDataSetChanged();
 
-                        if(targetSet.getEntryCount() < 25)
-                        {
-                            chart.getXAxis().setAxisMaximum(30);
-                        }
-                        else
-                        {
+                        if(targetSet.getEntryCount() > 25){
                             chart.getXAxis().setAxisMaximum(targetSet.getEntryCount() + 5);
                         }
 
-                        // let the chart know it's data has changed
-                        chart.notifyDataSetChanged();
+                        chart.setVisibleXRangeMaximum(30);
+
                         chart.moveViewToX(targetSet.getEntryCount());
 
                         // Update timer text
                         timerDisplay.setText(formatTime(timerSeconds));
 
-                        if(session.showHealthWarning(currentTemperature))
+                        if(session.showHealthWarning(targetTemperature))
                         {
                             TextView healthWarning = findViewById(R.id.warning_textbox);
                             healthWarning.setVisibility(View.VISIBLE);
@@ -434,8 +432,7 @@ public class Shower extends ActivityWithHeader {
 
         // Left axis
         XAxis xAxis = chart.getXAxis();
-        xAxis.setAxisMinimum(0f);
-        xAxis.setAxisMaximum(15f);
+        xAxis.setAxisMaximum(30f);
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -457,8 +454,8 @@ public class Shower extends ActivityWithHeader {
             leftAxis.setAxisMaximum(100);
         }
 
-        chart.getXAxis().setAxisMinimum(0);
-        chart.getXAxis().setAxisMaximum(30);
+        chart.setVisibleXRangeMinimum(15);
+        chart.setVisibleXRangeMaximum(30);
 
         chart.setData(chartData);
         chart.invalidate(); // refresh

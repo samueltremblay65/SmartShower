@@ -73,7 +73,14 @@ public class StatisticsCompiler {
         {
             latestShowerData.add(allStatistics.get(i));
         }
-        return latestShowerData;
+
+        ArrayList<Statistics> reverseList = new ArrayList<>();
+        for(int i = 0; i < latestShowerData.size();i++)
+        {
+            reverseList.add(latestShowerData.get(latestShowerData.size() - i - 1));
+        }
+
+        return reverseList;
     }
 
     public void calculateTodayStatistics()
